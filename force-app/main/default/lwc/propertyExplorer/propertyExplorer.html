@@ -18,16 +18,23 @@
                 </div>
                 <div class="slds-page-header__col-actions">
                     <!-- 목업 전용 컨트롤: 본 개발에서는 권한 세트(DreamHouse_Agent/Admin)로 결정됨 -->
-                    <lightning-radio-group
-                        data-testid="mockup-role-toggle"
-                        name="mockupRole"
-                        label="역할 (목업 전용)"
-                        type="button"
-                        variant="label-inline"
-                        options={roleOptions}
-                        value={role}
-                        onchange={handleRoleChange}
-                    ></lightning-radio-group>
+                    <div class="role-toggle" data-testid="mockup-role-toggle">
+                        <span class="slds-text-body_small slds-text-color_weak slds-m-right_x-small">역할 (목업 전용)</span>
+                        <lightning-button-group>
+                            <lightning-button
+                                label="상담원"
+                                data-value="agent"
+                                variant={agentVariant}
+                                onclick={handleRoleChange}
+                            ></lightning-button>
+                            <lightning-button
+                                label="관리자"
+                                data-value="admin"
+                                variant={adminVariant}
+                                onclick={handleRoleChange}
+                            ></lightning-button>
+                        </lightning-button-group>
+                    </div>
                 </div>
             </div>
         </div>

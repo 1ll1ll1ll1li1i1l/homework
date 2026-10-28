@@ -17,10 +17,13 @@ export default class PropertyExplorer extends LightningElement {
     selectedId;
     role = 'agent';
 
-    roleOptions = [
-        { label: '상담원', value: 'agent' },
-        { label: '관리자', value: 'admin' }
-    ];
+    get agentVariant() {
+        return this.role === 'agent' ? 'brand' : 'neutral';
+    }
+
+    get adminVariant() {
+        return this.role === 'admin' ? 'brand' : 'neutral';
+    }
 
     get filteredProperties() {
         return filterProperties(this.properties, this.filter);
@@ -35,7 +38,7 @@ export default class PropertyExplorer extends LightningElement {
     }
 
     handleRoleChange(event) {
-        this.role = event.detail.value;
+        this.role = event.currentTarget.dataset.value;
     }
 
     handleFilterChange(event) {
