@@ -10,17 +10,18 @@
 | 항목 | 내용 |
 |---|---|
 | 문서명 | ACCEPTANCE-CRITERIA — DreamHouse Lite |
-| 버전 | v1.0 (Draft — 고객 합의 전) |
+| 버전 | v1.1 (Draft — 고객 합의 전, 추적성 WI 확정·테스트 사용자 확인 필요 반영) |
 | 작성일 | 2026-10-28 |
 | 작성자 | 최정혁 (BA 역할, requirements_analyst 에이전트 활용) |
 | 기준 문서 | `docs/REQUIREMENT.md` v1.1 (OQ-02/04/07/10 해결 반영), `docs/phase-0/FIT-GAP-NUD.md` v1.0, `docs/inputs/RFP.md` |
-| 상태 | Draft — §7 확인 필요 목록 해소 후 v1.1 로 확정. "잠정" 표기 AC 는 해당 CK 해소 시 ENHANCE |
+| 상태 | Draft — §7 확인 필요 목록 해소 후 ~~v1.1 로~~ 확정(해소 시점의 다음 minor 버전) (ENHANCED 2026-10-28: v1.1 은 추적성 보정본이며 고객 확정본 아님). "잠정" 표기 AC 는 해당 CK 해소 시 ENHANCE |
 
 ### 0.1 변경 이력
 
 | 버전 | 일자 | 작성자 | 유형 | 변경 내용 |
 |---|---|---|---|---|
 | v1.0 | 2026-10-28 | 최정혁 | 최초 작성 | REQ-001~REQ-014 대상 AC-001~AC-070 정의, 샘플 데이터 SD-01~SD-10, 추적성 매트릭스, 경계/예외·비기능 인수기준, 확인 필요 CK-01~CK-15 |
+| v1.1 | 2026-10-28 | 최정혁 | ENHANCE / ADD | §3 추적성 매트릭스 WI 열을 PROJECT-PLAN v1.1 §7·WI 문서 FrontMatter ac-ids 기준으로 "(예정)" → "(확정 2026-10-28)", WI-1.005 전체 UI 회귀 이월 AC 명시 / §1.3 테스트 사용자 프로필 확인 필요 ENHANCE + §7 CK-16 ADD(Standard User 기본 CRUD 위험 → `Minimum Access - Salesforce` 권고). AC ID·Given/When/Then 변경 없음 |
 
 > 갱신 규칙: 재작성 금지, DROP / ENHANCE / ADD 로만 반영. **`AC-nnn` ID 는 이후 변경·재번호·재사용 금지.**
 
@@ -48,7 +49,7 @@
 |---|---|
 | 대상 오그 | 개발 검증 DH-DEV, 회귀 DH-SIT / DH-UAT |
 | 조직 설정 | 기본 통화 **KRW**, 다중 통화 비활성, 로캘 **ko_KR**, 시간대 Asia/Seoul |
-| 사용자(Playwright 인증 상태) | `agent` = 상담원(권한 세트 `DreamHouse_Agent`, 가칭) → `tests/e2e/.auth/agent.json` / `admin` = 관리자(권한 세트 `DreamHouse_Admin`, 가칭) → `tests/e2e/.auth/admin.json` / `noaccess` = 권한 세트 미할당 Standard User (`.auth/` 는 커밋 금지) |
+| 사용자(Playwright 인증 상태) | `agent` = 상담원(권한 세트 `DreamHouse_Agent`, 가칭) → `tests/e2e/.auth/agent.json` / `admin` = 관리자(권한 세트 `DreamHouse_Admin`, 가칭) → `tests/e2e/.auth/admin.json` / `noaccess` = 권한 세트 미할당 Standard User (`.auth/` 는 커밋 금지) (ENHANCED 2026-10-28: **확인 필요 — CK-16** · `Standard User` 프로필은 커스텀 오브젝트 기본 CRUD 를 가질 수 있어, `noaccess` 가 Property__c 를 조회(AC-055 실패)하거나 `agent` 가 프로필로 생성·편집 권한을 얻어 AC-004/006/053 이 실패할 수 있다. **권고: `agent`·`noaccess`(필요 시 `admin` 포함) 를 `Minimum Access - Salesforce` 프로필로 만들고 Property__c 권한은 권한 세트로만 부여**(WI-1.001 문서와 동일). 확정 전까지 배포 직후 두 사용자의 프로필 오브젝트 권한을 점검. AC ID·기대결과 변경 없음) |
 | 데이터 | §1.4 SD-01~SD-10 **10건만** 존재(REQ-003 데이터 플랜으로 적재). E2E 가 만든 레코드는 이름 접두어 `[E2E]` 를 붙이고 같은 spec 의 `afterAll` 에서 삭제. 상태·가격을 바꾸는 테스트는 `afterEach` 에서 원래 값으로 복원 |
 | Apex 테스트 데이터 | `@testSetup` 에서 SD-01~SD-10 과 같은 값을 테스트 데이터 팩토리(가칭 `PropertyTestDataFactory`)로 생성(오그 데이터 비의존) |
 | 화면 진입 | 앱 런처 → DreamHouse Lite → "매물 탐색" 탭(Lightning App Page). 뷰포트 기본 1440×900 |
@@ -539,35 +540,48 @@
 
 ## 3. 추적성 매트릭스
 
-> WI 는 REQUIREMENT §13.3 매핑 초안 기준 **(예정)**. 번호는 PROJECT-PLAN 에서 확정 후 ENHANCE 한다. 테스트 파일도 모두 **(예정)** 이며 STEP 10 에서 생성한다.
-> Apex 테스트 클래스(예정): `PropertyModelTest`(스키마·권한), `PropertyControllerTest`(조회 서비스).
+> ~~WI 는 REQUIREMENT §13.3 매핑 초안 기준 **(예정)**. 번호는 PROJECT-PLAN 에서 확정 후 ENHANCE 한다. 테스트 파일도 모두 **(예정)** 이며 STEP 10 에서 생성한다.~~
+> (ENHANCED 2026-10-28: WI 열을 PROJECT-PLAN v1.1 §7 과 각 `docs/work-items/WI-1.00n-*.md` FrontMatter `ac-ids` 기준으로 **(확정 2026-10-28)**. 테스트 파일명은 WI 문서와 동일하며 파일 생성은 STEP 10. 변경된 셀은 구 값을 취소선으로 남김. 한 AC 가 여러 WI 에 걸치면 부분별 소유 WI 를 괄호로 표기)
+> Apex 테스트 클래스: `PropertyModelTest`(스키마·권한, WI-1.001), `PropertyControllerTest`(조회 서비스, WI-1.003·1.004).
 
-| REQ | AC | (예정) WI | (예정) 테스트 파일 |
+| REQ | AC | WI (확정 2026-10-28) | 테스트 파일 (확정 2026-10-28, 생성은 STEP 10) |
 |---|---|---|---|
 | REQ-001 | AC-001, AC-002, AC-003 | WI-1.001 | `force-app/main/default/classes/PropertyModelTest.cls` |
-| REQ-002 | AC-004, AC-005 · AC-006 · (예외) AC-053, AC-054, AC-055 · (비기능) AC-067 | WI-1.001 (Apex 클래스 권한은 WI-1.003, 앱 권한은 WI-1.005 에서 보강) | `PropertyModelTest.cls`, `tests/e2e/WI-1.001-property-crud.spec.ts` |
-| REQ-003 | AC-007, AC-008 | WI-1.002 | 수동 QA 체크리스트(`sf data` 명령) |
-| REQ-004 | AC-009, AC-010, AC-011, AC-012 · AC-006, AC-038, AC-044 · (예외) AC-053, AC-054, AC-060, AC-061 | WI-1.001 | `tests/e2e/WI-1.001-property-crud.spec.ts` |
-| REQ-005 | AC-013 ~ AC-019 · (예외) AC-055, AC-056, AC-057, AC-062 · (비기능) AC-065, AC-066, AC-070 | WI-1.003 (조건 확장분 WI-1.004) | `force-app/main/default/classes/PropertyControllerTest.cls` |
+| REQ-002 | AC-004, AC-005 · AC-006 · (예외) AC-053, AC-054, AC-055 · (비기능) AC-067 | ~~WI-1.001 (Apex 클래스 권한은 WI-1.003, 앱 권한은 WI-1.005 에서 보강)~~ WI-1.001: AC-004(권한 벡터), 005, 006, 053, 067 / WI-1.003: AC-004(조회부), AC-055(Apex) / WI-1.005: AC-054, AC-055(UI) | `PropertyModelTest.cls`, `PropertyControllerTest.cls`, `tests/e2e/WI-1.001-property-crud.spec.ts`, `tests/e2e/WI-1.005-property-detail.spec.ts` |
+| REQ-003 | AC-007, AC-008 | WI-1.002 (AC-008 SIT/UAT 는 Lab 12) | 수동 QA 체크리스트(`sf data` 명령) |
+| REQ-004 | AC-009, AC-010, AC-011, AC-012 · AC-006, AC-038, AC-044 · (예외) AC-053, AC-054, AC-060, AC-061 | ~~WI-1.001~~ WI-1.001: AC-006, 009~012, 053, 060, 061(잠정) / WI-1.005: AC-038, 054 / WI-1.003: AC-044(Should) | `tests/e2e/WI-1.001-property-crud.spec.ts`, `tests/e2e/WI-1.005-property-detail.spec.ts`, `tests/e2e/WI-1.003-property-list.spec.ts` |
+| REQ-005 | AC-013 ~ AC-019 · (예외) AC-055, AC-056, AC-057, AC-062 · (비기능) AC-065, AC-066, AC-070 | ~~WI-1.003 (조건 확장분 WI-1.004)~~ WI-1.003: AC-013, 018, 019, 055(Apex), 062(잠정), 065, 066, 070 / WI-1.004: AC-014~017, 056, 057(잠정), 065·066·070 재확인 | `force-app/main/default/classes/PropertyControllerTest.cls` |
 | REQ-006 | AC-020, AC-021, AC-022, AC-023 | WI-1.002 | `tests/e2e/WI-1.002-property-tile.spec.ts` |
-| REQ-007 | AC-024, AC-025 · AC-026 · AC-032, AC-046, AC-047 · (비기능) AC-063 | WI-1.003 (AC-026 은 상세 패널이 생기는 WI-1.005 에서 검증) | `tests/e2e/WI-1.003-property-list.spec.ts`, `tests/e2e/WI-1.005-property-detail.spec.ts` |
-| REQ-008 | AC-027 ~ AC-034 · (예외) AC-057, AC-058, AC-059 · (비기능) AC-064 | WI-1.004 | `tests/e2e/WI-1.004-search-filter.spec.ts` |
+| REQ-007 | AC-024, AC-025 · AC-026 · AC-032, AC-046, AC-047 · (비기능) AC-063 | WI-1.003 (AC-026 은 상세 패널이 생기는 WI-1.005 에서 검증) — AC-032 는 WI-1.003(목록·건수 렌더링)·WI-1.004(가격 조건) 공동 매핑 | `tests/e2e/WI-1.003-property-list.spec.ts`, `tests/e2e/WI-1.004-search-filter.spec.ts`(AC-032), `tests/e2e/WI-1.005-property-detail.spec.ts` |
+| REQ-008 | AC-027 ~ AC-034 · (예외) AC-057, AC-058, AC-059 · (비기능) AC-064 | WI-1.004 (AC-032 는 WI-1.003 과 공동) | `tests/e2e/WI-1.004-search-filter.spec.ts` |
 | REQ-009 | AC-035 ~ AC-039 · AC-026 · (예외) AC-054 | WI-1.005 | `tests/e2e/WI-1.005-property-detail.spec.ts` |
-| REQ-010 | AC-040, AC-041 · (예외) AC-055 | WI-1.005 | `tests/e2e/WI-1.005-property-detail.spec.ts` |
-| REQ-011 | AC-044 · AC-042, AC-043 | AC-044 → WI-1.003 / AC-042·043 → WI-1.005 (상세 반영 검증) | `tests/e2e/WI-1.003-property-list.spec.ts`, `tests/e2e/WI-1.005-property-detail.spec.ts` |
-| REQ-012 | AC-045 ~ AC-048 · (비기능) AC-068 | 모든 UI WI(1.002~1.005) 공통, 최종 검증 WI-1.005 | `tests/e2e/WI-1.005-layout-a11y.spec.ts` |
+| REQ-010 | AC-040, AC-041 · (예외) AC-055 | WI-1.005 (AC-055 UI 부분. Apex 부분은 WI-1.003) | `tests/e2e/WI-1.005-property-detail.spec.ts` |
+| REQ-011 | AC-044 · AC-042, AC-043 | AC-044 → WI-1.003 (Should, E2E 는 WI-1.005 회귀) / AC-042·043 → WI-1.005 (상세 반영 검증) | `tests/e2e/WI-1.003-property-list.spec.ts`, `tests/e2e/WI-1.005-property-detail.spec.ts` |
+| REQ-012 | AC-045 ~ AC-048 · (비기능) AC-068 | ~~모든 UI WI(1.002~1.005) 공통, 최종 검증 WI-1.005~~ WI-1.003: AC-046, 047 / WI-1.005: AC-045, 048, 068(Should) | `tests/e2e/WI-1.003-property-list.spec.ts`, `tests/e2e/WI-1.005-layout-a11y.spec.ts` |
 | REQ-013 (Could) | AC-049, AC-050 | (Stretch) WI-1.006 | `tests/e2e/WI-1.006-property-map.spec.ts` |
 | REQ-014 (Could) | AC-051, AC-052 | (Stretch) WI-1.007 | `tests/e2e/WI-1.007-similar-properties.spec.ts`, `PropertyControllerTest.cls` |
 | REQ-015~018 (Won't) | — (제외, §2 끝) | — | — |
-| NFR-001 | AC-063, AC-064 | WI-1.003, WI-1.004 | `tests/e2e/WI-1.003-property-list.spec.ts`, `tests/e2e/WI-1.004-search-filter.spec.ts` |
-| NFR-002 | AC-034, AC-070 | WI-1.003, WI-1.004 | `WI-1.004-search-filter.spec.ts`, 코드 리뷰 |
-| NFR-003 | AC-056, AC-065 | WI-1.003 | `PropertyControllerTest.cls`, Code Analyzer |
-| NFR-004 | AC-004, AC-005, AC-053, AC-054, AC-055 | WI-1.001 | `PropertyModelTest.cls`, `WI-1.001-property-crud.spec.ts` |
-| NFR-005 | AC-067 | 전체 | 수동 QA |
-| NFR-006 | AC-066 | WI-1.003 | `sf apex run test` 결과 |
-| NFR-007 | AC-065 | 전체 | `sf code-analyzer` 결과 |
+| NFR-001 | AC-063, AC-064 | WI-1.003(AC-063), WI-1.004(AC-064) — 측정은 DH-SIT, Lab 12 | `tests/e2e/WI-1.003-property-list.spec.ts`, `tests/e2e/WI-1.004-search-filter.spec.ts` (`@perf`) |
+| NFR-002 | AC-034, AC-070 | WI-1.004(AC-034), WI-1.003·WI-1.004(AC-070) | `WI-1.004-search-filter.spec.ts`, 코드 리뷰 |
+| NFR-003 | AC-056, AC-065 | ~~WI-1.003~~ WI-1.004(AC-056), WI-1.003·WI-1.004(AC-065) | `PropertyControllerTest.cls`, Code Analyzer |
+| NFR-004 | AC-004, AC-005, AC-053, AC-054, AC-055 | ~~WI-1.001~~ WI-1.001(AC-004 권한 벡터, 005, 053) / WI-1.003(AC-004 조회부, AC-055 Apex) / WI-1.005(AC-054, AC-055 UI) | `PropertyModelTest.cls`, `PropertyControllerTest.cls`, `WI-1.001-property-crud.spec.ts`, `WI-1.005-property-detail.spec.ts` |
+| NFR-005 | AC-067 | 전체 (WI-1.001~1.005 모두 ac-ids 포함) | 수동 QA |
+| NFR-006 | AC-066 | WI-1.003 (WI-1.004 재확인) | `sf apex run test` 결과 |
+| NFR-007 | AC-065 | 전체 (ac-ids 기준 WI-1.003·WI-1.004, 이후 WI 는 품질 게이트로 재확인) | `sf code-analyzer` 결과 |
 | NFR-008 | AC-045, AC-048, AC-068 | WI-1.005 | `WI-1.005-layout-a11y.spec.ts` |
-| NFR-010 | AC-069 | 전체 | 수동 QA |
+| NFR-010 | AC-069 | ~~전체~~ Phase 1 종료(Lab 13) — WI ac-ids 미포함 | 수동 QA |
+
+**WI-1.005 전체 UI 회귀로 이월(deferred)되는 AC** (ADDED 2026-10-28: PROJECT-PLAN §7.2 · PHASE-PLAN-01 §3.4 · WI-1.005 문서 §6 과 동일) — `매물 탐색` 탭이 WI-1.005 에서 생성되므로 아래 AC 의 Playwright 는 원 WI spec 에 `@explore` 로 작성하고 WI-1.005 `npx playwright test` 에서 최종 판정한다.
+
+| 원 WI | 이월 AC | spec |
+|---|---|---|
+| WI-1.001 | AC-009, 011, 012, 060 (탐색 탭 부분) | `tests/e2e/WI-1.001-property-crud.spec.ts` |
+| WI-1.002 | AC-020, 021, 022, 023 | `tests/e2e/WI-1.002-property-tile.spec.ts` |
+| WI-1.003 | AC-024, 025, 032, 044(Should), 046, 047 | `tests/e2e/WI-1.003-property-list.spec.ts` |
+| WI-1.004 | AC-027 ~ 033, 034(Should), 059 | `tests/e2e/WI-1.004-search-filter.spec.ts` |
+| 잠정 | AC-057(CK-04), 058(CK-03), 061(CK-05) — CK 해소 시에만 포함 | 각 원 WI spec (`test.fixme`) |
+
+- 회귀 범위 외: AC-063·064(성능)·AC-008(SIT/UAT) → Lab 12, AC-069 → Lab 13, AC-004 조회 10건 → WI-1.003(Apex).
 
 **AC 역방향 확인**: AC-001~AC-070 은 모두 위 표의 REQ 또는 NFR 행 중 하나 이상에 나타난다(고아 AC 없음). REQ-001~REQ-014 는 모두 1개 이상의 AC 를 가진다.
 
@@ -752,3 +766,4 @@
 | CK-13 | Salesforce 모바일 앱 사용 여부(현재 브라우저 뷰포트 375px 만 검증) | AC-045 | OQ-12 | 고객 / Phase 0 |
 | CK-14 | 배지 색상 톤 확인: 주황 = `slds-theme_warning`, 회색 = 기본 `slds-badge` 로 충분한지 | AC-021 | OQ-04 (후속) | 고객 / 목업 리뷰 |
 | CK-15 | (기술) Scratch Org 기본 통화 KRW·로캘 ko_KR 설정 방법(scratch-def 설정 가능 여부)과 상태 필터(상태별 필터링) 미제공 가정 — 판매완료 기본 노출 결정 후 고객이 상태 필터를 요구하지 않는지 | AC-003, 032 | OQ-02/04 (후속) | backend_developer(기술) / 고객(상태 필터) |
+| CK-16 | (기술, ADDED 2026-10-28) 테스트 사용자 `agent`·`noaccess` 의 프로필: `Standard User` 는 커스텀 오브젝트 기본 CRUD 를 가질 수 있어 권한 세트 기반 AC 가 무력화될 위험 → `Minimum Access - Salesforce` 프로필 + 권한 세트로만 권한 부여 권고(§1.3) | AC-004, 006, 053, 055 | — (신규) | backend_developer·test_engineer / WI-1.001 배포 직후 |

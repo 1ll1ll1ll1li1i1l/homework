@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#e5e5e5"/>
+  <polygon points="140,150 200,105 260,150" fill="#b0adab"/>
+  <rect x="155" y="150" width="90" height="60" fill="#c9c7c5"/>
+  <text x="200" y="250" font-size="22" font-family="sans-serif" text-anchor="middle" fill="#706e6b">이미지 없음</text>
+</svg>

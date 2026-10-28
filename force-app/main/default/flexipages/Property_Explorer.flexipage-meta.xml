@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>[MOCKUP] 매물 탐색 — propertyExplorer 컨테이너(정적 데이터). 본 개발 WI-1.005 가 같은 이름으로 승계(ENHANCE)</description>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>propertyExplorer</componentName>
+                <identifier>c_propertyExplorer</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>main</name>
+        <type>Region</type>
+    </flexiPageRegions>
+    <masterLabel>매물 탐색</masterLabel>
+    <template>
+        <name>flexipage:defaultAppHomeTemplate</name>
+    </template>
+    <type>AppPage</type>
+</FlexiPage>

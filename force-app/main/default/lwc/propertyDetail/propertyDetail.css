@@ -1,0 +1,26 @@
+.property-detail {
+    margin: 0;
+}
+
+.detail-image {
+    display: block;
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 0.25rem;
+    background: #e5e5e5;
+}
+
+.detail-fields dt {
+    width: 25%;
+    padding: 0.25rem 0;
+}
+
+.detail-fields dd {
+    width: 75%;
+    padding: 0.25rem 0;
+}
+
+.detail-price {
+    font-weight: 700;
+}

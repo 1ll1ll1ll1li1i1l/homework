@@ -1,0 +1,38 @@
+<template>
+    <!-- MWI-1.002 (↔ WI-1.002) 매물 카드. data-testid 는 ACCEPTANCE-CRITERIA §1.6 규약 그대로 -->
+    <article
+        class={cardClass}
+        data-testid="property-card"
+        data-id={property.Id}
+        data-name={property.Name}
+        tabindex="0"
+        role="button"
+        aria-pressed={ariaPressed}
+        aria-label={ariaLabel}
+        onclick={handleSelect}
+        onkeydown={handleKeydown}
+    >
+        <img
+            data-testid="property-card-image"
+            class="property-card__image"
+            src={imageUrl}
+            alt={property.Name}
+            onerror={handleImageError}
+        />
+        <div class="slds-p-around_small">
+            <h3 data-testid="property-card-name" class="slds-text-heading_small slds-truncate" title={property.Name}>
+                {property.Name}
+            </h3>
+            <p data-testid="property-card-price" class="property-card__price">{priceLabel}</p>
+            <p data-testid="property-card-address" class="slds-text-body_small slds-text-color_weak">
+                {property.Address__c} · {property.City__c}
+            </p>
+            <p data-testid="property-card-rooms" class="slds-text-body_small">{rooms}</p>
+            <div class="slds-m-top_x-small">
+                <span data-testid="property-status-badge" class={statusBadgeClass} data-status={property.Status__c}>
+                    {statusText}
+                </span>
+            </div>
+        </div>
+    </article>
+</template>
