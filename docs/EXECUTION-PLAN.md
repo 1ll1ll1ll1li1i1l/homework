@@ -76,8 +76,8 @@ Cheatsheet_for_ProjectManager ──▶ "어떻게" — Lab 5~13 에서 Claude �
 
 ### Phase B — DevOps Center 설정 (Lab 2) 👤 UI 전용
 
-- [ ] Setup → DevOps Center 토글 On + DX Tools 약관 Accept
-- [ ] 권한 세트 4종 할당: DevOps Center User / Admin / Deployment Manager / Testing Manager
+- [X] Setup → DevOps Center 토글 On + DX Tools 약관 Accept
+- [X] 권한 세트 4종 할당 — ⚠ 이 org 에서는 라벨이 **"Lifecycle Center …"** 로 표시됨 (API: DevOpsCenter / DevOpsCenterManager / DevOpsCenterReleaseManager / DevopsTestingManager). CLI `sf org assign permset` 로 할당
 - [ ] DevOps Center 앱 → Connect to Version Control → GitHub 인가
 - [ ] 권한 세트 Access DevOps Center Named Credentials 할당 (연결 후 표시됨)
 
@@ -100,7 +100,8 @@ Cheatsheet_for_ProjectManager ──▶ "어떻게" — Lab 5~13 에서 Claude �
 - [X] STEP 1 `docs/REQUIREMENT.md` — requirements_analyst (REQ-001~018, OQ-01~14)
   - 입력값: RFP=`docs/inputs/RFP.md` · 팀=1인(PM·BA·Dev·QA·RM 겸임) · 기간=2일(1 스프린트, Phase 1) · 조직=DE Hub + Scratch(DEV/SIT/UAT), PROD=Hub · AI 코딩 적극 도입
 - [X] STEP 2 `docs/phase-0/FIT-GAP-NUD.md` — solution_architect (FIT 8 / GAP 8 / NUD 2, Decision Log D-01~15)
-- [ ] STEP 3 `docs/phase-0/ACCEPTANCE-CRITERIA.md` — requirements_analyst
+- [X] STEP 3 `docs/phase-0/ACCEPTANCE-CRITERIA.md` — requirements_analyst (AC-001~070, 샘플 데이터 SD-01~10, 확인 필요 CK-01~15)
+- [X] 고객 결정 반영 (2026-10-28): OQ-02 KRW · OQ-04 판매완료 기본 노출+회색 배지 · OQ-07 관리자만 삭제 · OQ-10 탐색 화면 내 상세 패널
 - [ ] 👤 **PM 검토 게이트** — REQ/선후관계/분류/AC 확인 후 Phase F 진행
 
 ### Phase F — 산출물 ② 계획 (Lab 6) 🤖
