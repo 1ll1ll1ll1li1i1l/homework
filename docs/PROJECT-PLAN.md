@@ -11,7 +11,7 @@
 | 항목 | 내용 |
 |---|---|
 | 문서명 | PROJECT-PLAN — DreamHouse Lite |
-| 버전 | v1.2 (Draft — PM 결정 I-01/I-02/I-03/I-11 반영 + WI 문서 기준 정합성 보정, 2026-10-28) |
+| 버전 | v1.3 (Draft — PM 결정 I-01/I-02/I-03/I-11 반영 + WI 문서 기준 정합성 보정 + DevOps Center Work Item 등록 매핑, 2026-10-28) |
 | 작성일 | 2026-10-28 |
 | 작성자 | 최정혁 (PM 역할, project_manager 에이전트 활용) |
 | 상태 | Draft. 목업 리뷰(Lab 7) 결과와 잔여 OQ/CK 해소 결과는 DROP / ENHANCE / ADD 로 반영 |
@@ -23,6 +23,7 @@
 | v1.0 | 2026-10-28 | 최정혁 | 최초 작성 | Phase 0 / Phase 1 / Phase 2(후보) 구성, WI-1.001~WI-1.005(Must) + WI-1.006~WI-1.007(Could, 선택) 확정, 일정·리소스·REQ↔AC↔WI 매핑 |
 | v1.1 | 2026-10-28 | 최정혁 | ENHANCE / ADD | PHASE-PLAN-01 §12 PM 결정 반영 — I-01: 탭 의존 화면 AC 이월처를 WI-1.005 전체 UI 회귀로 통일, §7.2 회귀 목록 보완 / I-02: LMS 채널 `PropertyUpdated__c` ADD(WI-1.005 소유) / I-03: `Property__c` 오브젝트 탭을 WI-1.001 로 이동(WI-1.001 Description ENHANCE) / I-11: 임시 테스트 하네스 미사용 / I-08: DH-HUB(PROD) 통화·로캘 변경은 사용자 명시 승인 전 실행 안 함(확인 필요 유지). WI ID·선행·공수 변경 없음 |
 | v1.2 | 2026-10-28 | 최정혁 | ENHANCE | WI 문서(docs/work-items/WI-1.001~1.005) 기준 정합성 보정 — §5.2 WI-1.005 `propertyDetail` 조회 방식 `lightning-record-view-form` → `getRecord`(LDS) / §5.2 WI-1.002 "Jest(선택)·목업/검증 페이지 1차" 취소선(I-11) / §7.2 AC-032 공동 매핑(WI-1.003 = 목록·건수 렌더링, WI-1.004 = 가격 조건) 명시. WI ID·선행·공수 변경 없음 |
+| v1.3 | 2026-10-28 | 최정혁 | ENHANCE / ADD | STEP 8(Lab 8.3) — DevOps Center(DH-HUB) Work Item 5건(WI-1.001~1.005) 등록, §6 번호 매핑 표 기입 + 등록 메모 ADD(번호가 선행 순서와 다른 이유, 3건 Description 코드 예시 일부 생략 — 원문은 저장소 문서). Feature Branch 미생성. WI ID·선행·공수 변경 없음 |
 
 > 갱신 규칙: 재작성 금지, DROP / ENHANCE / ADD 로만 반영. **`WI-p.nnn` ID 는 한 번 부여하면 변경·재번호·재사용하지 않는다.**
 
@@ -254,13 +255,17 @@
 
 | WI (문서) | DevOps Center Work Item 번호 | Feature Branch | 비고 |
 |---|---|---|---|
-| WI-1.001 | | | |
-| WI-1.002 | | | |
-| WI-1.003 | | | |
-| WI-1.004 | | | |
-| WI-1.005 | | | |
+| WI-1.001 | WI-000003 (`1fkbm000001DYo5AAG`) | (STEP 9 개발 시작 시 생성) | 2차 등록. Description 에서 §4.4~4.8 코드 예시 생략(원문 참조) (ENHANCED 2026-10-28: STEP 8 등록) |
+| WI-1.002 | WI-000001 (`1fkbm000001DYmTAAW`) | (STEP 9 개발 시작 시 생성) | 문서 전체 포함 (ENHANCED 2026-10-28: STEP 8 등록) |
+| WI-1.003 | WI-000002 (`1fkbm000001DYmUAAW`) | (STEP 9 개발 시작 시 생성) | 문서 전체 포함 (ENHANCED 2026-10-28: STEP 8 등록) |
+| WI-1.004 | WI-000004 (`1fkbm000001DYo6AAG`) | (STEP 9 개발 시작 시 생성) | 2차 등록. Description 에서 §5.6~5.7 코드 예시 생략(원문 참조) (ENHANCED 2026-10-28: STEP 8 등록) |
+| WI-1.005 | WI-000005 (`1fkbm000001DYo7AAG`) | (STEP 9 개발 시작 시 생성) | 2차 등록. Description 에서 §4.1, §4.3~4.7 코드 예시 생략(원문 참조) (ENHANCED 2026-10-28: STEP 8 등록) |
 | WI-1.006 (선택) | | | 착수 결정 시 등록 |
 | WI-1.007 (선택) | | | 착수 결정 시 등록 |
+
+> (ADDED 2026-10-28: STEP 8 / Lab 8.3 등록 결과) Hub = DH-HUB, Project `DreamHouse Lite`(`1Qgbm000000KqthCAC`), 담당자 = junghyuck.choi.85647fe082a1@agentforce.com(`005bm00000aeAiHAAU`), Status = NEW, Development Environment 미지정(STEP 9 에서 지정). 적재: CSV + `sf data import bulk -s WorkItem`, 필드 `Subject`·`Description`(리치텍스트, 최대 32,768자)·`DevopsProjectId`·`AssignedToId`.
+> - **DevOps Center 번호는 선행 순서와 다르다.** 1차 일괄 등록에서 WI-1.001·1.004·1.005 가 Description 리치텍스트 길이 초과(STRING_TOO_LONG — Salesforce 가 저장 시 표 셀마다 `colspan`/`rowspan` 속성을 붙여 길이가 늘어남)로 실패해, 성공한 WI-1.002·1.003 이 WI-000001·000002 가 되고 실패분을 2차로 등록해 WI-000003~000005 가 되었다. 실행 순서는 번호가 아니라 이 문서의 WI ID·선행(§5) 을 따른다.
+> - WI-1.001·1.004·1.005 의 Description 은 길이 한도 때문에 일부 "코드 예시" 하위 절을 생략했다(해당 위치에 생략 표시와 원문 경로 기재). **원문은 저장소 문서 `docs/work-items/WI-1.00n-*.md` 이다.**
 
 ---
 

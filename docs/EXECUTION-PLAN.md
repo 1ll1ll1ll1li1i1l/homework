@@ -126,8 +126,9 @@ Cheatsheet_for_ProjectManager ──▶ "어떻게" — Lab 5~13 에서 Claude �
 
 ### Phase H — Work Item 등록 (Lab 8)
 
-- [ ] 🤖 방법 B: `WorkItem` describe → CSV(Description=WI 문서 HTML) → `sf data import bulk -o DH-HUB`
-- [ ] 🤖 문서 WI-1.nnn ↔ DevOps Center 번호 매핑 → PROJECT-PLAN 비고
+- [X] 🤖 방법 B: `WorkItem` describe → CSV(Description=WI 문서 HTML) → `sf data import bulk -o DH-HUB` — 5건 등록 (2026-10-28)
+  - ⚠ 교훈: Description(리치텍스트 32,768자)은 저장 시 `<td>` 마다 colspan/rowspan 이 붙어 길어짐 → 표 많은 문서 3건이 1차 STRING_TOO_LONG, 코드 예시 일부 생략 후 재등록
+- [X] 🤖 문서 WI-1.nnn ↔ DevOps Center 번호 매핑 → PROJECT-PLAN §6 (WI-1.001=WI-000003, 1.002=000001, 1.003=000002, 1.004=000004, 1.005=000005)
 
 ### Phase I — 개발 (Lab 9) — WI 마다 반복, 선행 순서 준수
 
