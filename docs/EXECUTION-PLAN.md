@@ -132,6 +132,19 @@ Cheatsheet_for_ProjectManager ──▶ "어떻게" — Lab 5~13 에서 Claude �
 
 ### Phase I — 개발 (Lab 9) — WI 마다 반복, 선행 순서 준수
 
+> ✅ **실제로 동작한 WI 1건 흐름 (WI-1.001 = WI-000003, 2026-10-28 검증)**
+> 1. 👤 Hub → Lifecycle Center → Work Item 열기 → 개발 환경 DH-DEV → In Progress (브랜치 `WI-0000nn` 생성, 기준 = `sit`)
+> 2. 🤖 브랜치 checkout → 개발 → DH-DEV 배포 → Apex 테스트 → git 커밋·push
+> 3. 👤 **DH-DEV** 화면 → **DX Inspector → Change Management** → 해당 WI 컴포넌트만 체크 → **Commit Options** → WI 선택 → Commit → "Review for WI-… was created" (= GitHub PR 생성, 상태 IN_REVIEW)
+>    - ⚠ Hub 의 Work Item 화면에는 "Mark as In Review" 버튼이 없음. git 커밋만으로는 리뷰 생성 불가 — DX Inspector 커밋이 필요
+> 4. 🤖 code_reviewer 리뷰 → 수정 커밋 push (PR 자동 갱신) → `sit` 로 머지 → 👤 Hub 새로고침 시 **Ready to Promote**
+> - ⚠ WI-000003 은 `sit` 이 오래된 상태에서 생성돼 main 최신으로 fast-forward 함 → 목업·문서 커밋도 이 WI 의 Change List 에 포함됨 (이후 WI 는 `sit` 최신 기준)
+>
+> | WI | DevOps Center | 상태 |
+> |---|---|---|
+> | WI-1.001 | WI-000003 | ✅ Ready to Promote (PR #1 머지, Apex 7/7) — Playwright 대기 |
+> | WI-1.002~1.005 | WI-000001/000002/000004/000005 | 대기 |
+
 - [ ] 👤 Work Item 열기 → 개발 환경 DH-DEV 지정 → **Mark as In Progress** (Feature Branch 생성)
 - [ ] 🤖 `git fetch` → feature branch checkout → 개발(backend/frontend_developer) → `deploy --dry-run` → `deploy -o DH-DEV`
 - [ ] 🤖 `sf apex run test` · `sf code-analyzer run` 통과
