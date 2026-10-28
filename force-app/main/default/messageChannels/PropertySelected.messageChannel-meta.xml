@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<LightningMessageChannel xmlns="http://soap.sforce.com/2006/04/metadata">
+    <masterLabel>PropertySelected</masterLabel>
+    <isExposed>true</isExposed>
+    <description
+  >카드 선택 → 상세 패널 (OQ-10, AD-01). 소유 WI-1.002 (발행 propertyTile, 구독 propertyDetail WI-1.005)</description>
+    <lightningMessageFields>
+        <fieldName>recordId</fieldName>
+        <description>선택한 Property__c Id</description>
+    </lightningMessageFields>
+</LightningMessageChannel>

@@ -1,0 +1,113 @@
+{
+  "records": [
+    {
+      "attributes": { "type": "Property__c", "referenceId": "SD01" },
+      "Name": "강남 래미안 아파트",
+      "Address__c": "서울특별시 강남구 테헤란로 101",
+      "City__c": "서울",
+      "Price__c": 2500000000,
+      "Bedrooms__c": 4,
+      "Bathrooms__c": 2,
+      "Status__c": "Available",
+      "Picture_URL__c": "/resource/propertySamplePhotos/sd01.svg"
+    },
+    {
+      "attributes": { "type": "Property__c", "referenceId": "SD02" },
+      "Name": "해운대 오션뷰",
+      "Address__c": "부산광역시 해운대구 해운대해변로 22",
+      "City__c": "부산",
+      "Price__c": 850000000,
+      "Bedrooms__c": 3,
+      "Bathrooms__c": 2,
+      "Status__c": "Available",
+      "Picture_URL__c": "/resource/propertySamplePhotos/sd02.svg"
+    },
+    {
+      "attributes": { "type": "Property__c", "referenceId": "SD03" },
+      "Name": "판교 테크노 빌라",
+      "Address__c": "경기도 성남시 분당구 판교역로 33",
+      "City__c": "성남",
+      "Price__c": 1200000000,
+      "Bedrooms__c": 3,
+      "Bathrooms__c": 2,
+      "Status__c": "Under Contract",
+      "Picture_URL__c": "/resource/propertySamplePhotos/sd03.svg"
+    },
+    {
+      "attributes": { "type": "Property__c", "referenceId": "SD04" },
+      "Name": "마포 한강 오피스텔",
+      "Address__c": "서울특별시 마포구 마포대로 44",
+      "City__c": "서울",
+      "Price__c": 450000000,
+      "Bedrooms__c": 1,
+      "Bathrooms__c": 1,
+      "Status__c": "Available",
+      "Picture_URL__c": "/resource/propertySamplePhotos/sd04.svg"
+    },
+    {
+      "attributes": { "type": "Property__c", "referenceId": "SD05" },
+      "Name": "광교 호수 타운하우스",
+      "Address__c": "경기도 수원시 영통구 광교호수로 55",
+      "City__c": "수원",
+      "Price__c": 980000000,
+      "Bedrooms__c": 4,
+      "Bathrooms__c": 3,
+      "Status__c": "Sold",
+      "Picture_URL__c": "/resource/propertySamplePhotos/sd05.svg"
+    },
+    {
+      "attributes": { "type": "Property__c", "referenceId": "SD06" },
+      "Name": "둔산 센트럴 아파트",
+      "Address__c": "대전광역시 서구 둔산로 66",
+      "City__c": "대전",
+      "Price__c": 520000000,
+      "Bedrooms__c": 3,
+      "Bathrooms__c": 1,
+      "Status__c": "Available",
+      "Picture_URL__c": "/resource/propertySamplePhotos/sd06.svg"
+    },
+    {
+      "attributes": { "type": "Property__c", "referenceId": "SD07" },
+      "Name": "제주 애월 전원주택",
+      "Address__c": "제주특별자치도 제주시 애월읍 애월해안로 77",
+      "City__c": "제주",
+      "Price__c": 1650000000,
+      "Bedrooms__c": 5,
+      "Bathrooms__c": 3,
+      "Status__c": "Under Contract",
+      "Picture_URL__c": "/resource/propertySamplePhotos/sd07.svg"
+    },
+    {
+      "attributes": { "type": "Property__c", "referenceId": "SD08" },
+      "Name": "송파 잠실 아파트",
+      "Address__c": "서울특별시 송파구 올림픽로 88",
+      "City__c": "서울",
+      "Price__c": 1980000000,
+      "Bedrooms__c": 3,
+      "Bathrooms__c": 2,
+      "Status__c": "Sold",
+      "Picture_URL__c": "/resource/propertySamplePhotos/sd08.svg"
+    },
+    {
+      "attributes": { "type": "Property__c", "referenceId": "SD09" },
+      "Name": "송도 센트럴 오피스텔",
+      "Address__c": "인천광역시 연수구 센트럴로 99",
+      "City__c": "인천",
+      "Price__c": 350000000,
+      "Bedrooms__c": 1,
+      "Bathrooms__c": 1,
+      "Status__c": "Available"
+    },
+    {
+      "attributes": { "type": "Property__c", "referenceId": "SD10" },
+      "Name": "서면 스카이 빌라",
+      "Address__c": "부산광역시 부산진구 서면로 10",
+      "City__c": "부산",
+      "Price__c": 720000000,
+      "Bedrooms__c": 2,
+      "Bathrooms__c": 1,
+      "Status__c": "Available",
+      "Picture_URL__c": "https://invalid.example.invalid/none.jpg"
+    }
+  ]
+}
