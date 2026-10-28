@@ -194,13 +194,13 @@
 > 공통 완료 조건(CLAUDE.md 진행 규칙): 전문 에이전트 사용 · 선행 WI `[X]` 확인 · 단위 테스트 + 대응 AC Playwright 통과(실패/문제 해결 전 완료 금지, 잠정 AC 제외) · PROJECT-PLAN/PHASE-PLAN/WI 문서 체크리스트·Status `[X]` · `sf project deploy start --dry-run` → `sf project deploy start` · `WI-1.nnn-description` 이름으로 커밋 · 비밀정보 미커밋(AC-067).
 
 #### WI-1.001 — 데이터 모델 + 권한 세트 + 표준 CRUD + KRW (FIT)
-- [ ] DH-DEV/SIT/UAT/HUB 기본 통화 확인 (`UserInfo.getDefaultCurrency()`) → KRW 아니면 Company Information 통화 로케일(ko_KR) 조정, scratch def `country`/locale 보강 검토 (D-16, CK-15) — **PROD(DH-HUB) 포함** (ENHANCED 2026-10-28: I-08 — DH-HUB 는 점검만 자동 수행, 통화·로캘 **변경은 사용자 명시 승인 후에만**(Lab 12 전). 자동 변경 계획 없음 — 확인 필요 유지) (2026-10-28: 4개 오그 점검 완료 — 전부 USD·단일 통화. DH-DEV/SIT/UAT 조정은 Company Information UI 수동 대기, DH-HUB 미변경)
+- [ ] DH-DEV/SIT/UAT/HUB 기본 통화 확인 (`UserInfo.getDefaultCurrency()`) → KRW 아니면 Company Information 통화 로케일(ko_KR) 조정, scratch def `country`/locale 보강 검토 (D-16, CK-15) — **PROD(DH-HUB) 포함** (ENHANCED 2026-10-28: I-08 — DH-HUB 는 점검만 자동 수행, 통화·로캘 **변경은 사용자 명시 승인 후에만**(Lab 12 전). 자동 변경 계획 없음 — 확인 필요 유지) (2026-10-28: 4개 오그 점검 완료 — 전부 USD·단일 통화. DH-DEV/SIT/UAT 조정은 Company Information UI 수동 대기, DH-HUB 미변경) (ENHANCED 2026-10-28: DH-DEV KRW 조정 완료(사용자 UI) — 재점검 KRW/false. DH-SIT/UAT 는 Lab 12 전 동일 변경 필요, DH-HUB 사용자 결정 대기(I-08) → 4개 오그 대상 항목이라 미완 유지)
 - [X] `Property__c` + 필드 9개(Name, Address__c, City__c, State__c(OQ-01 결과), Price__c Currency(12,0), Bedrooms__c, Bathrooms__c, Picture_URL__c, Status__c 기본값 Available·라벨 판매중/계약중/판매완료)
 - [X] OWD Public Read Only (AD-03)
 - [X] 권한 세트 `DreamHouse_Agent`(Read 전용) / `DreamHouse_Admin`(CRUD + Modify All) — Apex 클래스·앱 권한은 WI-1.003/1.005 에서 ENHANCE
 - [ ] 페이지 레이아웃 필수값(Name·Price__c·Status__c), 유효성 규칙(가격 > 0 — CK-05 확정 시), 표준 New/Edit/Delete (2026-10-28: 레이아웃 필수값·표준 버튼 배포 완료, 유효성 규칙은 CK-05 미확정으로 미생성)
 - [X] `Property__c` 오브젝트 탭 `매물`(`tabs/Property__c.tab-meta.xml`) + 두 권한 세트 `tabSettings` Visible — 표준 목록·레코드 페이지를 URL 직접 입력 없이 진입 (ADDED 2026-10-28: I-03)
-- [ ] `PropertyModelTest` (AC-001~005, AC-053) 통과 (2026-10-28: 5/6 통과 — ac003 은 DH-DEV USD 로 실패, KRW 조정 후 재실행)
+- [X] `PropertyModelTest` (AC-001~005, AC-053) 통과 (2026-10-28: 5/6 통과 — ac003 은 DH-DEV USD 로 실패, KRW 조정 후 재실행) (ENHANCED 2026-10-28: DH-DEV KRW 조정 후 RunLocalTests 6/6 Pass, Pass Rate 100%)
 - [ ] Playwright `WI-1.001-property-crud.spec.ts` (AC-006, 009~012, 060) — 탐색 탭 검증 부분은 WI-1.005 회귀에서 확인 (Lab 10 미구성 — 대기)
 - [ ] dry-run → deploy (DH-DEV), 커밋 `WI-1.001-property-data-model` (2026-10-28: dry-run·deploy DH-DEV 완료 0Afgw000000b6x1CAA, 커밋은 메인 세션)
 

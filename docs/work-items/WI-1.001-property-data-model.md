@@ -29,7 +29,7 @@ synced_at: null                      # Sync 타임스탬프
 | Phase | Phase 1 — MVP (2026-10-29 ~ 2026-10-30, 1 스프린트) |
 | 모듈 | 데이터 모델(`Property__c`) · 보안(권한 세트·OWD) · 표준 UI(레이아웃·리스트 뷰·오브젝트 탭) · 오그 설정(KRW/로캘) |
 | 우선순위 | **Must** (분류 FIT) |
-| 상태 | [ ] 1차 완료(Playwright 대기) — 메타데이터·Apex DH-DEV 배포 완료, AC-003 은 DH-DEV Company Information KRW 수동 조정 대기 (ENHANCED 2026-10-28: backend_developer 1차 구현) |
+| 상태 | [ ] 1차 완료(Playwright 대기) — 메타데이터·Apex DH-DEV 배포 완료, AC-003 은 DH-DEV Company Information KRW 수동 조정 대기 (ENHANCED 2026-10-28: backend_developer 1차 구현) (ENHANCED 2026-10-28: DH-DEV 통화 KRW 조정 완료(사용자 Setup UI) → AC-003 DH-DEV Apex 통과, `PropertyModelTest` 6/6. 상태는 Playwright 대기 유지) |
 | 선행 (Depends-on) | 없음 (`-`) — 루트 WI |
 | 후행 | WI-1.002 |
 | 예상 소요 | **0.3 M/D (2.5h)** = REQ-001 1.0h + REQ-002 0.5h + REQ-004 0.5h + KRW/로케일 0.5h |
@@ -119,10 +119,10 @@ foreach ($o in 'DH-DEV','DH-SIT','DH-UAT','DH-HUB') {
 
 | 오그 | 통화 | 다중 통화 | 조직 로캘 | 시간대 | 조치 | 조치 후 재점검 |
 |---|---|---|---|---|---|---|
-| DH-DEV | USD | false | en_US (언어 en_US) | America/Los_Angeles | **조정 필요** — Company Information UI 수동(A-1). Organization 은 API 수정 불가, 통화 기본값을 바꾸는 메타데이터 설정 없음 | (수동 조정 후 재점검) |
-| DH-SIT | USD | false | en_US (언어 en_US) | America/Los_Angeles | 조정 필요 — A-1 수동 (Lab 12 전) | |
-| DH-UAT | USD | false | en_US (언어 en_US) | America/Los_Angeles | 조정 필요 — A-1 수동 (Lab 12 전) | |
-| DH-HUB (PROD) | USD | false | en_US (언어 en_US), 실행 사용자 로캘 ko_KR·TZ Asia/Seoul | America/Los_Angeles | **점검만 — 변경은 사용자 명시 승인 후(I-08)**. 미조정 시 Lab 12 `PropertyModelTest.ac003_currencyIsKrwSingle` 실패 | |
+| DH-DEV | USD | false | en_US (언어 en_US) | America/Los_Angeles | **조정 필요** — Company Information UI 수동(A-1). Organization 은 API 수정 불가, 통화 기본값을 바꾸는 메타데이터 설정 없음 | (ENHANCED 2026-10-28: 사용자가 Setup → Company Information UI 에서 통화 KRW 로 변경) 재점검 `CURRENCY=KRW`, `MULTI=false`. 로캘 en_US·TZ America/Los_Angeles 는 미변경(AC-003 요건 아님) |
+| DH-SIT | USD | false | en_US (언어 en_US) | America/Los_Angeles | 조정 필요 — A-1 수동 (Lab 12 전) | (ENHANCED 2026-10-28: 미조정 — Lab 12 전 DH-DEV 와 동일 변경 필요) |
+| DH-UAT | USD | false | en_US (언어 en_US) | America/Los_Angeles | 조정 필요 — A-1 수동 (Lab 12 전) | (ENHANCED 2026-10-28: 미조정 — Lab 12 전 DH-DEV 와 동일 변경 필요) |
+| DH-HUB (PROD) | USD | false | en_US (언어 en_US), 실행 사용자 로캘 ko_KR·TZ Asia/Seoul | America/Los_Angeles | **점검만 — 변경은 사용자 명시 승인 후(I-08)**. 미조정 시 Lab 12 `PropertyModelTest.ac003_currencyIsKrwSingle` 실패 | (ENHANCED 2026-10-28: 미변경 — 사용자 결정 대기(I-08)) |
 
 > (ENHANCED 2026-10-28: 점검 실행 결과 기입 — `scripts/apex/check-org-locale.apex` + Organization 조회. 4개 오그 모두 USD·단일 통화. 다중 통화는 어디에서도 켜지 않음. 오그 설정 변경은 실행하지 않음.)
 
@@ -564,7 +564,7 @@ test.describe.serial('WI-1.001 관리자 CRUD (AC-009 → 011 → 012 같은 레
 
 - [X] **AC-001** 필드 구성 — Given: "`Property__c` 메타데이터가 배포된 오그" / When: "`Schema.SObjectType.Property__c.fields.getMap()` 로 필드를 조회한다" / Then: "Name(STRING, 80), Address__c(STRING, 255), City__c(STRING, 100), Price__c(CURRENCY, 정밀도 12·소수 0), Bedrooms__c(DOUBLE, 2·0), Bathrooms__c(DOUBLE, 2·0), Picture_URL__c(URL), Status__c(PICKLIST). State__c 는 OQ-01 결과에 따라 존재 여부 판정(CK-11)" → Apex `ac001_fieldTypes`
 - [X] **AC-002** Status 값·기본값 — Given: "AC-001 과 같음" / When: "`getPicklistValues()` 를 조회하고, Status 를 지정하지 않은 `new Property__c(Name='[E2E] 기본값 확인', Price__c=100000000)` 를 insert" / Then: "활성 값이 정확히 3개 `Available`, `Under Contract`, `Sold` 이고, 기본값은 `Available`, insert 된 레코드의 Status__c = `Available`" → Apex
-- [ ] **AC-003** KRW 단일 통화 — Given: "대상 오그(공통 전제의 조직 설정)" / When: "`UserInfo.getDefaultCurrency()` 와 `UserInfo.isMultiCurrencyOrganization()` 를 호출" / Then: "각각 `'KRW'`, `false`" (SD-01 2500000000 저장·조회 일치) → Apex(DH-DEV) + §4.1 점검표. SIT/UAT/HUB 테스트 실행은 Lab 12
+- [X] **AC-003** KRW 단일 통화 — Given: "대상 오그(공통 전제의 조직 설정)" / When: "`UserInfo.getDefaultCurrency()` 와 `UserInfo.isMultiCurrencyOrganization()` 를 호출" / Then: "각각 `'KRW'`, `false`" (SD-01 2500000000 저장·조회 일치) → Apex(DH-DEV) + §4.1 점검표. SIT/UAT/HUB 테스트 실행은 Lab 12 (ENHANCED 2026-10-28: DH-DEV Apex 검증 통과 — `ac003_currencyIsKrwSingle` Pass, CURRENCY=KRW·MULTI=false. DH-SIT/UAT 는 Lab 12 전 동일 변경 필요, DH-HUB 는 사용자 결정 대기(I-08))
 - [X] **AC-004** 상담원 조회 전용 (권한 벡터) — Given: "`DreamHouse_Agent` 권한 세트 할당, SD-01~SD-10 존재" / When: "`System.runAs(agent)` 에서 isAccessible/isCreateable/isUpdateable/isDeletable 과 Status__c 의 isUpdateable 확인" / Then: "isAccessible = true, isCreateable = false, isUpdateable = false, isDeletable = false, Status__c.isUpdateable = false" → Apex. **"조회 결과 10건" 은 WI-1.003 으로 이월**(PropertyController 필요). I-05 확인 필요 (ENHANCED 2026-10-28: I-05 확인 — 상담원 `Status__c.isUpdateable()` = false 로 테스트 통과)
 - [X] **AC-005** 관리자 CRUD — Given: "`DreamHouse_Admin` 권한 세트 할당" / When: "`Database.insert/update/delete(record, AccessLevel.USER_MODE)` 차례로 실행(Name `[E2E] 관리자 권한 확인`, Price 300000000 → Status `Sold` → delete)" / Then: "3개 DML 모두 성공, 마지막 COUNT = 0" → Apex
 - [ ] **AC-006** 상담원 UI 진입점 미노출 — Given: "`agent` 인증 상태로 로그인" / When: "(1) "매물" 오브젝트 탭 목록 화면, (2) SD-02 표준 레코드 페이지에 접근" / Then: "(1) `새로 만들기` 버튼 없음, (2) `편집`·`삭제` 버튼 없음, Status 인라인 편집 아이콘 없음. 매물명 `해운대 오션뷰`, 가격 `₩850,000,000` 표시" → Playwright(agent), 이 WI 에서 전체 실행
@@ -594,7 +594,7 @@ test.describe.serial('WI-1.001 관리자 CRUD (AC-009 → 011 → 012 같은 레
 - [ ] 전문 에이전트 사용 확인 (backend_developer / test_engineer / code_reviewer)
 - [X] 선행 없음 확인, Feature Branch checkout (`WI-000003`)
 - [X] **(첫 작업)** 4개 오그 통화·로캘·시간대 점검표 작성 (D-16, CK-15) — §4.1 표 (전 오그 USD·단일 통화)
-- [ ] DH-DEV/SIT/UAT Company Information 조정 → 재점검 `KRW` / `false` (2026-10-28: UI 전용 → 사용자 수동 조정 대기)
+- [ ] DH-DEV/SIT/UAT Company Information 조정 → 재점검 `KRW` / `false` (2026-10-28: UI 전용 → 사용자 수동 조정 대기) (ENHANCED 2026-10-28: DH-DEV 완료 — 재점검 KRW/false. DH-SIT/UAT 는 Lab 12 전 동일 변경 필요 → 항목 전체는 미완)
 - [X] DH-HUB(PROD) — 점검만. 변경은 **사용자 명시 승인 후에만**(I-08), 미승인 시 "확인 필요" 상태로 남김 (2026-10-28: 점검 완료 USD — 변경 미실행, 확인 필요 유지)
 - [ ] scratch def `country: "KR"` 효과 확인(임시 오그) → 반영 여부 기록 (I-07)
 - [X] `Property__c` + 필드 9개, Status 기본값 Available·라벨 판매중/계약중/판매완료, Price Currency(12,0)
@@ -605,7 +605,7 @@ test.describe.serial('WI-1.001 관리자 CRUD (AC-009 → 011 → 012 같은 레
 - [X] 권한 세트 `DreamHouse_Agent` / `DreamHouse_Admin` (Modify All) — DH-DEV 관리자에 DreamHouse_Admin 할당
 - [ ] Playwright 사용자 3명(ko / ko_KR / Asia/Seoul), 프로필 권한 위험 확인(§4.6), `.auth/` 미커밋
 - [X] `sf project deploy start --dry-run -o DH-DEV` 성공 → `sf project deploy start -o DH-DEV` (dry-run 0Afgw000000b8ufCAA / deploy 0Afgw000000b6x1CAA, 28/28)
-- [ ] Apex: `sf apex run test -n PropertyModelTest -o DH-DEV -c -r human` 통과 (커버리지 ≥ 75%) (2026-10-28: 6건 중 5 통과, ac003 은 DH-DEV USD 로 실패 — KRW 조정 후 재실행)
+- [X] Apex: `sf apex run test -n PropertyModelTest -o DH-DEV -c -r human` 통과 (커버리지 ≥ 75%) (2026-10-28: 6건 중 5 통과, ac003 은 DH-DEV USD 로 실패 — KRW 조정 후 재실행) (ENHANCED 2026-10-28: KRW 조정 후 `sf apex run test -o DH-DEV -l RunLocalTests -r human` → `PropertyModelTest` 6/6 Pass(ac003 포함), Outcome Passed, Pass Rate 100%. 이번 실행은 `-c` 미지정 — 커버리지 미측정)
 - [X] 정적 분석: `sf code-analyzer run --workspace . --view table` — High 이상 0건 (신규 코드 Moderate/Low 만, flow 엔진 Python 미설치 경고 제외)
 - [ ] Playwright `WI-1.001-property-crud.spec.ts --grep-invert @explore` 통과 (실패 시 완료 불가) (Lab 10 미구성 — 대기)
 - [ ] 이월 AC(AC-004 조회 10건 → WI-1.003 / AC-009·011·012·060 탐색 부분 → WI-1.005 / AC-003 SIT·UAT·HUB → Lab 12) PHASE-PLAN-01 §3.4 기록, spec 에 `@explore`

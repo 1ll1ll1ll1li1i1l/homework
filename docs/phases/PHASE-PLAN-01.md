@@ -495,7 +495,7 @@ sf org create user --definition-file config/users/agent-user-def.json -o DH-DEV
 
 - [X] 선행 없음 확인, Feature Branch checkout (`WI-000003`)
 - [X] **(첫 작업)** DH-DEV/SIT/UAT/HUB 통화·로캘·시간대 점검표 작성 (D-16, CK-15) (2026-10-28: 전부 USD·단일 통화, WI-1.001 문서 §4.1)
-- [ ] DH-DEV/SIT/UAT Company Information 조정 → 재점검 `KRW`/`false` (2026-10-28: UI 전용 — 사용자 수동 조정 대기)
+- [ ] DH-DEV/SIT/UAT Company Information 조정 → 재점검 `KRW`/`false` (2026-10-28: UI 전용 — 사용자 수동 조정 대기) (ENHANCED 2026-10-28: DH-DEV 완료 — 재점검 KRW/false. DH-SIT/UAT 는 Lab 12 전 동일 변경 필요 → 3개 오그 대상 항목이라 미완 유지)
 - [ ] DH-HUB(PROD) 조정 — 사람 승인 후, Lab 12 전 완료 (ENHANCED 2026-10-28: I-08 — 사용자 명시 승인 없이는 실행 금지, 확인 필요) (2026-10-28: 점검만 완료, 미변경)
 - [ ] scratch def `country: "KR"` 효과 확인(임시 오그) → 반영 여부 결정 (확인 필요)
 - [X] `Property__c` + 필드 9개, Status 기본값 Available·라벨 판매중/계약중/판매완료, Price Currency(12,0)
@@ -505,7 +505,7 @@ sf org create user --definition-file config/users/agent-user-def.json -o DH-DEV
 - [ ] 유효성 규칙(가격 > 0) — CK-05 확정 시에만 (2026-10-28: CK-05 미확정 → 미생성)
 - [X] 권한 세트 `DreamHouse_Agent` / `DreamHouse_Admin` (Modify All)
 - [ ] Playwright 사용자 3명(ko / ko_KR / Asia/Seoul), `.auth/` 미커밋
-- [ ] `PropertyModelTest` 통과 (AC-001~005, 053) (2026-10-28: 5/6 통과, ac003 KRW 조정 대기)
+- [X] `PropertyModelTest` 통과 (AC-001~005, 053) (2026-10-28: 5/6 통과, ac003 KRW 조정 대기) (ENHANCED 2026-10-28: DH-DEV KRW 조정 후 RunLocalTests 6/6 Pass, Pass Rate 100%)
 - [ ] Playwright `WI-1.001-property-crud.spec.ts` 1차(`--grep-invert @explore`) 통과 (Lab 10 미구성 — 대기)
 - [ ] 이월 AC §3.4 기록
 - [ ] dry-run → deploy (DH-DEV), 커밋 `WI-1.001-property-data-model` (2026-10-28: deploy 완료 0Afgw000000b6x1CAA, 커밋 대기)
