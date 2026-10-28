@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StaticResource xmlns="http://soap.sforce.com/2006/04/metadata">
+    <cacheControl>Public</cacheControl>
+    <contentType>image/svg+xml</contentType>
+    <description>매물 사진 누락·오류 시 대체 이미지 (AC-022, AC-039). 목업에서 생성, 본 개발 WI-1.002 가 승계</description>
+</StaticResource>

@@ -1,0 +1,39 @@
+<template>
+    <!-- MWI-1.003 (↔ WI-1.003) 매물 목록(카드 그리드) -->
+    <section data-testid="property-list" class="slds-card slds-is-relative property-list" aria-label="매물 목록">
+        <div class="slds-card__header slds-grid slds-grid_vertical-align-center">
+            <h2 class="slds-card__header-title slds-col">매물 목록</h2>
+            <p data-testid="result-count" class="slds-text-title_bold" aria-live="polite">{countLabel}</p>
+        </div>
+        <div class="slds-card__body slds-card__body_inner">
+            <template lwc:if={isLoading}>
+                <lightning-spinner data-testid="loading-spinner" alternative-text="로딩 중" size="medium"></lightning-spinner>
+            </template>
+            <template lwc:if={isEmpty}>
+                <div data-testid="empty-state" class="slds-text-align_center slds-p-around_large slds-text-color_weak">
+                    <lightning-icon icon-name="utility:search" size="small" alternative-text=""></lightning-icon>
+                    <p class="slds-m-top_small">{emptyText}</p>
+                </div>
+            </template>
+            <template lwc:else>
+                <lightning-layout multiple-rows>
+                    <template for:each={items} for:item="item">
+                        <lightning-layout-item
+                            key={item.property.Id}
+                            size="12"
+                            medium-device-size="6"
+                            large-device-size="4"
+                            padding="around-small"
+                        >
+                            <c-property-tile
+                                property={item.property}
+                                selected={item.selected}
+                                onpropertyselect={handleSelect}
+                            ></c-property-tile>
+                        </lightning-layout-item>
+                    </template>
+                </lightning-layout>
+            </template>
+        </div>
+    </section>
+</template>
