@@ -118,11 +118,11 @@ Cheatsheet_for_ProjectManager ──▶ "어떻게" — Lab 5~13 에서 Claude �
 
 ### Phase G — 목업 프로토타이핑 (Lab 7)
 
-- [ ] 🤖 `mockup` 브랜치 · MOCKUP-PROJECT-PLAN + MWI 문서 — frontend_developer
-- [ ] 🤖 전체 MWI 정적 LWC 구현 → DH-DEV 배포
-- [ ] 👤 부록 D 체크리스트로 리뷰 → `docs/mockup/reviews/REVIEW-01.md` (고객 역할)
-- [ ] 🤖 리뷰 반영(DROP/ENHANCE/ADD) → 재배포 → 반복
-- [ ] 🤖 최종 결정 본 산출물 반영 — requirements_analyst → `main` 병합
+- [X] 🤖 `mockup` 브랜치 · MOCKUP-PROJECT-PLAN + MWI-1.002~1.005 문서 — frontend_developer (WI-1.001 은 N/A)
+- [X] 🤖 전체 MWI 정적 LWC 구현 → DH-DEV 배포 (앱 DreamHouse Lite · 탭 매물 탐색)
+- [X] 👤 리뷰 → [REVIEW-01.md](mockup/reviews/REVIEW-01.md) — **목업 승인** (역할 토글 UI 결함 1건 수정)
+- [X] 🤖 리뷰 반영 — DROP/ENHANCE/ADD 대상 없음, 미결 CP 는 현 가정 유지
+- [X] 🤖 본 산출물 반영(변경 없음) → `mockup` 을 `main` 에 병합 (2026-10-28)
 
 ### Phase H — Work Item 등록 (Lab 8)
 
