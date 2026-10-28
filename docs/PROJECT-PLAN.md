@@ -11,7 +11,7 @@
 | 항목 | 내용 |
 |---|---|
 | 문서명 | PROJECT-PLAN — DreamHouse Lite |
-| 버전 | v1.1 (Draft — PM 결정 I-01/I-02/I-03/I-11 반영, 2026-10-28) |
+| 버전 | v1.2 (Draft — PM 결정 I-01/I-02/I-03/I-11 반영 + WI 문서 기준 정합성 보정, 2026-10-28) |
 | 작성일 | 2026-10-28 |
 | 작성자 | 최정혁 (PM 역할, project_manager 에이전트 활용) |
 | 상태 | Draft. 목업 리뷰(Lab 7) 결과와 잔여 OQ/CK 해소 결과는 DROP / ENHANCE / ADD 로 반영 |
@@ -22,6 +22,7 @@
 |---|---|---|---|---|
 | v1.0 | 2026-10-28 | 최정혁 | 최초 작성 | Phase 0 / Phase 1 / Phase 2(후보) 구성, WI-1.001~WI-1.005(Must) + WI-1.006~WI-1.007(Could, 선택) 확정, 일정·리소스·REQ↔AC↔WI 매핑 |
 | v1.1 | 2026-10-28 | 최정혁 | ENHANCE / ADD | PHASE-PLAN-01 §12 PM 결정 반영 — I-01: 탭 의존 화면 AC 이월처를 WI-1.005 전체 UI 회귀로 통일, §7.2 회귀 목록 보완 / I-02: LMS 채널 `PropertyUpdated__c` ADD(WI-1.005 소유) / I-03: `Property__c` 오브젝트 탭을 WI-1.001 로 이동(WI-1.001 Description ENHANCE) / I-11: 임시 테스트 하네스 미사용 / I-08: DH-HUB(PROD) 통화·로캘 변경은 사용자 명시 승인 전 실행 안 함(확인 필요 유지). WI ID·선행·공수 변경 없음 |
+| v1.2 | 2026-10-28 | 최정혁 | ENHANCE | WI 문서(docs/work-items/WI-1.001~1.005) 기준 정합성 보정 — §5.2 WI-1.005 `propertyDetail` 조회 방식 `lightning-record-view-form` → `getRecord`(LDS) / §5.2 WI-1.002 "Jest(선택)·목업/검증 페이지 1차" 취소선(I-11) / §7.2 AC-032 공동 매핑(WI-1.003 = 목록·건수 렌더링, WI-1.004 = 가격 조건) 명시. WI ID·선행·공수 변경 없음 |
 
 > 갱신 규칙: 재작성 금지, DROP / ENHANCE / ADD 로만 반영. **`WI-p.nnn` ID 는 한 번 부여하면 변경·재번호·재사용하지 않는다.**
 
@@ -207,7 +208,7 @@
 - [ ] 재실행 중복 방지 절차 문서화 (AC-008 — SIT/UAT 검증은 Lab 12)
 - [ ] 대체 이미지 정적 리소스 `propertyPlaceholder`
 - [ ] `propertyTile`: `data-testid` 규약(§1.6), KRW `lightning-formatted-number`, 배지 `slds-theme_success`/`slds-theme_warning`/기본 + `data-status`, `aria-label`(매물명·가격), 클릭 시 `PropertySelected__c` 발행
-- [ ] Jest(선택) + Playwright `WI-1.002-property-tile.spec.ts` (AC-020~023) — 목업/검증 페이지에서 1차, WI-1.005 에서 최종 (ENHANCED 2026-10-28: I-11 — 임시 검증 페이지(하네스) 미사용. 1차는 Jest, spec 은 `@explore` 로 작성해 WI-1.005 전체 UI 회귀에서 최종)
+- [ ] ~~Jest(선택)~~ Jest(1차 검증, 필수) + Playwright `WI-1.002-property-tile.spec.ts` (AC-020~023, 전부 `@explore`) — ~~목업/검증 페이지에서 1차, WI-1.005 에서 최종~~ 1차 = CLI(데이터 분포) + Jest, Playwright 최종 = WI-1.005 전체 UI 회귀 (ENHANCED 2026-10-28: 정합성 보정 — 구 문구 취소선, WI-1.002 문서와 일치) (ENHANCED 2026-10-28: I-11 — 임시 검증 페이지(하네스) 미사용. 1차는 Jest, spec 은 `@explore` 로 작성해 WI-1.005 전체 UI 회귀에서 최종)
 - [ ] code_reviewer 리뷰(SLDS·접근성), dry-run → deploy, 커밋 `WI-1.002-sample-data-property-tile`
 
 #### WI-1.003 — Property List LWC + Apex 컨트롤러 (GAP)
@@ -227,7 +228,7 @@
 - [ ] AC-065·066·070 재확인, dry-run → deploy, 커밋 `WI-1.004-search-filter`
 
 #### WI-1.005 — 상세 패널 + Lightning App Page (GAP)
-- [ ] `propertyDetail`: `PropertySelected__c` 구독, `detail-empty` 초기 문구, `lightning-record-view-form` 전체 속성·큰 사진·대체 이미지, 관리자 전용 `detail-edit-button`(상담원 미노출)
+- [ ] `propertyDetail`: `PropertySelected__c` 구독, `detail-empty` 초기 문구, ~~`lightning-record-view-form`~~ `getRecord`(LDS, `lightning/uiRecordApi`) 로 전체 속성·큰 사진·대체 이미지, 관리자 전용 `detail-edit-button`(상담원 미노출) (ENHANCED 2026-10-28: 정합성 보정 — 조회는 `getRecord`, 편집 폼만 `lightning-record-edit-form`. PHASE-PLAN-01 §8.2·§8.3.1, WI-1.005 문서와 일치)
 - [ ] 저장 성공 시 `notifyRecordUpdateAvailable` + 목록 `refreshApex` → 카드·배지·상세 즉시 반영 (REQ-011, 같은 사용자 화면 — D-12/OQ-11)
 - [ ] LMS 채널 `PropertyUpdated__c`(필드 `recordId`) 생성 — `propertyDetail` 이 저장·상태 변경 성공 후 발행, `propertyList` 가 구독해 `refreshApex` 호출 (AC-042, 043) (ADDED 2026-10-28: I-02 — 채널 메타데이터·구독 연결 모두 WI-1.005 소유)
 - [ ] Lightning 앱 `DreamHouse Lite` + App Page `매물 탐색`(3영역) + `매물` 탭, 앱·탭 권한을 권한 세트에 ENHANCE (ENHANCED 2026-10-28: I-03 — `매물` 오브젝트 탭은 WI-1.001 에서 생성됨. WI-1.005 는 앱 내비게이션에 추가 + `매물 탐색` App Page 탭 생성·`tabSettings` 만)
@@ -294,14 +295,16 @@
 |---|---|---|---|---|
 | WI-1.001 | AC-001, 002, 003, 004(권한 벡터), 005, 006, 009, 010, 011, 012, 053, 060, 067 | — | AC-061 (CK-05) | AC-004 조회 10건 → WI-1.003 / AC-009·011·012·060 탐색 탭 부분 → WI-1.005 |
 | WI-1.002 | AC-007, 008, 020, 021, 022, 023, 067 | — | — | AC-008 SIT/UAT → Lab 12 / AC-020~023 → WI-1.005 |
-| WI-1.003 | AC-004(조회부), 013, 018, 019, 024, 025, 032, 046, 047, 055(Apex), 063, 065, 066, 067 | AC-044, 070 | AC-062 (CK-06) | ~~AC-025·032·046·047 필터 입력 → WI-1.004~~ AC-024·025·032·046·047·044(Should) → WI-1.005 전체 UI 회귀 (필터 입력 로직 Jest 1차 확인은 WI-1.004) / AC-063 DH-SIT 측정 → Lab 12 (ENHANCED 2026-10-28: I-01 — WI-1.004 에도 `매물 탐색` 탭이 없어 E2E 불가) |
-| WI-1.004 | AC-014, 015, 016, 017, 027, 028, 029, 030, 031, 032, 033, 056, 059, 064, 065, 066, 067 | AC-034, 070 | AC-057 (CK-04), AC-058 (CK-03) | AC-027~034(AC-034 Should 포함)·059 화면 부분 → WI-1.005 전체 UI 회귀 (잠정 AC-057/058 UI 는 CK 해소 시) / AC-064 DH-SIT 측정 → Lab 12 (ENHANCED 2026-10-28: I-01) |
+| WI-1.003 | AC-004(조회부), 013, 018, 019, 024, 025, 032(공동 — 목록·건수 렌더링 부분), 046, 047, 055(Apex), 063, 065, 066, 067 | AC-044, 070 | AC-062 (CK-06) | ~~AC-025·032·046·047 필터 입력 → WI-1.004~~ AC-024·025·032·046·047·044(Should) → WI-1.005 전체 UI 회귀 (필터 입력 로직 Jest 1차 확인은 WI-1.004) / AC-063 DH-SIT 측정 → Lab 12 (ENHANCED 2026-10-28: I-01 — WI-1.004 에도 `매물 탐색` 탭이 없어 E2E 불가) |
+| WI-1.004 | AC-014, 015, 016, 017, 027, 028, 029, 030, 031, 032(공동 — 가격 조건 부분), 033, 056, 059, 064, 065, 066, 067 | AC-034, 070 | AC-057 (CK-04), AC-058 (CK-03) | AC-027~034(AC-034 Should 포함)·059 화면 부분 → WI-1.005 전체 UI 회귀 (잠정 AC-057/058 UI 는 CK 해소 시) / AC-064 DH-SIT 측정 → Lab 12 (ENHANCED 2026-10-28: I-01) |
 | WI-1.005 | AC-026, 035, 036, 037, 038, 039, 040, 041, 042, 043, 045, 048, 054, 055(UI), 067 + 회귀(AC-009, 011, 012, 020~023, 060) + 회귀 보완(AC-024, 025, 032, 046, 047 / AC-027~033, 059) | AC-068 + 회귀 AC-034, 044 | 회귀 AC-057, 058, 061 (CK 해소 시) | — (ENHANCED 2026-10-28: I-01 — 회귀 목록을 WI-1.001~1.004 의 탭 의존 화면 AC 전체로 보완, PHASE-PLAN-01 §3.4 와 동일. AC-042·043 의 목록 갱신은 LMS `PropertyUpdated__c`(I-02)로 검증) |
 | WI-1.006 | — (Could) | — | AC-049, 050 (CK-11) | — |
 | WI-1.007 | — (Could) | — | AC-051, 052 (CK-12) | — |
 | Phase 1 종료 | — | AC-069 | — | Lab 13 |
 
 **AC 커버리지 확인**: AC-001~AC-070 중 Must 61개(잠정 4개 포함 — AC-057/058/061/062)가 모두 1개 이상의 WI 에 매핑됨. Should 5개(AC-034, 044, 068, 069, 070) · Could 4개(AC-049~052) 도 매핑됨(61 + 5 + 4 = 70). **미매핑 AC 없음.**
+
+- **AC-032 공동 매핑** (ENHANCED 2026-10-28: 정합성 보정 — WI-1.003·WI-1.004 문서 ac-ids 모두 포함) — WI-1.003 = 목록·건수 렌더링 부분(상태 조건이 없어 Sold·Under Contract 가 기본 노출됨을 Apex AC-013 으로 확인), WI-1.004 = 가격 조건 부분(최소 900000000 → 5건 Apex). WI-1.003 의 1차 검증은 가격 조건 Apex 검증을 주장하지 않는다(PHASE-PLAN-01 §6.4). E2E 는 양쪽 spec 의 `@explore` 테스트를 WI-1.005 전체 UI 회귀에서 실행.
 
 ---
 

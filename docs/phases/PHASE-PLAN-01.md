@@ -12,7 +12,7 @@
 | 항목 | 내용 |
 |---|---|
 | 문서명 | PHASE-PLAN-01 — Phase 1 MVP |
-| 버전 | v1.1 (Draft — PM 결정 I-01/I-02/I-03/I-11 반영, 2026-10-28) |
+| 버전 | v1.2 (Draft — PM 결정 I-01/I-02/I-03/I-11 반영 + WI 문서 기준 정합성 보정, 2026-10-28) |
 | 작성일 | 2026-10-28 |
 | 작성자 | 최정혁 (PM 역할, project_manager 에이전트 활용) |
 | 기간 | 2026-10-29(목) ~ 2026-10-30(금), 2일 / 1 스프린트 |
@@ -24,6 +24,7 @@
 |---|---|---|---|---|
 | v1.0 | 2026-10-28 | 최정혁 | 최초 작성 | WI-1.001~WI-1.005(Must) 상세 계획, WI-1.006/1.007(Could·선택) 요약, 위상정렬 실행 순서, WI 별 1차 검증 방법과 WI-1.005 전체 UI 회귀로 이월하는 AC 정의 |
 | v1.1 | 2026-10-28 | 최정혁 | ENHANCE / ADD | §12 PM 결정 반영 — I-01 해결(PROJECT-PLAN §7.2 회귀 목록 보완, §3.4 ⚠ 해소) / I-02 해결(LMS `PropertyUpdated__c` 확정, WI-1.005 소유, `propertyList` 구독 코드 ADD) / I-03 해결(`Property__c` 오브젝트 탭 WI-1.001 로 이동, WI-1.001 Description ENHANCE) / I-11 해결(임시 하네스 미사용) / I-08 확인 필요 유지(DH-HUB 변경은 사용자 명시 승인 후). WI ID·선행·공수 변경 없음 |
+| v1.2 | 2026-10-28 | 최정혁 | ENHANCE | WI 문서(docs/work-items/WI-1.001~1.005) 기준 정합성 보정 — §4.5 표준 목록 진입 경로의 URL 직접 접근 문구 취소선(I-03, `매물` 탭 진입) / §6.4·§7.4·§11 AC-032 공동 매핑(WI-1.003 = 목록·건수 렌더링, WI-1.004 = 가격 조건), WI-1.003 1차 검증에서 가격 조건 Apex 주장 제거. WI ID·선행·공수 변경 없음 |
 
 > 갱신 규칙: 재작성 금지, DROP / ENHANCE / ADD 로만 반영. `WI-p.nnn` · `AC-nnn` · `REQ-nnn` ID 는 바꾸지 않는다.
 > 표기: **(확인 필요)** = 실제 오그에서 검증하지 않은 방식 또는 사실. 구현 전에 담당 에이전트가 확인하고 결과를 ENHANCE 로 기록한다.
@@ -479,7 +480,7 @@ sf org create user --definition-file config/users/agent-user-def.json -o DH-DEV
 | 구분 | 내용 |
 |---|---|
 | 1차 검증 | ① §4.3.1 오그 4개 점검표 작성(DH-DEV 는 KRW 조정 완료) ② `sf apex run test -n PropertyModelTest -o DH-DEV -c -r human` 통과 ③ 배포 후 수동 확인: 관리자/상담원으로 표준 목록·레코드 페이지 진입 ④ Playwright `WI-1.001-property-crud.spec.ts --grep-invert @explore` (AC-006, 010 전체 + AC-009/011/012/060 표준 화면 부분) |
-| 표준 목록 진입 경로 | `매물` 탭은 PROJECT-PLAN 상 WI-1.005 에서 만든다. WI-1.001 에서는 URL `/lightning/o/Property__c/list?filterName=All` 로 직접 들어간다 — 탭 없이 접근 가능한지 **확인 필요**. 안 되면 `Property__c` 오브젝트 탭 생성만 WI-1.001 로 앞당기는 ENHANCE 를 PM 에 요청(§12 I-03) (ENHANCED 2026-10-28: I-03 PM 결정 — `매물` 오브젝트 탭을 WI-1.001 작업 6-1 에서 생성. 표준 목록은 `매물` 탭으로 진입하며 URL 직접 입력 방식은 쓰지 않는다) |
+| 표준 목록 진입 경로 | ~~`매물` 탭은 PROJECT-PLAN 상 WI-1.005 에서 만든다. WI-1.001 에서는 URL `/lightning/o/Property__c/list?filterName=All` 로 직접 들어간다 — 탭 없이 접근 가능한지 **확인 필요**. 안 되면 `Property__c` 오브젝트 탭 생성만 WI-1.001 로 앞당기는 ENHANCE 를 PM 에 요청(§12 I-03)~~ 앱 런처 → `매물` 오브젝트 탭(`Property__c`, WI-1.001 §4.2 작업 6-1 에서 생성·두 권한 세트 Visible) → 표준 목록·레코드 페이지 (ENHANCED 2026-10-28: 정합성 보정 — 구 문구 취소선, WI-1.001 문서와 일치) (ENHANCED 2026-10-28: I-03 PM 결정 — `매물` 오브젝트 탭을 WI-1.001 작업 6-1 에서 생성. 표준 목록은 `매물` 탭으로 진입하며 URL 직접 입력 방식은 쓰지 않는다) |
 | 이월 | AC-004 조회 10건 → WI-1.003 / AC-009·011·012·060 탐색 탭 부분 → WI-1.005 (`@explore`) / AC-003 SIT·UAT·HUB 테스트 실행 → Lab 12 |
 
 ### 4.6 테스트
@@ -933,7 +934,7 @@ it('AC-047 기반 오류 → error 토스트, 스피너 없음', async () => { /
 | AC-062 (잠정) | 반환 = N | Apex | CK-06 해소 후 |
 | AC-024 | 초기 진입 카드 10개 `10건`, Sold 포함 | Jest | WI-1.005 |
 | AC-025 | `강릉` → 1초 안에 0개 `0건` + 빈 결과 문구 | Jest(0건 분기) | WI-1.005 |
-| AC-032 | 최소 가격 900000000 → 5건, Sold 2·Under Contract 2, "판매완료 제외" 옵션 없음 | Apex(조건은 WI-1.004) | WI-1.005 |
+| AC-032 (공동 — 목록·건수 렌더링 부분) | 최소 가격 900000000 → 5건, Sold 2·Under Contract 2, "판매완료 제외" 옵션 없음 | ~~Apex(조건은 WI-1.004)~~ Apex(AC-013 — 상태 조건이 없어 Sold·Under Contract 가 기본 포함됨만 확인). 가격 조건 Apex 검증은 이 WI 범위 아님 → WI-1.004 §7.4 (ENHANCED 2026-10-28: AC-032 공동 매핑, WI-1.003 문서와 일치) | WI-1.005 |
 | AC-046 | 1,500ms 지연 중 스피너(대체 텍스트), 응답 후 사라짐 | Jest(로딩 분기) | WI-1.005 |
 | AC-047 | 오류 응답 → error 토스트 `매물 정보를 불러오지 못했습니다.`, 스피너 없음 | Jest | WI-1.005 |
 | AC-063 | DH-SIT 5회 중앙값 ≤ 1,000ms, 최대 ≤ 1,500ms | — | Lab 12 |
@@ -1148,7 +1149,7 @@ disconnectedCallback() { unsubscribe(this.subscription); this.subscription = nul
 | AC-029 | (a) 4개 (b) 1개 | Apex + Jest | WI-1.005 |
 | AC-030 | `3개 이상` 7개, `4개 이상` 3개 | Apex + Jest(선택지 값) | WI-1.005 |
 | AC-031 | 3 → 2 → 1건, SD-08 `판매완료` | Apex(AC-017a) | WI-1.005 |
-| AC-032 | 최소 900000000 → 5건, Sold 2 | Apex | WI-1.005 |
+| AC-032 (공동 — 가격 조건 부분) | 최소 900000000 → 5건, Sold 2 | Apex(가격 조건 — 이 WI 소유분. 목록·건수 렌더링은 WI-1.003) (ENHANCED 2026-10-28: AC-032 공동 매핑) | WI-1.005 |
 | AC-033 | 초기화 → 입력값 빈 값·`전체`, 10건 | Jest | WI-1.005 |
 | AC-059 | `-100` → `aria-invalid`, 10건 유지 / `abc` 입력 안 됨 | Jest(`reportValidity` 모의, 발행 안 함) | WI-1.005 |
 | AC-064 | DH-SIT 응답 중앙값 ≤ 1,000ms, 반영 ≤ 1,300ms | — | Lab 12 |
@@ -1573,6 +1574,7 @@ public static List<Property__c> getSimilarProperties(Id propertyId) {
 | WI-1.007 | — (Could) AC-051, 052 잠정 | Apex + Playwright | `PropertyControllerTest` | — | `WI-1.007-similar-properties.spec.ts` |
 
 - Should: AC-034·070(WI-1.004), AC-044(WI-1.003 → WI-1.005 검증), AC-068(WI-1.005), AC-069(Lab 13). 잠정: AC-057·058·061·062 (CK 해소 후 완료 조건 포함).
+- AC-032 는 WI-1.003(목록·건수 렌더링)·WI-1.004(가격 조건, "027~033" 에 포함) **공동 매핑** — WI-1.003 1차 검증은 가격 조건 Apex 를 주장하지 않는다(§6.4). (ENHANCED 2026-10-28: 정합성 보정, PROJECT-PLAN §7.2 와 일치)
 
 ---
 
