@@ -46,7 +46,7 @@
 
 | Status | ID | Description | 선행(Depends-on) | 분류(FIT/GAP/NUD) | Man-day (M/D) |
 |---|---|---|---|---|---|
-| [ ] | WI-1.001 | `Property__c` 오브젝트·필드(Status 기본값 Available, Price KRW Currency(12,0)) + 권한 세트 2종(상담원 Read 전용 / 관리자 CRUD+Modify All) + 표준 레코드 페이지·페이지 레이아웃(등록·수정·삭제, 필수값) + `매물` 오브젝트 탭(`Property__c`) + **KRW 통화/로케일 확인·조정**(DEV/SIT/UAT/HUB) — REQ-001, REQ-002, REQ-004 (ENHANCED 2026-10-28: I-03 — `Property__c` 오브젝트 탭을 WI-1.005 에서 WI-1.001 로 이동, 공수 변경 없음) | - | FIT | 0.3 (2.5h = REQ-001 1.0 + REQ-002 0.5 + REQ-004 0.5 + KRW/로케일 0.5) |
+| [ ] 1차 완료(Playwright 대기) | WI-1.001 | `Property__c` 오브젝트·필드(Status 기본값 Available, Price KRW Currency(12,0)) + 권한 세트 2종(상담원 Read 전용 / 관리자 CRUD+Modify All) + 표준 레코드 페이지·페이지 레이아웃(등록·수정·삭제, 필수값) + `매물` 오브젝트 탭(`Property__c`) + **KRW 통화/로케일 확인·조정**(DEV/SIT/UAT/HUB) — REQ-001, REQ-002, REQ-004 (ENHANCED 2026-10-28: I-03 — `Property__c` 오브젝트 탭을 WI-1.005 에서 WI-1.001 로 이동, 공수 변경 없음) | - | FIT | 0.3 (2.5h = REQ-001 1.0 + REQ-002 0.5 + REQ-004 0.5 + KRW/로케일 0.5) |
 | [ ] | WI-1.002 | 샘플 데이터 플랜(SD-01~SD-10, `sf data import tree --plan`) + **Property Tile/Card LWC** `propertyTile`(사진·대체 이미지, KRW 가격, 주소/도시, 침실·욕실, 상태 색상 배지, 선택 이벤트 발행) + 공통 UX 기반 — REQ-003, REQ-006, REQ-012 | WI-1.001 | GAP (REQ-003 은 FIT) | 0.3 (2.25h = 0.5 + 1.5 + 0.25) |
 | [ ] | WI-1.003 | **Property List LWC** `propertyList`(반응형 그리드·건수·빈 결과·스피너·에러 토스트) + **Apex 컨트롤러** `PropertyController.getProperties(PropertyFilter)` 기본 조회(`with sharing`·`WITH USER_MODE`·`cacheable`·LIMIT) + `PropertyControllerTest` + 목록 즉시 갱신(`refreshApex`) — REQ-005, REQ-007, REQ-011, REQ-012 | WI-1.002 | GAP (REQ-011 은 OQ-11 에 따라 NUD 가능) | 0.5 (3.75h = 1.5 + 1.5 + 0.5 + 0.25) |
 | [ ] | WI-1.004 | **검색 필터 패널** `propertyFilter`(키워드·최소/최대 가격(원)·최소 침실 수·초기화, 300ms 디바운스, LMS `PropertyFilter__c`) + **Apex 조건 확장**(키워드 Name/City 부분 일치·가격 경계 포함·침실 이상, 바인드 변수) — REQ-008 (+REQ-005 조건, REQ-012) | WI-1.003 | GAP | 0.35 (2.75h = REQ-005 0.5 + REQ-008 2.0 + 0.25) |
@@ -493,22 +493,22 @@ sf org create user --definition-file config/users/agent-user-def.json -o DH-DEV
 
 ### 4.7 체크리스트
 
-- [ ] 선행 없음 확인, Feature Branch checkout
-- [ ] **(첫 작업)** DH-DEV/SIT/UAT/HUB 통화·로캘·시간대 점검표 작성 (D-16, CK-15)
-- [ ] DH-DEV/SIT/UAT Company Information 조정 → 재점검 `KRW`/`false`
-- [ ] DH-HUB(PROD) 조정 — 사람 승인 후, Lab 12 전 완료 (ENHANCED 2026-10-28: I-08 — 사용자 명시 승인 없이는 실행 금지, 확인 필요)
+- [X] 선행 없음 확인, Feature Branch checkout (`WI-000003`)
+- [X] **(첫 작업)** DH-DEV/SIT/UAT/HUB 통화·로캘·시간대 점검표 작성 (D-16, CK-15) (2026-10-28: 전부 USD·단일 통화, WI-1.001 문서 §4.1)
+- [ ] DH-DEV/SIT/UAT Company Information 조정 → 재점검 `KRW`/`false` (2026-10-28: UI 전용 — 사용자 수동 조정 대기)
+- [ ] DH-HUB(PROD) 조정 — 사람 승인 후, Lab 12 전 완료 (ENHANCED 2026-10-28: I-08 — 사용자 명시 승인 없이는 실행 금지, 확인 필요) (2026-10-28: 점검만 완료, 미변경)
 - [ ] scratch def `country: "KR"` 효과 확인(임시 오그) → 반영 여부 결정 (확인 필요)
-- [ ] `Property__c` + 필드 9개, Status 기본값 Available·라벨 판매중/계약중/판매완료, Price Currency(12,0)
-- [ ] OWD Public Read Only (AD-03)
-- [ ] 페이지 레이아웃 필수값(Name·Price__c·Status__c), 리스트 뷰 All
-- [ ] `Property__c` 오브젝트 탭 `매물` + 권한 세트 `tabSettings` Visible (ADDED 2026-10-28: I-03)
-- [ ] 유효성 규칙(가격 > 0) — CK-05 확정 시에만
-- [ ] 권한 세트 `DreamHouse_Agent` / `DreamHouse_Admin` (Modify All)
+- [X] `Property__c` + 필드 9개, Status 기본값 Available·라벨 판매중/계약중/판매완료, Price Currency(12,0)
+- [X] OWD Public Read Only (AD-03)
+- [X] 페이지 레이아웃 필수값(Name·Price__c·Status__c), 리스트 뷰 All
+- [X] `Property__c` 오브젝트 탭 `매물` + 권한 세트 `tabSettings` Visible (ADDED 2026-10-28: I-03)
+- [ ] 유효성 규칙(가격 > 0) — CK-05 확정 시에만 (2026-10-28: CK-05 미확정 → 미생성)
+- [X] 권한 세트 `DreamHouse_Agent` / `DreamHouse_Admin` (Modify All)
 - [ ] Playwright 사용자 3명(ko / ko_KR / Asia/Seoul), `.auth/` 미커밋
-- [ ] `PropertyModelTest` 통과 (AC-001~005, 053)
-- [ ] Playwright `WI-1.001-property-crud.spec.ts` 1차(`--grep-invert @explore`) 통과
+- [ ] `PropertyModelTest` 통과 (AC-001~005, 053) (2026-10-28: 5/6 통과, ac003 KRW 조정 대기)
+- [ ] Playwright `WI-1.001-property-crud.spec.ts` 1차(`--grep-invert @explore`) 통과 (Lab 10 미구성 — 대기)
 - [ ] 이월 AC §3.4 기록
-- [ ] dry-run → deploy (DH-DEV), 커밋 `WI-1.001-property-data-model`
+- [ ] dry-run → deploy (DH-DEV), 커밋 `WI-1.001-property-data-model` (2026-10-28: deploy 완료 0Afgw000000b6x1CAA, 커밋 대기)
 
 ---
 
