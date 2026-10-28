@@ -1,0 +1,95 @@
+<template>
+    <!-- MWI-1.005 (↔ WI-1.005) 상세 패널 -->
+    <section data-testid="property-detail" class="slds-card slds-p-around_medium property-detail" aria-label="매물 상세">
+        <template lwc:if={hasSelection}>
+            <img
+                data-testid="detail-image"
+                class="detail-image"
+                src={imageUrl}
+                alt={property.Name}
+                onerror={handleImageError}
+            />
+            <div class="slds-grid slds-grid_vertical-align-center slds-m-top_small">
+                <h2 data-testid="detail-name" class="slds-text-heading_medium slds-col">{property.Name}</h2>
+                <span data-testid="detail-status-badge" class={statusBadgeClass} data-status={property.Status__c}>
+                    {statusText}
+                </span>
+            </div>
+            <dl class="slds-list_horizontal slds-wrap slds-m-top_small detail-fields">
+                <dt class="slds-item_label slds-text-color_weak">주소</dt>
+                <dd data-testid="detail-address" class="slds-item_detail">{property.Address__c}</dd>
+                <dt class="slds-item_label slds-text-color_weak">도시</dt>
+                <dd data-testid="detail-city" class="slds-item_detail">{property.City__c}</dd>
+                <!-- detail-state: OQ-01/CK-11(시/도 필드) 확정 시에만 추가 -->
+                <dt class="slds-item_label slds-text-color_weak">가격</dt>
+                <dd data-testid="detail-price" class="slds-item_detail detail-price">{priceLabel}</dd>
+                <dt class="slds-item_label slds-text-color_weak">침실</dt>
+                <dd data-testid="detail-bedrooms" class="slds-item_detail">{property.Bedrooms__c}</dd>
+                <dt class="slds-item_label slds-text-color_weak">욕실</dt>
+                <dd data-testid="detail-bathrooms" class="slds-item_detail">{property.Bathrooms__c}</dd>
+            </dl>
+
+            <template lwc:if={canEdit}>
+                <template lwc:if={isEditing}>
+                    <div data-testid="detail-edit-form" class="slds-box slds-m-top_medium" role="group" aria-label="매물 편집">
+                        <lightning-input
+                            class="edit-field"
+                            data-field="Name"
+                            label="매물명"
+                            required
+                            max-length="80"
+                            value={draft.Name}
+                            onchange={handleDraftChange}
+                        ></lightning-input>
+                        <lightning-input
+                            class="edit-field slds-m-top_x-small"
+                            data-field="Price__c"
+                            label="가격"
+                            type="number"
+                            min="0"
+                            step="1"
+                            required
+                            value={draft.Price__c}
+                            onchange={handleDraftChange}
+                        ></lightning-input>
+                        <lightning-combobox
+                            data-testid="detail-status-input"
+                            class="edit-field slds-m-top_x-small"
+                            data-field="Status__c"
+                            label="상태"
+                            required
+                            value={draft.Status__c}
+                            options={statusOptions}
+                            onchange={handleDraftChange}
+                        ></lightning-combobox>
+                        <div class="slds-m-top_small">
+                            <lightning-button label="취소" onclick={handleCancel}></lightning-button>
+                            <lightning-button
+                                data-testid="detail-save-button"
+                                class="slds-m-left_x-small"
+                                variant="brand"
+                                label="저장"
+                                onclick={handleSave}
+                            ></lightning-button>
+                        </div>
+                    </div>
+                </template>
+                <template lwc:else>
+                    <lightning-button
+                        data-testid="detail-edit-button"
+                        class="slds-m-top_medium slds-show"
+                        label="편집"
+                        icon-name="utility:edit"
+                        onclick={handleEdit}
+                    ></lightning-button>
+                </template>
+            </template>
+        </template>
+        <template lwc:else>
+            <div data-testid="detail-empty" class="slds-text-align_center slds-p-around_large slds-text-color_weak">
+                <lightning-icon icon-name="utility:home" size="small" alternative-text=""></lightning-icon>
+                <p class="slds-m-top_small">{emptyText}</p>
+            </div>
+        </template>
+    </section>
+</template>

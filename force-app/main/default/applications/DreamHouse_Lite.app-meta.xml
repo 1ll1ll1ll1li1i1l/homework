@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>DreamHouse Lite — 목업 단계에서는 "매물 탐색" 탭만 포함. 본 개발 WI-1.005 에서 Property__c(매물) 탭 추가(ENHANCE)</description>
+    <formFactors>Large</formFactors>
+    <formFactors>Small</formFactors>
+    <isNavAutoTempTabsDisabled>false</isNavAutoTempTabsDisabled>
+    <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>
+    <label>DreamHouse Lite</label>
+    <navType>Standard</navType>
+    <tabs>Property_Explorer</tabs>
+    <uiType>Lightning</uiType>
+</CustomApplication>
