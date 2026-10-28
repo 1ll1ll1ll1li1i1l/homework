@@ -11,7 +11,7 @@
 | 항목 | 내용 |
 |---|---|
 | 문서명 | PROJECT-PLAN — DreamHouse Lite |
-| 버전 | v1.0 (Draft — PM 검토 게이트 전) |
+| 버전 | v1.1 (Draft — PM 결정 I-01/I-02/I-03/I-11 반영, 2026-10-28) |
 | 작성일 | 2026-10-28 |
 | 작성자 | 최정혁 (PM 역할, project_manager 에이전트 활용) |
 | 상태 | Draft. 목업 리뷰(Lab 7) 결과와 잔여 OQ/CK 해소 결과는 DROP / ENHANCE / ADD 로 반영 |
@@ -21,6 +21,7 @@
 | 버전 | 일자 | 작성자 | 유형 | 변경 내용 |
 |---|---|---|---|---|
 | v1.0 | 2026-10-28 | 최정혁 | 최초 작성 | Phase 0 / Phase 1 / Phase 2(후보) 구성, WI-1.001~WI-1.005(Must) + WI-1.006~WI-1.007(Could, 선택) 확정, 일정·리소스·REQ↔AC↔WI 매핑 |
+| v1.1 | 2026-10-28 | 최정혁 | ENHANCE / ADD | PHASE-PLAN-01 §12 PM 결정 반영 — I-01: 탭 의존 화면 AC 이월처를 WI-1.005 전체 UI 회귀로 통일, §7.2 회귀 목록 보완 / I-02: LMS 채널 `PropertyUpdated__c` ADD(WI-1.005 소유) / I-03: `Property__c` 오브젝트 탭을 WI-1.001 로 이동(WI-1.001 Description ENHANCE) / I-11: 임시 테스트 하네스 미사용 / I-08: DH-HUB(PROD) 통화·로캘 변경은 사용자 명시 승인 전 실행 안 함(확인 필요 유지). WI ID·선행·공수 변경 없음 |
 
 > 갱신 규칙: 재작성 금지, DROP / ENHANCE / ADD 로만 반영. **`WI-p.nnn` ID 는 한 번 부여하면 변경·재번호·재사용하지 않는다.**
 
@@ -157,7 +158,7 @@
 
 | Status | ID | Description | 선행(Depends-on) | 분류(FIT/GAP/NUD) | Man-day (M/D) |
 |---|---|---|---|---|---|
-| [ ] | WI-1.001 | `Property__c` 오브젝트·필드(Status 기본값 Available, Price KRW Currency(12,0)) + 권한 세트 2종(상담원 Read 전용 / 관리자 CRUD+Modify All) + 표준 레코드 페이지·페이지 레이아웃(등록·수정·삭제, 필수값) + **KRW 통화/로케일 확인·조정**(DEV/SIT/UAT/HUB) — REQ-001, REQ-002, REQ-004 | - | FIT | 0.3 (2.5h = REQ-001 1.0 + REQ-002 0.5 + REQ-004 0.5 + KRW/로케일 0.5) |
+| [ ] | WI-1.001 | `Property__c` 오브젝트·필드(Status 기본값 Available, Price KRW Currency(12,0)) + 권한 세트 2종(상담원 Read 전용 / 관리자 CRUD+Modify All) + 표준 레코드 페이지·페이지 레이아웃(등록·수정·삭제, 필수값) + `매물` 오브젝트 탭(`Property__c`) + **KRW 통화/로케일 확인·조정**(DEV/SIT/UAT/HUB) — REQ-001, REQ-002, REQ-004 (ENHANCED 2026-10-28: I-03 — `Property__c` 오브젝트 탭을 WI-1.005 에서 WI-1.001 로 이동, 공수 변경 없음) | - | FIT | 0.3 (2.5h = REQ-001 1.0 + REQ-002 0.5 + REQ-004 0.5 + KRW/로케일 0.5) |
 | [ ] | WI-1.002 | 샘플 데이터 플랜(SD-01~SD-10, `sf data import tree --plan`) + **Property Tile/Card LWC** `propertyTile`(사진·대체 이미지, KRW 가격, 주소/도시, 침실·욕실, 상태 색상 배지, 선택 이벤트 발행) + 공통 UX 기반 — REQ-003, REQ-006, REQ-012 | WI-1.001 | GAP (REQ-003 은 FIT) | 0.3 (2.25h = 0.5 + 1.5 + 0.25) |
 | [ ] | WI-1.003 | **Property List LWC** `propertyList`(반응형 그리드·건수·빈 결과·스피너·에러 토스트) + **Apex 컨트롤러** `PropertyController.getProperties(PropertyFilter)` 기본 조회(`with sharing`·`WITH USER_MODE`·`cacheable`·LIMIT) + `PropertyControllerTest` + 목록 즉시 갱신(`refreshApex`) — REQ-005, REQ-007, REQ-011, REQ-012 | WI-1.002 | GAP (REQ-011 은 OQ-11 에 따라 NUD 가능) | 0.5 (3.75h = 1.5 + 1.5 + 0.5 + 0.25) |
 | [ ] | WI-1.004 | **검색 필터 패널** `propertyFilter`(키워드·최소/최대 가격(원)·최소 침실 수·초기화, 300ms 디바운스, LMS `PropertyFilter__c`) + **Apex 조건 확장**(키워드 Name/City 부분 일치·가격 경계 포함·침실 이상, 바인드 변수) — REQ-008 (+REQ-005 조건, REQ-012) | WI-1.003 | GAP | 0.35 (2.75h = REQ-005 0.5 + REQ-008 2.0 + 0.25) |
@@ -191,11 +192,12 @@
 > 공통 완료 조건(CLAUDE.md 진행 규칙): 전문 에이전트 사용 · 선행 WI `[X]` 확인 · 단위 테스트 + 대응 AC Playwright 통과(실패/문제 해결 전 완료 금지, 잠정 AC 제외) · PROJECT-PLAN/PHASE-PLAN/WI 문서 체크리스트·Status `[X]` · `sf project deploy start --dry-run` → `sf project deploy start` · `WI-1.nnn-description` 이름으로 커밋 · 비밀정보 미커밋(AC-067).
 
 #### WI-1.001 — 데이터 모델 + 권한 세트 + 표준 CRUD + KRW (FIT)
-- [ ] DH-DEV/SIT/UAT/HUB 기본 통화 확인 (`UserInfo.getDefaultCurrency()`) → KRW 아니면 Company Information 통화 로케일(ko_KR) 조정, scratch def `country`/locale 보강 검토 (D-16, CK-15) — **PROD(DH-HUB) 포함**
+- [ ] DH-DEV/SIT/UAT/HUB 기본 통화 확인 (`UserInfo.getDefaultCurrency()`) → KRW 아니면 Company Information 통화 로케일(ko_KR) 조정, scratch def `country`/locale 보강 검토 (D-16, CK-15) — **PROD(DH-HUB) 포함** (ENHANCED 2026-10-28: I-08 — DH-HUB 는 점검만 자동 수행, 통화·로캘 **변경은 사용자 명시 승인 후에만**(Lab 12 전). 자동 변경 계획 없음 — 확인 필요 유지)
 - [ ] `Property__c` + 필드 9개(Name, Address__c, City__c, State__c(OQ-01 결과), Price__c Currency(12,0), Bedrooms__c, Bathrooms__c, Picture_URL__c, Status__c 기본값 Available·라벨 판매중/계약중/판매완료)
 - [ ] OWD Public Read Only (AD-03)
 - [ ] 권한 세트 `DreamHouse_Agent`(Read 전용) / `DreamHouse_Admin`(CRUD + Modify All) — Apex 클래스·앱 권한은 WI-1.003/1.005 에서 ENHANCE
 - [ ] 페이지 레이아웃 필수값(Name·Price__c·Status__c), 유효성 규칙(가격 > 0 — CK-05 확정 시), 표준 New/Edit/Delete
+- [ ] `Property__c` 오브젝트 탭 `매물`(`tabs/Property__c.tab-meta.xml`) + 두 권한 세트 `tabSettings` Visible — 표준 목록·레코드 페이지를 URL 직접 입력 없이 진입 (ADDED 2026-10-28: I-03)
 - [ ] `PropertyModelTest` (AC-001~005, AC-053) 통과
 - [ ] Playwright `WI-1.001-property-crud.spec.ts` (AC-006, 009~012, 060) — 탐색 탭 검증 부분은 WI-1.005 회귀에서 확인
 - [ ] dry-run → deploy (DH-DEV), 커밋 `WI-1.001-property-data-model`
@@ -205,15 +207,15 @@
 - [ ] 재실행 중복 방지 절차 문서화 (AC-008 — SIT/UAT 검증은 Lab 12)
 - [ ] 대체 이미지 정적 리소스 `propertyPlaceholder`
 - [ ] `propertyTile`: `data-testid` 규약(§1.6), KRW `lightning-formatted-number`, 배지 `slds-theme_success`/`slds-theme_warning`/기본 + `data-status`, `aria-label`(매물명·가격), 클릭 시 `PropertySelected__c` 발행
-- [ ] Jest(선택) + Playwright `WI-1.002-property-tile.spec.ts` (AC-020~023) — 목업/검증 페이지에서 1차, WI-1.005 에서 최종
+- [ ] Jest(선택) + Playwright `WI-1.002-property-tile.spec.ts` (AC-020~023) — 목업/검증 페이지에서 1차, WI-1.005 에서 최종 (ENHANCED 2026-10-28: I-11 — 임시 검증 페이지(하네스) 미사용. 1차는 Jest, spec 은 `@explore` 로 작성해 WI-1.005 전체 UI 회귀에서 최종)
 - [ ] code_reviewer 리뷰(SLDS·접근성), dry-run → deploy, 커밋 `WI-1.002-sample-data-property-tile`
 
 #### WI-1.003 — Property List LWC + Apex 컨트롤러 (GAP)
 - [ ] `PropertyController`(`with sharing`) `@AuraEnabled(cacheable=true) getProperties(PropertyFilter)` — `WITH USER_MODE`, 상수 LIMIT·정렬(CK-06 확정값, 미확정 시 임시값 명시), 0건 시 빈 List
 - [ ] `PropertyFilter` 파라미터 객체 (NFR-009), Apex 권한을 두 권한 세트에 ENHANCE
 - [ ] `PropertyControllerTest`(`@testSetup` + `PropertyTestDataFactory`): AC-004(조회부), 013, 018, 019, 055(Apex), 062(잠정) / 커버리지 ≥ 85% 목표 (AC-066)
-- [ ] `propertyList`: 반응형 그리드, `result-count`(`{n}건`), `empty-state`, `loading-spinner`, 오류 토스트, `refreshApex` 갱신 경로 (AC-044)
-- [ ] Playwright `WI-1.003-property-list.spec.ts` (AC-024, 025, 032, 046, 047, 063 — 필터 입력이 필요한 단계는 WI-1.004 에서 확인)
+- [ ] `propertyList`: 반응형 그리드, `result-count`(`{n}건`), `empty-state`, `loading-spinner`, 오류 토스트, `refreshApex` 갱신 경로 (AC-044) (ENHANCED 2026-10-28: I-02 — WI-1.003 은 `@api refresh()` 까지. `PropertyUpdated__c` 구독 연결은 WI-1.005)
+- [ ] Playwright `WI-1.003-property-list.spec.ts` (AC-024, 025, 032, 046, 047, 063 — 필터 입력이 필요한 단계는 WI-1.004 에서 확인) (ENHANCED 2026-10-28: I-01 — 1차는 Jest, AC-024·025·032·044·046·047 E2E 는 `@explore` 로 작성해 WI-1.005 전체 UI 회귀에서 실행. AC-063 은 Lab 12)
 - [ ] `sf code-analyzer` High 0건 (AC-065), dry-run → deploy, 커밋 `WI-1.003-property-list-apex`
 
 #### WI-1.004 — 검색 필터 + Apex 조건 확장 (GAP)
@@ -221,15 +223,16 @@
 - [ ] `PropertyControllerTest` 확장: AC-014~017, 056, 057
 - [ ] `propertyFilter`: 라벨 `키워드`/`최소 가격`/`최대 가격`/`최소 침실 수`, 침실 선택지 `전체`~`5개 이상`, 300ms 디바운스, LMS `PropertyFilter__c` 발행, `filter-reset`, 음수·비숫자 차단, min > max 처리(CK-03)
 - [ ] `propertyList` 가 LMS 필터 구독
-- [ ] Playwright `WI-1.004-search-filter.spec.ts` (AC-027~034, 057~059, 064) + WI-1.003 의 필터 의존 AC(025, 032, 046, 047) 확인
+- [ ] Playwright `WI-1.004-search-filter.spec.ts` (AC-027~034, 057~059, 064) + WI-1.003 의 필터 의존 AC(025, 032, 046, 047) 확인 (ENHANCED 2026-10-28: I-01 — WI-1.004 에서는 필터 입력 로직을 Jest 로 1차 확인만 한다. AC-027~034·059 와 WI-1.003 의 AC-025·032·046·047 E2E 는 WI-1.005 전체 UI 회귀, AC-064 는 Lab 12)
 - [ ] AC-065·066·070 재확인, dry-run → deploy, 커밋 `WI-1.004-search-filter`
 
 #### WI-1.005 — 상세 패널 + Lightning App Page (GAP)
 - [ ] `propertyDetail`: `PropertySelected__c` 구독, `detail-empty` 초기 문구, `lightning-record-view-form` 전체 속성·큰 사진·대체 이미지, 관리자 전용 `detail-edit-button`(상담원 미노출)
 - [ ] 저장 성공 시 `notifyRecordUpdateAvailable` + 목록 `refreshApex` → 카드·배지·상세 즉시 반영 (REQ-011, 같은 사용자 화면 — D-12/OQ-11)
-- [ ] Lightning 앱 `DreamHouse Lite` + App Page `매물 탐색`(3영역) + `매물` 탭, 앱·탭 권한을 권한 세트에 ENHANCE
+- [ ] LMS 채널 `PropertyUpdated__c`(필드 `recordId`) 생성 — `propertyDetail` 이 저장·상태 변경 성공 후 발행, `propertyList` 가 구독해 `refreshApex` 호출 (AC-042, 043) (ADDED 2026-10-28: I-02 — 채널 메타데이터·구독 연결 모두 WI-1.005 소유)
+- [ ] Lightning 앱 `DreamHouse Lite` + App Page `매물 탐색`(3영역) + `매물` 탭, 앱·탭 권한을 권한 세트에 ENHANCE (ENHANCED 2026-10-28: I-03 — `매물` 오브젝트 탭은 WI-1.001 에서 생성됨. WI-1.005 는 앱 내비게이션에 추가 + `매물 탐색` App Page 탭 생성·`tabSettings` 만)
 - [ ] Playwright `WI-1.005-property-detail.spec.ts` (AC-026, 035~043, 054, 055 UI) + `WI-1.005-layout-a11y.spec.ts` (AC-045, 048, 068)
-- [ ] **전체 UI 회귀**: WI-1.001/1.002 의 탐색 탭 의존 AC(AC-009, 011, 012, 020~023, 060) 재실행
+- [ ] **전체 UI 회귀**: WI-1.001/1.002 의 탐색 탭 의존 AC(AC-009, 011, 012, 020~023, 060) 재실행 (ENHANCED 2026-10-28: I-01 — 회귀 범위 = AC-009, 011, 012, 060(WI-1.001) / AC-020~023(WI-1.002) / AC-024, 025, 032, 044, 046, 047(WI-1.003) / AC-027~034, 059(WI-1.004), 잠정 AC-057/058/061 은 CK 해소 시 포함. PHASE-PLAN-01 §3.4 와 동일, `npx playwright test` 전체)
 - [ ] dry-run → deploy, 커밋 `WI-1.005-property-detail-app-page`
 
 #### WI-1.006 — 상세 위치 지도 (NUD, 선택)
@@ -291,9 +294,9 @@
 |---|---|---|---|---|
 | WI-1.001 | AC-001, 002, 003, 004(권한 벡터), 005, 006, 009, 010, 011, 012, 053, 060, 067 | — | AC-061 (CK-05) | AC-004 조회 10건 → WI-1.003 / AC-009·011·012·060 탐색 탭 부분 → WI-1.005 |
 | WI-1.002 | AC-007, 008, 020, 021, 022, 023, 067 | — | — | AC-008 SIT/UAT → Lab 12 / AC-020~023 → WI-1.005 |
-| WI-1.003 | AC-004(조회부), 013, 018, 019, 024, 025, 032, 046, 047, 055(Apex), 063, 065, 066, 067 | AC-044, 070 | AC-062 (CK-06) | AC-025·032·046·047 필터 입력 → WI-1.004 / AC-063 DH-SIT 측정 → Lab 12 |
-| WI-1.004 | AC-014, 015, 016, 017, 027, 028, 029, 030, 031, 032, 033, 056, 059, 064, 065, 066, 067 | AC-034, 070 | AC-057 (CK-04), AC-058 (CK-03) | AC-064 DH-SIT 측정 → Lab 12 |
-| WI-1.005 | AC-026, 035, 036, 037, 038, 039, 040, 041, 042, 043, 045, 048, 054, 055(UI), 067 + 회귀(AC-009, 011, 012, 020~023, 060) | AC-068 | — | — |
+| WI-1.003 | AC-004(조회부), 013, 018, 019, 024, 025, 032, 046, 047, 055(Apex), 063, 065, 066, 067 | AC-044, 070 | AC-062 (CK-06) | ~~AC-025·032·046·047 필터 입력 → WI-1.004~~ AC-024·025·032·046·047·044(Should) → WI-1.005 전체 UI 회귀 (필터 입력 로직 Jest 1차 확인은 WI-1.004) / AC-063 DH-SIT 측정 → Lab 12 (ENHANCED 2026-10-28: I-01 — WI-1.004 에도 `매물 탐색` 탭이 없어 E2E 불가) |
+| WI-1.004 | AC-014, 015, 016, 017, 027, 028, 029, 030, 031, 032, 033, 056, 059, 064, 065, 066, 067 | AC-034, 070 | AC-057 (CK-04), AC-058 (CK-03) | AC-027~034(AC-034 Should 포함)·059 화면 부분 → WI-1.005 전체 UI 회귀 (잠정 AC-057/058 UI 는 CK 해소 시) / AC-064 DH-SIT 측정 → Lab 12 (ENHANCED 2026-10-28: I-01) |
+| WI-1.005 | AC-026, 035, 036, 037, 038, 039, 040, 041, 042, 043, 045, 048, 054, 055(UI), 067 + 회귀(AC-009, 011, 012, 020~023, 060) + 회귀 보완(AC-024, 025, 032, 046, 047 / AC-027~033, 059) | AC-068 + 회귀 AC-034, 044 | 회귀 AC-057, 058, 061 (CK 해소 시) | — (ENHANCED 2026-10-28: I-01 — 회귀 목록을 WI-1.001~1.004 의 탭 의존 화면 AC 전체로 보완, PHASE-PLAN-01 §3.4 와 동일. AC-042·043 의 목록 갱신은 LMS `PropertyUpdated__c`(I-02)로 검증) |
 | WI-1.006 | — (Could) | — | AC-049, 050 (CK-11) | — |
 | WI-1.007 | — (Could) | — | AC-051, 052 (CK-12) | — |
 | Phase 1 종료 | — | AC-069 | — | Lab 13 |
@@ -308,8 +311,8 @@
 |---|---|---|---|
 | R-01 | Phase 1 공수 20h vs 가용 16h (초과 0.55 M/D) | 높음 | §3.4 대응. Stretch 미배정, Promotion 우선 |
 | R-04 | Pipeline Activate·Project 생성 미완료 → Lab 8 지연 | 높음 | P0-07 전후로 완료(👤 UI 작업) |
-| R-08 | 기존 Scratch Org·DH-HUB 기본 통화 USD → AC-003·KRW 표시 AC 실패 | 중 | WI-1.001 첫 체크 항목, 4개 오그 모두 확인 |
-| R-09 | 화면 의존 AC(탐색 탭 필요)를 앞 WI 에서 Playwright 로 검증 불가 → 완료 판정 지연 | 중 | §7.2 "최종 검증 이월" 규칙 적용, WI-1.005 에서 전체 회귀. PHASE-PLAN-01 에서 각 WI 의 1차 검증 방법(목업 페이지/Jest/Apex) 명시 |
+| R-08 | 기존 Scratch Org·DH-HUB 기본 통화 USD → AC-003·KRW 표시 AC 실패 | 중 | WI-1.001 첫 체크 항목, 4개 오그 모두 확인 (ENHANCED 2026-10-28: I-08 — DH-HUB(PROD) 변경은 사용자 명시 승인 후 Lab 12 전 실행, 자동 변경하지 않음. 미승인 시 PROD `PropertyModelTest.ac003` 실패 위험 — 확인 필요) |
+| R-09 | 화면 의존 AC(탐색 탭 필요)를 앞 WI 에서 Playwright 로 검증 불가 → 완료 판정 지연 | 중 | §7.2 "최종 검증 이월" 규칙 적용, WI-1.005 에서 전체 회귀. PHASE-PLAN-01 에서 각 WI 의 1차 검증 방법(목업 페이지/Jest/Apex) 명시 (ENHANCED 2026-10-28: I-01/I-03/I-11 — 임시 하네스 미사용, 1차 = Jest·Apex·CLI·탭 비의존 Playwright. `매물` 오브젝트 탭을 WI-1.001 로 당겨 표준 화면 AC 는 바로 실행, `매물 탐색` 의존 AC 는 전부 WI-1.005 회귀) |
 | R-10 | OQ-11 이 사용자 간 실시간 반영으로 결정 → REQ-011 NUD, +1~2h | 높음 | Phase 1 은 같은 사용자 화면으로 한정 권고(D-12), 결정 시 Phase 2 또는 변경 요청 |
 | R-11 | OQ-09 페이지네이션 필요 시 WI-1.003 +1h | 중 | 미결정 시 상수 LIMIT 으로 진행, Phase 2 후보 |
 | R-02/03/05/07 | 리뷰 부재 / AI 보안 누락 / Playwright 불안정 / 사진 CSP | 중 | REQUIREMENT §10.3 대응 유지 |

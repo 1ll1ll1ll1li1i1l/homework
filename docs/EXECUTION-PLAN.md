@@ -94,8 +94,8 @@ Cheatsheet_for_ProjectManager ──▶ "어떻게" — Lab 5~13 에서 Claude �
   - ⚠ 교훈: Hub(DE) 를 Production 단계에 연결할 때 유형을 **Production** 으로 골라야 함. Sandbox 로 고르면 OrgIdentifier 가 비고 "Error with org authentication" 발생
   - 실패 시도로 남은 빈 환경 레코드 3건(DH-DEV ×2, DH-HUB SANDBOX ×1)은 사용하지 않음
 - [X] 브랜치 `sit`, `uat` 를 GitHub 에 생성(main 기준) 후 단계에 지정
-- [ ] Activate Pipeline
-- [ ] Project `DreamHouse Lite` 생성·파이프라인 연결 (2026-10-28 기준 DevopsProject 0건)
+- [X] Activate Pipeline
+- [X] Project `DreamHouse Lite` 생성·파이프라인 연결 (DevopsProject `1Qgbm000000KqthCAC`)
 - [ ] (선택) Tests 탭 Provider 3종 구성 — Suite 배정은 Lab 9.6 에서
 
 > 🤖 Phase B~D 와 **병행**해서 Phase E~F(문서 작업)를 진행할 수 있습니다. 문서는 org/저장소 없이도 작성 가능.
