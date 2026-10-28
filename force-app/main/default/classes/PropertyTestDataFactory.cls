@@ -6,6 +6,14 @@
 @IsTest
 public with sharing class PropertyTestDataFactory {
     private static final String TEST_USER_DOMAIN = '@dreamhouse.test';
+    // (ENHANCED 2026-10-28: 코드 리뷰 H-2) 'Minimum Access - Salesforce' 우선 — 프로필 기본 CRUD 의존을 없애고
+    // Property__c 권한은 권한 세트로만 부여. DE/Scratch 의 Salesforce 라이선스(약 2석) 부족 시
+    // LICENSE_LIMIT_EXCEEDED → 'Standard Platform User'(Salesforce Platform 라이선스)로 대체.
+    private static final String PRIMARY_PROFILE = 'Minimum Access - Salesforce';
+    private static final String FALLBACK_PROFILE = 'Standard Platform User';
+    private static Map<String, Id> profileIdsByName; // L-1: 프로필 2종을 1회 SOQL 로 조회 후 캐시
+
+    public class TestDataException extends Exception {}
 
     /** SD-01~SD-10 을 1회 DML 로 생성 (루프 내 DML 없음) */
     public static List<Property__c> createSampleProperties() {
@@ -42,11 +50,43 @@ public with sharing class PropertyTestDataFactory {
     public static User createUserWithPermSet(String alias, String permSetName) {
         User u = newUser(alias);
         System.runAs(new User(Id = UserInfo.getUserId())) {
-            Database.insert(u, AccessLevel.SYSTEM_MODE);
-            PermissionSet ps = [SELECT Id FROM PermissionSet WHERE Name = :permSetName LIMIT 1];
-            Database.insert(new PermissionSetAssignment(AssigneeId = u.Id, PermissionSetId = ps.Id), AccessLevel.SYSTEM_MODE);
+            // L-2: 권한 세트가 없으면 QueryException 대신 원인이 드러나는 메시지로 실패
+            List<PermissionSet> ps = [SELECT Id FROM PermissionSet WHERE Name = :permSetName LIMIT 1];
+            if (ps.isEmpty()) {
+                throw new TestDataException('권한 세트 미배포: ' + permSetName + ' — force-app/main/default/permissionsets 를 먼저 배포하세요.');
+            }
+            insertWithLicenseFallback(u);
+            Database.insert(new PermissionSetAssignment(AssigneeId = u.Id, PermissionSetId = ps[0].Id), AccessLevel.SYSTEM_MODE);
         }
         return u;
+    }
+
+    /** PRIMARY_PROFILE 로 insert, Salesforce 라이선스 부족이면 FALLBACK_PROFILE 로 재시도 */
+    private static void insertWithLicenseFallback(User u) {
+        u.ProfileId = profileId(PRIMARY_PROFILE);
+        Database.SaveResult sr = Database.insert(u, false, AccessLevel.SYSTEM_MODE);
+        if (sr.isSuccess()) {
+            return;
+        }
+        if (sr.getErrors()[0].getStatusCode() != StatusCode.LICENSE_LIMIT_EXCEEDED) {
+            throw new TestDataException('테스트 사용자 생성 실패: ' + sr.getErrors()[0].getMessage());
+        }
+        u.Id = null;
+        u.ProfileId = profileId(FALLBACK_PROFILE);
+        Database.insert(u, AccessLevel.SYSTEM_MODE);
+    }
+
+    private static Id profileId(String name) {
+        if (profileIdsByName == null) {
+            profileIdsByName = new Map<String, Id>();
+            for (Profile pr : [SELECT Id, Name FROM Profile WHERE Name IN (:PRIMARY_PROFILE, :FALLBACK_PROFILE)]) {
+                profileIdsByName.put(pr.Name, pr.Id);
+            }
+        }
+        if (!profileIdsByName.containsKey(name)) {
+            throw new TestDataException('프로필 없음: ' + name + ' — 오그에 표준 프로필이 있는지 확인하세요.');
+        }
+        return profileIdsByName.get(name);
     }
 
     public static User getUser(String alias) {
@@ -55,15 +95,13 @@ public with sharing class PropertyTestDataFactory {
     }
 
     private static User newUser(String alias) {
-        // 표준 프로필 이름은 로캘에 따라 번역될 수 있음 → 두 이름 모두 허용 (WI-1.001 §4.6)
-        Profile prof = [SELECT Id FROM Profile WHERE Name IN ('Standard User', '표준 사용자') LIMIT 1];
+        // ProfileId 는 insertWithLicenseFallback 에서 지정 (H-2)
         String uname = alias + '.' + System.currentTimeMillis() + TEST_USER_DOMAIN;
         return new User(
             Alias = alias,
             Username = uname,
             LastName = alias,
             Email = alias + '@example.invalid',
-            ProfileId = prof.Id,
             EmailEncodingKey = 'UTF-8',
             LanguageLocaleKey = 'ko',
             LocaleSidKey = 'ko_KR',

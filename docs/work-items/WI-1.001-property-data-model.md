@@ -378,6 +378,7 @@ sf org create user --definition-file config/users/noaccess-user-def.json -o DH-D
 - (확인 필요, I-04) DE Scratch Org 의 Salesforce 라이선스로 3명 생성 가능한지. 부족하면 `Standard Platform User` 프로필.
 - **(확인 필요 — 위험)** 표준 프로필(`Standard User` 등)은 커스텀 오브젝트에 기본 CRUD 를 가질 수 있다. 그러면 ① `noaccess` 가 Property__c 를 조회할 수 있어 AC-055 가 실패하고 ② `agent` 가 프로필로 생성·편집 권한을 얻어 AC-004/006/053 이 실패한다. 배포 직후 `agent`·`noaccess` 프로필의 Property__c 오브젝트 권한을 확인하고, 권한이 있으면 사용자 프로필을 `Minimum Access - Salesforce` 로 바꾸는 방안을 requirements_analyst 와 협의한다(AC 문서 §1.3 은 noaccess = Standard User 로 정의).
 - (ENHANCED 2026-10-28: 배포 후 확인) DH-DEV 에서 `Property__c` ObjectPermissions 는 System Administrator 프로필·DreamHouse_Admin·DreamHouse_Agent 에만 있고 `Standard User`·`Standard Platform User` 프로필에는 없음 → 위 위험은 DH-DEV 에서 발생하지 않음. I-04: DH-DEV UserLicense `Salesforce` 총 2·사용 1(1명만 추가 가능), `Salesforce Platform` 총 3·사용 0 → Playwright 사용자 3명 중 2명은 `Standard Platform User` 프로필 필요. Playwright 사용자는 아직 만들지 않음(test_engineer, Lab 10).
+- (ENHANCED 2026-10-28: 코드 리뷰 반영 H-2) Apex 테스트 사용자(`PropertyTestDataFactory`)는 `Standard User` 대신 **`Minimum Access - Salesforce`** 프로필로 생성 — 권한은 권한 세트로만 부여(프로필 기본 CRUD 의존 제거). insert 가 `LICENSE_LIMIT_EXCEEDED` 이면 `Standard Platform User` 로 대체. DH-DEV 실측: agent·admin 모두 `Minimum Access - Salesforce` 로 생성됨(대체 미발생). Playwright 사용자 정의(`config/users/*.json`)의 프로필은 test_engineer 가 Lab 10 에서 같은 기준으로 결정.
 
 ### 4.7 Apex — `PropertyTestDataFactory` · `PropertyModelTest`
 
@@ -434,6 +435,8 @@ public with sharing class PropertyTestDataFactory {
 ```
 
 - `createUserWithoutPermSet('noaccess')` 는 WI-1.003(`PropertyControllerTest`, AC-055)에서 추가한다(ENHANCE).
+- (ENHANCED 2026-10-28: 코드 리뷰 반영 H-2/L-1/L-2) 위 코드 예시는 초안이다. 실제 코드는 `force-app/main/default/classes/PropertyTestDataFactory.cls` 기준 — 프로필 `Minimum Access - Salesforce`(라이선스 부족 시 `Standard Platform User`), 프로필 2종 1회 SOQL 조회·캐시, 권한 세트 미존재 시 `TestDataException('권한 세트 미배포: …')`.
+- (ENHANCED 2026-10-28: 코드 리뷰 반영 M-1/M-2/L-3) `PropertyModelTest` 변경 — `ac053_agentDmlDenied` 는 insert/update/delete 를 각각 `Assert.fail` 로 검증하고 `System.TypeException` 만 catch, 메시지가 `DML operation <INSERT|UPDATE|DELETE> not allowed on Property__c` 와 일치해야 통과(DH-DEV 실측 예외). `ac005_adminModifyAllOthersRecord` 추가(관리자가 타인 소유 SD-03 을 USER_MODE 로 `Sold` 변경·삭제). `ac001_fieldTypes` 에 Price__c·Status__c `isNillable()=false`, Status__c `isRestrictedPicklist()=true` 추가.
 
 ```apex
 // classes/PropertyModelTest.cls
@@ -572,7 +575,7 @@ test.describe.serial('WI-1.001 관리자 CRUD (AC-009 → 011 → 012 같은 레
 - [ ] **AC-010** 필수값 누락 차단 — Given: "`admin` 로그인, `새로 만들기` 폼" / When: "(a) 매물명 빈 값 + 가격 `500000000`, (b) 매물명 `[E2E] 필수값 확인` + 가격 빈 값 으로 각각 `저장`" / Then: "폼이 닫히지 않고 필수 입력 오류 표시, `[E2E] 필수값%` COUNT = 0" → Playwright, 전체
 - [ ] **AC-011** 관리자 수정 — Given: "AC-009 에서 만든 `[E2E] 성수 숲 아파트`(₩1,100,000,000)" / When: "`편집` → 가격 `1050000000`, 침실 `3` → `저장` → "매물 탐색" 탭에서 `성수` 검색" / Then: "`property-card-price` = `₩1,050,000,000`, `property-card-rooms` = `침실 3 · 욕실 1`" → Playwright. 표준 화면 저장 성공까지 이 WI / **카드 확인 [이월→WI-1.005]**
 - [ ] **AC-012** 관리자 물리 삭제 — Given: "AC-011 의 `[E2E] 성수 숲 아파트`" / When: "레코드 `삭제` → 확인 대화상자 `삭제`" / Then: "삭제 성공 토스트, COUNT = 0, "매물 탐색" 탭에서 `성수` 검색 시 `empty-state`·`0건`, 조건 해제 시 `10건`" → Playwright + SOQL. 표준 화면 부분 이 WI / **탐색 탭 부분 [이월→WI-1.005]** (CK-01 휴지통 보관 여부)
-- [X] **AC-053** 상담원 DML 거부 — Given: "`DreamHouse_Agent` 사용자, SD-02 존재" / When: "(a) insert `[E2E] 상담원 등록`, (b) SD-02 Status `Sold` update, (c) SD-02 delete — 모두 `AccessLevel.USER_MODE`" / Then: "세 경우 모두 예외, SD-02 Status = `Available`·존재, `[E2E] 상담원 등록` 0건" → Apex
+- [X] **AC-053** 상담원 DML 거부 — Given: "`DreamHouse_Agent` 사용자, SD-02 존재" / When: "(a) insert `[E2E] 상담원 등록`, (b) SD-02 Status `Sold` update, (c) SD-02 delete — 모두 `AccessLevel.USER_MODE`" / Then: "세 경우 모두 예외, SD-02 Status = `Available`·존재, `[E2E] 상담원 등록` 0건" → Apex (ENHANCED 2026-10-28: 코드 리뷰 반영 M-1 — "예외" 를 권한 거부로 한정: 각 DML 마다 `System.TypeException` `DML operation <op> not allowed on Property__c` 단언)
 - [ ] **AC-060** 가격 자릿수 한도 — Given: "`admin` 로그인, `새로 만들기` 폼" / When: "매물명 `[E2E] 한도 초과`, 가격 `1000000000000`(13자리) → `저장`" / Then: "가격 필드 오류로 저장 실패, 0건. `999999999999` 는 저장 성공 후 카드에 `₩999,999,999,999`" → Playwright. 저장 부분 이 WI / **카드 표시 [이월→WI-1.005]**
 - [ ] **AC-061 (잠정 — CK-05)** 가격 0·음수 — Given: "`admin`, `새로 만들기` 폼" / When: "가격 `0` / `-1` 로 `저장`" / Then: "`가격은 0보다 커야 합니다.` 표시, 레코드 미생성" → `test.fixme`. CK-05 해소 전 완료 조건 제외
 - [ ] **AC-067** 비밀정보 미커밋 — Given: "커밋 직전 저장소" / When: "`git ls-files | grep -E "\.auth/|sfdx-url|accessToken"`, `.gitignore` 확인" / Then: "결과 0줄, `.gitignore` 에 `tests/e2e/.auth/`" → 수동 QA
@@ -581,7 +584,7 @@ test.describe.serial('WI-1.001 관리자 CRUD (AC-009 → 011 → 012 같은 레
 
 | 종류 | 대상 | AC | 목표 / 명령 |
 |---|---|---|---|
-| Apex 단위 | `PropertyModelTest` (+ `PropertyTestDataFactory`) | AC-001, 002, 003, 004(권한 벡터), 005, 053 | 실패 0, 조직 커버리지 ≥ 75% — `sf apex run test -n PropertyModelTest -o DH-DEV -c -r human` |
+| Apex 단위 | `PropertyModelTest` (+ `PropertyTestDataFactory`) | AC-001, 002, 003, 004(권한 벡터), 005, 053 | 실패 0, 조직 커버리지 ≥ 75% — `sf apex run test -n PropertyModelTest -o DH-DEV -c -r human` (ENHANCED 2026-10-28: 코드 리뷰 반영 L-8 — 커버리지 N/A: 비테스트 Apex 없음(Org Wide Coverage 0% 표시), WI-1.003부터 측정. 테스트 7건: ac001·ac002·ac003·ac004·ac005_adminCrudUserMode·ac005_adminModifyAllOthersRecord(M-2 추가)·ac053(M-1 강화)) |
 | Playwright | `tests/e2e/WI-1.001-property-crud.spec.ts` (`test.describe.serial`) | AC-006, 009, 010, 011, 012, 060 (AC-061 `test.fixme`) | 1차: `npx playwright test tests/e2e/WI-1.001-property-crud.spec.ts --grep-invert @explore` 통과 / 최종: WI-1.005 `npx playwright test` |
 | CLI 수동 | 오그 점검표 | AC-003(오그별) | §4.1 표 기입 |
 | 수동 QA | 비밀정보 | AC-067 | 0줄 |
@@ -594,18 +597,19 @@ test.describe.serial('WI-1.001 관리자 CRUD (AC-009 → 011 → 012 같은 레
 - [ ] 전문 에이전트 사용 확인 (backend_developer / test_engineer / code_reviewer)
 - [X] 선행 없음 확인, Feature Branch checkout (`WI-000003`)
 - [X] **(첫 작업)** 4개 오그 통화·로캘·시간대 점검표 작성 (D-16, CK-15) — §4.1 표 (전 오그 USD·단일 통화)
-- [ ] DH-DEV/SIT/UAT Company Information 조정 → 재점검 `KRW` / `false` (2026-10-28: UI 전용 → 사용자 수동 조정 대기) (ENHANCED 2026-10-28: DH-DEV 완료 — 재점검 KRW/false. DH-SIT/UAT 는 Lab 12 전 동일 변경 필요 → 항목 전체는 미완)
+- [ ] DH-DEV/SIT/UAT Company Information 조정 → 재점검 `KRW` / `false` (2026-10-28: UI 전용 → 사용자 수동 조정 대기) (ENHANCED 2026-10-28: DH-DEV 완료 — 재점검 KRW/false. DH-SIT/UAT 는 Lab 12 전 동일 변경 필요 → 항목 전체는 미완) (ENHANCED 2026-10-28: 코드 리뷰 반영 H-1 — DH-SIT/UAT 는 **SIT 프로모션 전에** KRW 조정 필수(미조정 시 프로모션 테스트에서 `ac003_currencyIsKrwSingle` 실패). DH-HUB(PROD)는 사용자 승인 대기(I-08))
 - [X] DH-HUB(PROD) — 점검만. 변경은 **사용자 명시 승인 후에만**(I-08), 미승인 시 "확인 필요" 상태로 남김 (2026-10-28: 점검 완료 USD — 변경 미실행, 확인 필요 유지)
 - [ ] scratch def `country: "KR"` 효과 확인(임시 오그) → 반영 여부 기록 (I-07)
 - [X] `Property__c` + 필드 9개, Status 기본값 Available·라벨 판매중/계약중/판매완료, Price Currency(12,0)
 - [X] OWD Public Read Only (AD-03) — EntityDefinition Internal/External = Read 확인
 - [X] 페이지 레이아웃 필수값(Name·Price__c·Status__c), 리스트 뷰 All
+- [ ] SIT 프로모션 후 DH-SIT 에서 Page Layout Assignment 확인 — `Property__c-Property Layout` 이 사용 프로필(System Administrator·Minimum Access·Standard Platform User 등)에 할당됐는지 (ADDED 2026-10-28: 코드 리뷰 M-3 — 레이아웃 할당은 프로필 메타데이터 소관이라 소스 배포로 자동 보장되지 않음)
 - [X] `매물` 오브젝트 탭 + 두 권한 세트 `tabSettings` Visible (I-03)
 - [ ] 유효성 규칙(가격 > 0) — CK-05 확정 시에만 (2026-10-28: CK-05 미확정 → 의도적으로 미생성)
 - [X] 권한 세트 `DreamHouse_Agent` / `DreamHouse_Admin` (Modify All) — DH-DEV 관리자에 DreamHouse_Admin 할당
 - [ ] Playwright 사용자 3명(ko / ko_KR / Asia/Seoul), 프로필 권한 위험 확인(§4.6), `.auth/` 미커밋
 - [X] `sf project deploy start --dry-run -o DH-DEV` 성공 → `sf project deploy start -o DH-DEV` (dry-run 0Afgw000000b8ufCAA / deploy 0Afgw000000b6x1CAA, 28/28)
-- [X] Apex: `sf apex run test -n PropertyModelTest -o DH-DEV -c -r human` 통과 (커버리지 ≥ 75%) (2026-10-28: 6건 중 5 통과, ac003 은 DH-DEV USD 로 실패 — KRW 조정 후 재실행) (ENHANCED 2026-10-28: KRW 조정 후 `sf apex run test -o DH-DEV -l RunLocalTests -r human` → `PropertyModelTest` 6/6 Pass(ac003 포함), Outcome Passed, Pass Rate 100%. 이번 실행은 `-c` 미지정 — 커버리지 미측정)
+- [X] Apex: `sf apex run test -n PropertyModelTest -o DH-DEV -c -r human` 통과 (커버리지 ≥ 75%) (2026-10-28: 6건 중 5 통과, ac003 은 DH-DEV USD 로 실패 — KRW 조정 후 재실행) (ENHANCED 2026-10-28: KRW 조정 후 `sf apex run test -o DH-DEV -l RunLocalTests -r human` → `PropertyModelTest` 6/6 Pass(ac003 포함), Outcome Passed, Pass Rate 100%. 이번 실행은 `-c` 미지정 — 커버리지 미측정) (ENHANCED 2026-10-28: 코드 리뷰 반영 H-2/M-1/M-2/L-1/L-2/L-3 — dry-run 0Afgw000000bBhFCAU → deploy 0Afgw000000bBkTCAU, `sf apex run test -o DH-DEV -l RunLocalTests -c -r human` → `PropertyModelTest` 7/7 Pass (Run 707gw000002GRQg). 커버리지: N/A — 비테스트 Apex 없음, WI-1.003부터 측정(L-8))
 - [X] 정적 분석: `sf code-analyzer run --workspace . --view table` — High 이상 0건 (신규 코드 Moderate/Low 만, flow 엔진 Python 미설치 경고 제외)
 - [ ] Playwright `WI-1.001-property-crud.spec.ts --grep-invert @explore` 통과 (실패 시 완료 불가) (Lab 10 미구성 — 대기)
 - [ ] 이월 AC(AC-004 조회 10건 → WI-1.003 / AC-009·011·012·060 탐색 부분 → WI-1.005 / AC-003 SIT·UAT·HUB → Lab 12) PHASE-PLAN-01 §3.4 기록, spec 에 `@explore`

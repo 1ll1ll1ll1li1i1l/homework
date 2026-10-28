@@ -51,3 +51,6 @@ test-results/
 **/__pycache__/
 **/.venv/
 **/venv/
+
+# Claude Code worktrees
+.claude/worktrees/
