@@ -1,24 +1,22 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <LightningMessageChannel xmlns="http://soap.sforce.com/2006/04/metadata">
-    <masterLabel>PropertyFilter</masterLabel>
+    <description>필터 패널 → 목록 (REQ-008, NFR-009). 소유 WI-1.004 (발행 propertyFilter, 구독 propertyList)</description>
     <isExposed>true</isExposed>
-    <description
-  >필터 패널 → 목록 (REQ-008, NFR-009). 소유 WI-1.004 (발행 propertyFilter, 구독 propertyList)</description>
     <lightningMessageFields>
+        <description>키워드 (Name 또는 City__c 부분 일치). 빈 값 = null</description>
         <fieldName>keyword</fieldName>
-        <description
-    >키워드 (Name 또는 City__c 부분 일치). 빈 값 = null</description>
     </lightningMessageFields>
     <lightningMessageFields>
-        <fieldName>minPrice</fieldName>
         <description>최소 가격 (원 단위, 경계 포함). 미입력 = null</description>
+        <fieldName>minPrice</fieldName>
     </lightningMessageFields>
     <lightningMessageFields>
-        <fieldName>maxPrice</fieldName>
         <description>최대 가격 (원 단위, 경계 포함). 미입력 = null</description>
+        <fieldName>maxPrice</fieldName>
     </lightningMessageFields>
     <lightningMessageFields>
-        <fieldName>minBedrooms</fieldName>
         <description>최소 침실 수 (1~5 이상). 전체 = null</description>
+        <fieldName>minBedrooms</fieldName>
     </lightningMessageFields>
+    <masterLabel>PropertyFilter</masterLabel>
 </LightningMessageChannel>

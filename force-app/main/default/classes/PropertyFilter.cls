@@ -4,12 +4,8 @@
  * (ENHANCED 2026-10-29: WI-1.004) PropertyController 가 4개 조건을 바인드 변수로 적용. 속성명 = LMS PropertyFilter__c 필드명.
  */
 public with sharing class PropertyFilter {
-  @AuraEnabled
-  public String keyword { get; set; }
-  @AuraEnabled
-  public Decimal minPrice { get; set; }
-  @AuraEnabled
-  public Decimal maxPrice { get; set; }
-  @AuraEnabled
-  public Integer minBedrooms { get; set; }
+    @AuraEnabled public String keyword { get; set; }
+    @AuraEnabled public Decimal minPrice { get; set; }
+    @AuraEnabled public Decimal maxPrice { get; set; }
+    @AuraEnabled public Integer minBedrooms { get; set; }
 }
