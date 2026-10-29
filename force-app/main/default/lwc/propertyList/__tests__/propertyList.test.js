@@ -2,6 +2,8 @@ import { createElement } from "lwc";
 import PropertyList from "c/propertyList";
 import getProperties from "@salesforce/apex/PropertyController.getProperties";
 import { refreshApex } from "@salesforce/apex";
+import { subscribe, unsubscribe } from "lightning/messageService";
+import PROPERTY_FILTER from "@salesforce/messageChannel/PropertyFilter__c";
 // sfdx-lwc-jest 스텁은 ShowToastEventName 을 export 하지 않음 → 이벤트명 직접 사용
 const ShowToastEventName = "lightning__showtoast";
 
@@ -65,7 +67,7 @@ const mount = (props = {}) => {
 const q = (el, id) => el.shadowRoot.querySelector(`[data-testid="${id}"]`);
 const tiles = (el) => el.shadowRoot.querySelectorAll("c-property-tile");
 
-describe("c-property-list (WI-1.003)", () => {
+describe("c-property-list (WI-1.003 + WI-1.004)", () => {
   afterEach(() => {
     while (document.body.firstChild) {
       document.body.removeChild(document.body.firstChild);
@@ -136,9 +138,12 @@ describe("c-property-list (WI-1.003)", () => {
     });
     expect(q(el, "loading-spinner")).toBeNull();
     expect(q(el, "empty-state")).toBeNull();
-    expect(el.shadowRoot.querySelector('[role="alert"]').textContent).toContain(
+    expect(q(el, "error-state").getAttribute("role")).toBe("alert");
+    expect(q(el, "error-state").textContent).toContain(
       "매물 정보를 불러오지 못했습니다."
     );
+    // code-review L-1: 오류 시 "0건" 대신 오류 안내만
+    expect(q(el, "result-count")).toBeNull();
   });
 
   it("AC-044 기반 refresh() → refreshApex(wire 결과) 호출 후 스피너 해제", async () => {
@@ -161,18 +166,104 @@ describe("c-property-list (WI-1.003)", () => {
     expect(refreshApex).toHaveBeenCalled();
   });
 
-  it("[임시 — WI-1.004 에서 서버 조건으로 교체] clientFilter 로 로드된 목록을 거른다", async () => {
+  it("WI-1.004 PropertyFilter__c 를 구독하고 분리 시 해제한다", async () => {
+    const el = mount();
+    await flush();
+    expect(subscribe).toHaveBeenCalledTimes(1);
+    expect(subscribe.mock.calls[0][1]).toBe(PROPERTY_FILTER);
+    document.body.removeChild(el);
+    expect(unsubscribe).toHaveBeenCalledTimes(1);
+  });
+
+  it("WI-1.004 필터 수신 → filter 갱신 → getProperties 재호출 인자(서버 측 필터) + 스피너", async () => {
     const el = mount();
     getProperties.emit(TEN);
     await flush();
-    el.clientFilter = { keyword: "부산" };
+    const onMessage = subscribe.mock.calls[0][2];
+    onMessage({
+      keyword: "서울",
+      minPrice: null,
+      maxPrice: 2000000000,
+      minBedrooms: 3
+    });
     await flush();
-    expect(tiles(el).length).toBe(2);
+    expect(getProperties.getLastConfig()).toEqual({
+      filter: {
+        keyword: "서울",
+        minPrice: null,
+        maxPrice: 2000000000,
+        minBedrooms: 3
+      }
+    });
+    expect(q(el, "loading-spinner")).not.toBeNull();
+    // 서버가 거른 결과만 그대로 표시 (클라이언트 측 필터 없음)
+    getProperties.emit([TEN[0]]);
+    await flush();
+    expect(q(el, "loading-spinner")).toBeNull();
+    expect(tiles(el).length).toBe(1);
+    expect(q(el, "result-count").textContent).toBe("1건");
+  });
+
+  it("WI-1.004 같은 조건 재수신 시 재조회·스피너 없음(스피너 고착 방지), 알 수 없는 필드는 버림", async () => {
+    const el = mount();
+    getProperties.emit(TEN);
+    await flush();
+    const onMessage = subscribe.mock.calls[0][2];
+    onMessage({ keyword: "부산", extra: "x" });
+    await flush();
+    const config = getProperties.getLastConfig();
+    expect(config.filter).toEqual({
+      keyword: "부산",
+      minPrice: null,
+      maxPrice: null,
+      minBedrooms: null
+    });
+    getProperties.emit([TEN[3], TEN[4]]);
+    await flush();
+    onMessage({ keyword: "부산" });
+    await flush();
+    expect(getProperties.getLastConfig()).toBe(config);
+    expect(q(el, "loading-spinner")).toBeNull();
     expect(q(el, "result-count").textContent).toBe("2건");
-    el.clientFilter = { keyword: "강릉" };
+  });
+
+  it("WI-1.004 초기화(모든 값 null) 수신 → 조건 없음 조회, 0건이면 empty-state", async () => {
+    const el = mount();
+    getProperties.emit(TEN);
+    await flush();
+    const onMessage = subscribe.mock.calls[0][2];
+    onMessage({ keyword: "강릉" });
+    await flush();
+    getProperties.emit([]);
     await flush();
     expect(q(el, "result-count").textContent).toBe("0건");
     expect(q(el, "empty-state")).not.toBeNull();
+    onMessage({
+      keyword: null,
+      minPrice: null,
+      maxPrice: null,
+      minBedrooms: null
+    });
+    await flush();
+    expect(getProperties.getLastConfig().filter.keyword).toBeNull();
+    getProperties.emit(TEN);
+    await flush();
+    expect(q(el, "result-count").textContent).toBe("10건");
+  });
+
+  it("code-review M-1: refresh() 실패 → error 토스트 + error-state, 예외 전파 없음", async () => {
+    const el = mount();
+    getProperties.emit(TEN);
+    await flush();
+    const handler = jest.fn();
+    el.addEventListener(ShowToastEventName, handler);
+    refreshApex.mockImplementationOnce(() => Promise.reject(new Error("x")));
+    await el.refresh();
+    await flush();
+    expect(handler).toHaveBeenCalledTimes(1);
+    expect(q(el, "error-state")).not.toBeNull();
+    expect(q(el, "loading-spinner")).toBeNull();
+    expect(tiles(el).length).toBe(0);
   });
 
   it("selectedId 카드 하이라이트", async () => {

@@ -6,7 +6,7 @@
 //   (보조) 표시가 붙은 test 는 같은 AC 의 Then 을 필터 없이(초기 로딩 응답 모의) 검증하는 경계/negative 케이스.
 // 데이터: 실제 Property__c SD-01~SD-10(10건). 정렬은 검증하지 않는다(OQ-09).
 // AC-044 만 데이터를 바꾸며 afterEach 에서 sf CLI 로 SD-03 Status__c 를 원래 값(Under Contract)으로 복원한다.
-import { execSync } from 'node:child_process';
+// 대상 org 가드(코드 리뷰 L-4): AC-044 describe 의 beforeAll 에서 assertSafeOrg() — DH-DEV/SIT/UAT 외(DH-HUB/core 등)는 throw.
 import { test, expect, type Locator, type Page } from '@playwright/test';
 import {
   cardByName,
@@ -17,22 +17,9 @@ import {
   usesRoleState,
 } from './support/explorer';
 import { delayGetProperties, emptyGetProperties, failGetProperties, isGetProperties, AURA_APEX_URL } from './support/aura';
+import { assertSafeOrg, sfResult, targetOrg } from './support/org';
 
-const ORG = process.env.SF_TARGET_ORG ?? 'DH-DEV';
-
-/** sf CLI 실행 → result. Playwright 가 FORCE_COLOR 를 켜므로 색상 끄고 ANSI 제거 후 파싱 (토큰 등 출력 금지) */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function sfResult(cmd: string): any {
-  const raw = execSync(`${cmd} --json`, {
-    shell: true,
-    encoding: 'utf8',
-    stdio: ['ignore', 'pipe', 'ignore'],
-    env: { ...process.env, FORCE_COLOR: '0', NO_COLOR: '1', SF_DISABLE_COLORS: 'true' },
-  });
-  // eslint-disable-next-line no-control-regex
-  const clean = raw.replace(/\u001b\[[0-9;]*m/g, '');
-  return JSON.parse(clean.slice(clean.indexOf('{'))).result;
-}
+const ORG = targetOrg(); // 조건 판단용(@perf). sf 명령·데이터 변경은 support/org.ts 가드(DH-DEV/SIT/UAT 만) 경유
 
 // AC 문서 §1.4 / §1.5
 const SOLD = ['광교 호수 타운하우스', '송파 잠실 아파트']; // SD-05, SD-08
@@ -182,7 +169,9 @@ test.describe('agent — 매물 목록', () => {
     await expect(list.getByTestId('loading-spinner')).toHaveCount(0);
     await expect(list).toBeVisible();
     await expect(page.getByTestId('filter-panel')).toBeVisible();
-    await expect(list.getByTestId('result-count')).toBeVisible();
+    // 빈 흰 화면 없음: 목록 영역에 인라인 오류(alert) 또는 건수가 보인다 (ENHANCED 2026-10-29: 오류 상태에서 result-count 는
+    // 숨김 처리될 수 있음 — AC-047 Then 은 건수 표시를 요구하지 않으므로 인라인 오류 표시도 허용)
+    await expect(list.getByRole('alert').or(list.getByTestId('result-count')).first()).toBeVisible();
   });
 
   // AC-047 / REQ-012, REQ-007 / WI-1.003 — (보조) 초기 진입 조회 오류
@@ -236,7 +225,7 @@ test.describe('admin — 표준 페이지 변경 후 복귀 반영', () => {
   test.afterEach(() => {
     // 복원: SD-03 Status__c = Under Contract (AC 문서 §1.3 — 상태 변경 테스트는 afterEach 복원)
     if (!sd03Id) return;
-    sfResult(`sf data update record -o ${ORG} -s Property__c -i ${sd03Id} -v "Status__c='${SD03.status}'"`);
+    sfResult(`sf data update record -s Property__c -i ${sd03Id} -v "Status__c='${SD03.status}'"`);
   });
 
   // AC-044 / REQ-011, REQ-004 / WI-1.003 (Should — 실패 시 I-10 으로 이월)
@@ -259,12 +248,20 @@ test.describe('admin — 표준 페이지 변경 후 복귀 반영', () => {
     await expect(page).toHaveURL(new RegExp(`/lightning/r/(Property__c/)?${sd03Id}`), { timeout: 30_000 });
     await page.getByRole('button', { name: /^(편집|Edit)$/ }).first().click(); // 사용자 UI 언어(ko/en) 무관
     const dialog = page.getByRole('dialog');
-    await dialog.getByRole('combobox', { name: '상태' }).click();
-    await page.getByRole('option', { name: '판매중' }).click();
+    // 모달 로딩 직후 클릭이 무시되는 경우가 있어(2026-10-29 실행 관측: 드롭다운 미표시로 테스트 타임아웃) 열릴 때까지 재시도
+    const statusBox = dialog.getByRole('combobox', { name: '상태' });
+    await expect(statusBox).toContainText(SD03.label, { timeout: 30_000 });
+    const available = page.getByRole('option', { name: '판매중' });
+    await expect(async () => {
+      if (!(await available.isVisible())) await statusBox.click();
+      await expect(available).toBeVisible({ timeout: 3_000 });
+    }).toPass({ timeout: 30_000 });
+    await available.click();
+    await expect(statusBox).toContainText('판매중');
     await dialog.getByRole('button', { name: /^(저장|Save)$/ }).click();
     await expect(dialog).toHaveCount(0, { timeout: 30_000 });
     // 전제 확인: 저장이 실제 반영됨(실패 원인을 '저장 실패'와 '목록 캐시'로 구분)
-    const saved = sfResult(`sf data query -o ${ORG} -q "SELECT Status__c FROM Property__c WHERE Id = '${sd03Id}'"`).records[0].Status__c;
+    const saved = sfResult(`sf data query -q "SELECT Status__c FROM Property__c WHERE Id = '${sd03Id}'"`).records[0].Status__c;
     expect(saved, 'SD-03 저장 결과(서버)').toBe('Available');
 
     // When: 내비게이션의 '매물 탐색' 탭 클릭 (브라우저 새로고침 없음)
