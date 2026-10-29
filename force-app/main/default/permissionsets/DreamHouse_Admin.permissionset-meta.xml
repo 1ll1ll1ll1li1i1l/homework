@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <classAccesses>
+        <apexClass>PropertyController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
     <description>관리자 - Property__c CRUD + View All + Modify All, 물리 삭제·상태 변경 (OQ-07, D-18, AD-03). (WI-1.003/1.005 ENHANCE) 클래스·앱 권한</description>
     <fieldPermissions>
         <editable>true</editable>

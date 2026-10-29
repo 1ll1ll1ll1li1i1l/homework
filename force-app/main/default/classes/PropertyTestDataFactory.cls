@@ -61,6 +61,15 @@ public with sharing class PropertyTestDataFactory {
         return u;
     }
 
+    /** (ENHANCED 2026-10-28: WI-1.003) 권한 세트 미할당 사용자 — AC-055 `noaccess`. 프로필은 H-2 와 동일(Minimum Access 우선) */
+    public static User createUserWithoutPermSet(String alias) {
+        User u = newUser(alias);
+        System.runAs(new User(Id = UserInfo.getUserId())) {
+            insertWithLicenseFallback(u);
+        }
+        return u;
+    }
+
     /** PRIMARY_PROFILE 로 insert, Salesforce 라이선스 부족이면 FALLBACK_PROFILE 로 재시도 */
     private static void insertWithLicenseFallback(User u) {
         u.ProfileId = profileId(PRIMARY_PROFILE);

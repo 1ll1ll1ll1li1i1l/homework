@@ -16,7 +16,9 @@ import {
  * - 배지: 상태 → SLDS 배지 클래스 + data-status (AC-021, CK-14), 라벨 텍스트로 색상 외 전달
  * - 사진 빈 값 / 로드 오류 → 정적 리소스 propertyPlaceholder (AC-022)
  * - 클릭·Enter(·Space) → LMS PropertySelected__c { recordId } 발행 (AD-01, 구독은 WI-1.005 propertyDetail)
- * - [MOCKUP 호환] CustomEvent 'propertyselect' 도 함께 보냄 — 목업 propertyExplorer(안 B) 가 WI-1.003/1.005 전까지 사용
+ * - [MOCKUP 호환] CustomEvent 'propertyselect' 도 함께 보냄 — 목업 propertyExplorer(안 B) 가 WI-1.005 전까지 사용
+ *   TODO(WI-1.005, code-review M-2): 안 A(LMS) 확정 시 CustomEvent·propertyList.handleSelect·"[목업 호환]" Jest 케이스 제거.
+ *   WI-1.003 에서는 컨테이너가 부모 상태로 상세를 연결하므로 유지 (2026-10-28 결정)
  */
 export default class PropertyTile extends LightningElement {
   _property = {};

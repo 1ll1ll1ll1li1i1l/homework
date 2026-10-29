@@ -11,7 +11,7 @@
                         <div class="slds-media__body">
                             <h1 class="slds-page-header__title">매물 탐색</h1>
                             <p class="slds-text-body_small slds-text-color_weak">
-                                목업 — 정적 샘플 데이터(SD-01~SD-10), 저장 내용은 새로고침 시 초기화됩니다.
+                                목업 컨테이너 — 목록은 실제 매물(PropertyController), 필터는 화면 내 임시 처리, 편집 저장은 WI-1.005 에서 구현됩니다.
                             </p>
                         </div>
                     </div>
@@ -45,7 +45,7 @@
             </lightning-layout-item>
             <lightning-layout-item size="12" large-device-size="6" padding="around-small">
                 <c-property-list
-                    properties={filteredProperties}
+                    client-filter={filter}
                     selected-id={selectedId}
                     onpropertyselect={handleSelect}
                 ></c-property-list>

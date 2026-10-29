@@ -4,11 +4,12 @@
   WI-1.002 (AC-007 / AC-008) — 샘플 매물 SD-01~SD-10 적재 (중복 방지) + 분포 확인.
 
 .DESCRIPTION
+  0) (M-1) Organization.IsSandbox / TrialExpirationDate 로 Scratch·Sandbox 여부를 확인, 아니면(PROD) 중단. 별칭 차단은 보조.
   1) 적재 전 SD-01~SD-10 매물명(Name)으로 기존 레코드 수를 확인한다.
      - 0건  → data/sample/property-plan.json 으로 적재
      - 10건 → 이미 적재됨, 적재를 건너뛴다(재실행해도 20건이 되지 않음)
      - 그 외 → 부분 적재 상태. 중단한다. scripts/apex/reset-sample-data.apex (SIT/UAT/DEV 전용) 실행 후 재시도
-  2) 상태별 건수(6/2/2)·도시 고유값(7)·전체 건수(10)를 확인하고, 기대값과 다르면 exit 1.
+  2) SD-01~SD-10 이름 한정(L-7)으로 상태별 건수(6/2/2)·도시 고유값(7)·전체 건수(10)를 확인하고, 기대값과 다르면 exit 1.
 
 .EXAMPLE
   pwsh -File scripts/load-sample-data.ps1 -TargetOrg DH-DEV
@@ -26,6 +27,7 @@ $OutputEncoding = [System.Text.UTF8Encoding]::new($false)
 $root = Split-Path -Parent $PSScriptRoot
 $plan = Join-Path $root 'data/sample/property-plan.json'
 
+# (보조 가드) 별칭 차단 — 1차 가드는 아래 Organization 조회 (ENHANCED 2026-10-28: 코드 리뷰 M-1)
 if ($TargetOrg -in @('DH-HUB', 'core')) {
     throw "DH-HUB(PROD) 적재는 이 스크립트 범위가 아닙니다 (I-08: 사용자 명시 승인 필요)."
 }
@@ -41,6 +43,13 @@ function Invoke-Soql([string]$q) {
     $res = $raw | ConvertFrom-Json
     if ($res.status -ne 0) { throw "SOQL 실패: $q`n$raw" }
     return $res.result
+}
+
+# (1차 가드, M-1) 별칭과 무관하게 실제 오그 유형으로 PROD 차단 — reset-sample-data.apex 와 동일 규칙:
+# Sandbox 가 아니고 TrialExpirationDate 도 없으면(= Scratch/Trial 아님) PROD 로 간주하고 중단
+$org = (Invoke-Soql "SELECT IsSandbox, TrialExpirationDate FROM Organization LIMIT 1").records[0]
+if ((-not $org.IsSandbox) -and [string]::IsNullOrEmpty([string]$org.TrialExpirationDate)) {
+    throw "[$TargetOrg] Scratch/Sandbox 오그가 아닙니다 (IsSandbox=false, TrialExpirationDate 없음) — PROD 적재 금지 (I-08)."
 }
 
 $existing = (Invoke-Soql "SELECT COUNT() FROM Property__c WHERE Name IN ($nameList)").totalSize
@@ -59,11 +68,13 @@ if (-not $VerifyOnly) {
 }
 
 # --- 분포 확인 (AC-007) ---
-$total = (Invoke-Soql "SELECT COUNT() FROM Property__c").totalSize
+# (ENHANCED 2026-10-28: 코드 리뷰 L-7) SD-01~SD-10 이름으로 한정 — 테스트/수동 생성 레코드가 있어도 분포 판정이 흔들리지 않음
+$sdFilter = "WHERE Name IN ($nameList)"
+$total = (Invoke-Soql "SELECT COUNT() FROM Property__c $sdFilter").totalSize
 $byStatus = @{}
-foreach ($r in (Invoke-Soql "SELECT Status__c s, COUNT(Id) c FROM Property__c GROUP BY Status__c").records) { $byStatus[$r.s] = [int]$r.c }
+foreach ($r in (Invoke-Soql "SELECT Status__c s, COUNT(Id) c FROM Property__c $sdFilter GROUP BY Status__c").records) { $byStatus[$r.s] = [int]$r.c }
 $byCity = @{}
-foreach ($r in (Invoke-Soql "SELECT City__c ci, COUNT(Id) c FROM Property__c GROUP BY City__c").records) { $byCity[$r.ci] = [int]$r.c }
+foreach ($r in (Invoke-Soql "SELECT City__c ci, COUNT(Id) c FROM Property__c $sdFilter GROUP BY City__c").records) { $byCity[$r.ci] = [int]$r.c }
 
 Write-Host "[$TargetOrg] 전체: $total 건"
 Write-Host "[$TargetOrg] 상태별: " (($byStatus.GetEnumerator() | Sort-Object Name | ForEach-Object { "$($_.Name)=$($_.Value)" }) -join ', ')
