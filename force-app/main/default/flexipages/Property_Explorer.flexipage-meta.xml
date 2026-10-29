@@ -1,7 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
-    <description
-  >매물 탐색 (WI-1.005, 안 A — LMS) — region1 propertyFilter / region2 propertyList / region3 propertyDetail. 목업 propertyExplorer 컨테이너 대체(ENHANCED)</description>
+    <description>매물 탐색 (WI-1.005, 안 A — LMS) — region1 propertyFilter / region2 propertyList / region3 propertyDetail. 목업 propertyExplorer 컨테이너 대체(ENHANCED)</description>
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>

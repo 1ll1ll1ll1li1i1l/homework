@@ -1,11 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <LightningMessageChannel xmlns="http://soap.sforce.com/2006/04/metadata">
-    <masterLabel>PropertyUpdated</masterLabel>
+    <description>상세 패널 저장·상태 변경 성공 → 목록 refreshApex (REQ-011, I-02). 소유 WI-1.005 (발행 propertyDetail, 구독 propertyList)</description>
     <isExposed>true</isExposed>
-    <description
-  >상세 패널 저장·상태 변경 성공 → 목록 refreshApex (REQ-011, I-02). 소유 WI-1.005 (발행 propertyDetail, 구독 propertyList)</description>
     <lightningMessageFields>
-        <fieldName>recordId</fieldName>
         <description>저장된 Property__c Id</description>
+        <fieldName>recordId</fieldName>
     </lightningMessageFields>
+    <masterLabel>PropertyUpdated</masterLabel>
 </LightningMessageChannel>
