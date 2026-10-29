@@ -78,8 +78,8 @@ Cheatsheet_for_ProjectManager ──▶ "어떻게" — Lab 5~13 에서 Claude �
 
 - [X] Setup → DevOps Center 토글 On + DX Tools 약관 Accept
 - [X] 권한 세트 4종 할당 — ⚠ 이 org 에서는 라벨이 **"Lifecycle Center …"** 로 표시됨 (API: DevOpsCenter / DevOpsCenterManager / DevOpsCenterReleaseManager / DevopsTestingManager). CLI `sf org assign permset` 로 할당
-- [ ] DevOps Center 앱 → Connect to Version Control → GitHub 인가
-- [ ] 권한 세트 Access DevOps Center Named Credentials 할당 (연결 후 표시됨)
+- [X] DevOps Center 앱 → Connect to Version Control → GitHub 인가 (Named Credential `ALMDevOpsGitHub` 생성 확인)
+- [X] 권한 세트 Access Lifecycle Center Named Credentials (`AccessDevOpsCenterNamedCredentials`) — 연결 시 자동 할당 확인
 
 ### Phase C — Scratch Org (Lab 3) 🤖
 
@@ -88,9 +88,14 @@ Cheatsheet_for_ProjectManager ──▶ "어떻게" — Lab 5~13 에서 Claude �
 
 ### Phase D — 파이프라인 & 프로젝트 (Lab 4) 👤 UI 전용
 
-- [ ] Pipeline `DreamHouse Pipeline` — GitHub · **Connect to a repository** · dreamhouse-lite URL
-- [ ] Staging 단계 삭제 → DEV(DH-DEV) / Integration(DH-SIT, `sit`) / UAT(DH-UAT, `uat`) / Production(DH-HUB, `main`)
-- [ ] Activate Pipeline → Project `DreamHouse Lite` 생성·연결
+- [X] Pipeline `DreamHouse Pipeline` — GitHub · **Connect to a repository** · https://github.com/1ll1ll1ll1li1i1l/homework
+- [X] 단계 DEV(DH-DEV) / SIT(DH-SIT, `sit`) / UAT(DH-UAT, `uat`) / PROD(DH-HUB, `main`) — 처음에 Integration 이 삭제되고 Staging 이 남아 단계 이름을 변경해 맞춤 (2026-10-28)
+- [X] 환경 4종 연결 확인 (2026-10-28, `DevopsEnvironment` 조회): DH-DEV/SIT/UAT = SANDBOX, **DH-HUB = PRODUCTION**
+  - ⚠ 교훈: Hub(DE) 를 Production 단계에 연결할 때 유형을 **Production** 으로 골라야 함. Sandbox 로 고르면 OrgIdentifier 가 비고 "Error with org authentication" 발생
+  - 실패 시도로 남은 빈 환경 레코드 3건(DH-DEV ×2, DH-HUB SANDBOX ×1)은 사용하지 않음
+- [X] 브랜치 `sit`, `uat` 를 GitHub 에 생성(main 기준) 후 단계에 지정
+- [X] Activate Pipeline
+- [X] Project `DreamHouse Lite` 생성·파이프라인 연결 (DevopsProject `1Qgbm000000KqthCAC`)
 - [ ] (선택) Tests 탭 Provider 3종 구성 — Suite 배정은 Lab 9.6 에서
 
 > 🤖 Phase B~D 와 **병행**해서 Phase E~F(문서 작업)를 진행할 수 있습니다. 문서는 org/저장소 없이도 작성 가능.
@@ -106,23 +111,24 @@ Cheatsheet_for_ProjectManager ──▶ "어떻게" — Lab 5~13 에서 Claude �
 
 ### Phase F — 산출물 ② 계획 (Lab 6) 🤖
 
-- [ ] STEP 4 `docs/PROJECT-PLAN.md` — project_manager (CLAUDE.md 진행 규칙 보강 포함)
+- [X] STEP 4 `docs/PROJECT-PLAN.md` — project_manager (WI-1.001~1.005 Must + 1.006/1.007 Could, CLAUDE.md 규칙은 기존으로 충족)
 - [ ] STEP 5 `docs/phases/PHASE-PLAN-01.md` — project_manager
 - [ ] STEP 6 `docs/work-items/WI-1.nnn-*.md` (교재 예상 5건) — work_item_manager
 - [ ] 커밋 `docs: REQUIREMENT/Phase0/PROJECT-PLAN/PHASE-PLAN/WORKITEMS 초안` → push
 
 ### Phase G — 목업 프로토타이핑 (Lab 7)
 
-- [ ] 🤖 `mockup` 브랜치 · MOCKUP-PROJECT-PLAN + MWI 문서 — frontend_developer
-- [ ] 🤖 전체 MWI 정적 LWC 구현 → DH-DEV 배포
-- [ ] 👤 부록 D 체크리스트로 리뷰 → `docs/mockup/reviews/REVIEW-01.md` (고객 역할)
-- [ ] 🤖 리뷰 반영(DROP/ENHANCE/ADD) → 재배포 → 반복
-- [ ] 🤖 최종 결정 본 산출물 반영 — requirements_analyst → `main` 병합
+- [X] 🤖 `mockup` 브랜치 · MOCKUP-PROJECT-PLAN + MWI-1.002~1.005 문서 — frontend_developer (WI-1.001 은 N/A)
+- [X] 🤖 전체 MWI 정적 LWC 구현 → DH-DEV 배포 (앱 DreamHouse Lite · 탭 매물 탐색)
+- [X] 👤 리뷰 → [REVIEW-01.md](mockup/reviews/REVIEW-01.md) — **목업 승인** (역할 토글 UI 결함 1건 수정)
+- [X] 🤖 리뷰 반영 — DROP/ENHANCE/ADD 대상 없음, 미결 CP 는 현 가정 유지
+- [X] 🤖 본 산출물 반영(변경 없음) → `mockup` 을 `main` 에 병합 (2026-10-28)
 
 ### Phase H — Work Item 등록 (Lab 8)
 
-- [ ] 🤖 방법 B: `WorkItem` describe → CSV(Description=WI 문서 HTML) → `sf data import bulk -o DH-HUB`
-- [ ] 🤖 문서 WI-1.nnn ↔ DevOps Center 번호 매핑 → PROJECT-PLAN 비고
+- [X] 🤖 방법 B: `WorkItem` describe → CSV(Description=WI 문서 HTML) → `sf data import bulk -o DH-HUB` — 5건 등록 (2026-10-28)
+  - ⚠ 교훈: Description(리치텍스트 32,768자)은 저장 시 `<td>` 마다 colspan/rowspan 이 붙어 길어짐 → 표 많은 문서 3건이 1차 STRING_TOO_LONG, 코드 예시 일부 생략 후 재등록
+- [X] 🤖 문서 WI-1.nnn ↔ DevOps Center 번호 매핑 → PROJECT-PLAN §6 (WI-1.001=WI-000003, 1.002=000001, 1.003=000002, 1.004=000004, 1.005=000005)
 
 ### Phase I — 개발 (Lab 9) — WI 마다 반복, 선행 순서 준수
 

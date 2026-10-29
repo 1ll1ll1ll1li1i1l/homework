@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- WI-1.003 (MWI-1.003 승계). App Page Property_Explorer region2 (WI-1.005) -->
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>67.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>Property List</masterLabel>
+    <description
+  >매물 목록 — PropertyController.getProperties 카드 그리드(건수·빈 결과·스피너·오류 토스트)</description>
+    <targets>
+        <target>lightning__AppPage</target>
+    </targets>
+</LightningComponentBundle>

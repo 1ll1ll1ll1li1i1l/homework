@@ -1,0 +1,58 @@
+<template>
+  <!-- WI-1.004 검색·필터 패널 (MWI-1.004 승계). data-testid 는 ACCEPTANCE-CRITERIA §1.6 규약 그대로 (이름 변경 금지) -->
+  <section
+    data-testid="filter-panel"
+    class="slds-card slds-p-around_medium filter-panel"
+    aria-label="매물 검색 필터"
+  >
+    <h2 class="slds-text-heading_small slds-m-bottom_small">검색 필터</h2>
+    <lightning-input
+      data-testid="filter-keyword"
+      label="키워드"
+      type="search"
+      placeholder="매물명 또는 도시"
+      value={keyword}
+      onchange={handleKeyword}
+    ></lightning-input>
+    <lightning-input
+      data-testid="filter-min-price"
+      class="slds-m-top_small"
+      label="최소 가격"
+      type="number"
+      min="0"
+      step="1"
+      field-level-help="원 단위 전체 금액 (예: 500000000)"
+      value={minPrice}
+      message-when-range-underflow="0 이상의 금액을 입력하세요."
+      onchange={handleMinPrice}
+    ></lightning-input>
+    <lightning-input
+      data-testid="filter-max-price"
+      class="slds-m-top_small"
+      label="최대 가격"
+      type="number"
+      min="0"
+      step="1"
+      field-level-help="원 단위 전체 금액 (예: 1000000000)"
+      value={maxPrice}
+      message-when-range-underflow="0 이상의 금액을 입력하세요."
+      onchange={handleMaxPrice}
+    ></lightning-input>
+    <lightning-combobox
+      data-testid="filter-min-bedrooms"
+      class="slds-m-top_small"
+      label="최소 침실 수"
+      value={minBedrooms}
+      options={bedroomOptions}
+      onchange={handleBedrooms}
+    ></lightning-combobox>
+    <!-- filter-price-error: CK-03(최소>최대 동작) 확정 시에만 구현. 목업 리뷰에서 결정 -->
+    <lightning-button
+      data-testid="filter-reset"
+      class="slds-m-top_medium slds-show"
+      label="초기화"
+      icon-name="utility:refresh"
+      onclick={handleReset}
+    ></lightning-button>
+  </section>
+</template>

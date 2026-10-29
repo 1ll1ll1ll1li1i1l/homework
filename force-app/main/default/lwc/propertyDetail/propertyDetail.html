@@ -1,0 +1,135 @@
+<template>
+  <!-- WI-1.005 상세 패널 (MWI-1.005 승계). data-testid 는 ACCEPTANCE-CRITERIA §1.6 규약 그대로 — 이름 변경 금지 -->
+  <section
+    data-testid="property-detail"
+    class="slds-card slds-is-relative slds-p-around_medium property-detail"
+    aria-label="매물 상세"
+  >
+    <template lwc:if={hasSelection}>
+      <template lwc:if={isLoading}>
+        <div class="detail-loading">
+          <lightning-spinner
+            alternative-text="상세 정보 로딩 중"
+            size="small"
+          ></lightning-spinner>
+        </div>
+      </template>
+      <template lwc:elseif={hasLoadError}>
+        <p
+          class="slds-text-align_center slds-p-around_large slds-text-color_error"
+          role="alert"
+        >
+          {loadErrorText}
+        </p>
+      </template>
+      <template lwc:elseif={isLoaded}>
+        <img
+          data-testid="detail-image"
+          class="detail-image"
+          src={imageUrl}
+          alt={name}
+          onerror={handleImageError}
+        />
+        <div class="slds-grid slds-grid_vertical-align-center slds-m-top_small">
+          <h2
+            data-testid="detail-name"
+            class="slds-text-heading_medium slds-col"
+          >
+            {name}
+          </h2>
+          <span
+            data-testid="detail-status-badge"
+            class={statusBadgeClass}
+            data-status={status}
+            >{statusText}</span
+          >
+        </div>
+        <dl
+          class="slds-list_horizontal slds-wrap slds-m-top_small detail-fields"
+        >
+          <dt class="slds-item_label slds-text-color_weak">주소</dt>
+          <dd data-testid="detail-address" class="slds-item_detail">
+            {address}
+          </dd>
+          <dt class="slds-item_label slds-text-color_weak">도시</dt>
+          <dd data-testid="detail-city" class="slds-item_detail">{city}</dd>
+          <template lwc:if={showState}>
+            <!-- OQ-01/CK-11: State__c 확정 시에만 렌더 -->
+            <dt class="slds-item_label slds-text-color_weak">시/도</dt>
+            <dd data-testid="detail-state" class="slds-item_detail">{state}</dd>
+          </template>
+          <dt class="slds-item_label slds-text-color_weak">가격</dt>
+          <dd data-testid="detail-price" class="slds-item_detail detail-price">
+            {priceLabel}
+          </dd>
+          <dt class="slds-item_label slds-text-color_weak">침실</dt>
+          <dd data-testid="detail-bedrooms" class="slds-item_detail">
+            {bedrooms}
+          </dd>
+          <dt class="slds-item_label slds-text-color_weak">욕실</dt>
+          <dd data-testid="detail-bathrooms" class="slds-item_detail">
+            {bathrooms}
+          </dd>
+        </dl>
+
+        <template lwc:if={showEditButton}>
+          <lightning-button
+            data-testid="detail-edit-button"
+            class="slds-m-top_medium slds-show"
+            label="편집"
+            icon-name="utility:edit"
+            onclick={handleEdit}
+          ></lightning-button>
+        </template>
+        <template lwc:if={showEditForm}>
+          <lightning-record-edit-form
+            data-testid="detail-edit-form"
+            class="slds-box slds-show slds-m-top_medium"
+            object-api-name="Property__c"
+            record-id={recordId}
+            onsubmit={handleSubmit}
+            onsuccess={handleSuccess}
+            onerror={handleError}
+          >
+            <lightning-messages></lightning-messages>
+            <lightning-input-field field-name="Name"></lightning-input-field>
+            <lightning-input-field
+              field-name="Price__c"
+            ></lightning-input-field>
+            <lightning-input-field
+              data-testid="detail-status-input"
+              field-name="Status__c"
+            ></lightning-input-field>
+            <div class="slds-m-top_small">
+              <lightning-button
+                label="취소"
+                onclick={handleCancel}
+              ></lightning-button>
+              <lightning-button
+                data-testid="detail-save-button"
+                class="slds-m-left_x-small"
+                variant="brand"
+                type="submit"
+                label="저장"
+                disabled={isSaving}
+              ></lightning-button>
+            </div>
+          </lightning-record-edit-form>
+        </template>
+      </template>
+    </template>
+    <template lwc:else>
+      <div
+        data-testid="detail-empty"
+        class="slds-text-align_center slds-p-around_large slds-text-color_weak"
+      >
+        <lightning-icon
+          icon-name="utility:home"
+          size="small"
+          alternative-text=""
+        ></lightning-icon>
+        <p class="slds-m-top_small">{emptyText}</p>
+      </div>
+    </template>
+  </section>
+</template>

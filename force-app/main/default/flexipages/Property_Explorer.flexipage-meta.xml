@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>매물 탐색 (WI-1.005, 안 A — LMS) — region1 propertyFilter / region2 propertyList / region3 propertyDetail. 목업 propertyExplorer 컨테이너 대체(ENHANCED)</description>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>propertyFilter</componentName>
+                <identifier>c_propertyFilter</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>region1</name>
+        <type>Region</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>propertyList</componentName>
+                <identifier>c_propertyList</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>region2</name>
+        <type>Region</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>propertyDetail</componentName>
+                <identifier>c_propertyDetail</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>region3</name>
+        <type>Region</type>
+    </flexiPageRegions>
+    <masterLabel>매물 탐색</masterLabel>
+    <template>
+        <name>flexipage:appHomeTemplateThreeColumns</name>
+    </template>
+    <type>AppPage</type>
+</FlexiPage>
