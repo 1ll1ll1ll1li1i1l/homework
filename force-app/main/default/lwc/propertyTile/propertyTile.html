@@ -27,6 +27,7 @@
       >
         {property.Name}
       </h3>
+      {space}
       <p data-testid="property-card-price" class="property-card__price">
         <lightning-formatted-number
           value={property.Price__c}
@@ -36,15 +37,18 @@
           maximum-fraction-digits="0"
         ></lightning-formatted-number>
       </p>
+      {space}
       <p
         data-testid="property-card-address"
         class="slds-text-body_small slds-text-color_weak"
       >
-        {property.Address__c} · {property.City__c}
+        {addressLine}
       </p>
+      {space}
       <p data-testid="property-card-rooms" class="slds-text-body_small">
         {rooms}
       </p>
+      {space}
       <div class="slds-m-top_x-small">
         <span
           data-testid="property-status-badge"

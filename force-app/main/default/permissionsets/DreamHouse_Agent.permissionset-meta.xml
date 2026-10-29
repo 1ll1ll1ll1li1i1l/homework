@@ -1,10 +1,15 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <applicationVisibilities>
+        <application>DreamHouse_Lite</application>
+        <visible>true</visible>
+    </applicationVisibilities>
     <classAccesses>
         <apexClass>PropertyController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
-    <description>상담원 - Property__c 조회 전용 (OQ-07, D-18). (WI-1.003 ENHANCE) classAccesses PropertyController / (WI-1.005 ENHANCE) applicationVisibilities DreamHouse_Lite, tabSettings Property_Explorer</description>
+    <description
+  >상담원 - Property__c 조회 전용 (OQ-07, D-18). (WI-1.003 ENHANCE) classAccesses PropertyController / (WI-1.005 ENHANCE) applicationVisibilities DreamHouse_Lite, tabSettings Property_Explorer</description>
     <fieldPermissions>
         <editable>false</editable>
         <field>Property__c.Address__c</field>
@@ -48,7 +53,15 @@
         <viewAllRecords>false</viewAllRecords>
     </objectPermissions>
     <tabSettings>
+        <tab>Property_Explorer</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+    <tabSettings>
         <tab>Property__c</tab>
         <visibility>Visible</visibility>
     </tabSettings>
+    <userPermissions>
+        <enabled>true</enabled>
+        <name>LightningExperienceUser</name>
+    </userPermissions>
 </PermissionSet>

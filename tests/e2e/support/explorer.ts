@@ -14,16 +14,16 @@ export const SAMPLE_COUNT = 10;
  * - `tests/e2e/.auth/<role>.json` 이 있으면 그 파일을 사용한다.
  * - 아직 역할 사용자(agent/admin)가 없으면 기본 세션(`E2E_STORAGE_STATE` 또는 state.json, 시스템 관리자)으로 대체한다.
  *   조회 전용 AC(카드 표시 등)는 결과가 같지만, 권한 AC 는 반드시 역할 세션으로 실행해야 한다.
- *   역할 사용자 생성(프로필 `Minimum Access - Salesforce` + 권한 세트)은 별도 작업으로 이월 — README 참고.
+ *   역할 사용자·세션은 `node tests/e2e/global-setup.mjs`(setup-users.mjs 포함)가 만든다 (ENHANCED 2026-10-29, WI-1.005).
  */
-export function storageStateFor(role: 'agent' | 'admin'): string {
+export function storageStateFor(role: 'agent' | 'admin' | 'noaccess'): string {
   const rolePath = `tests/e2e/.auth/${role}.json`;
   if (existsSync(rolePath)) return rolePath;
   return process.env.E2E_STORAGE_STATE ?? 'tests/e2e/.auth/state.json';
 }
 
 /** 역할 세션 파일이 실제로 쓰였는지 (리포트 annotation 용) */
-export function usesRoleState(role: 'agent' | 'admin'): boolean {
+export function usesRoleState(role: 'agent' | 'admin' | 'noaccess'): boolean {
   return existsSync(`tests/e2e/.auth/${role}.json`);
 }
 

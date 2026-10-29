@@ -16,9 +16,7 @@ import {
  * - 배지: 상태 → SLDS 배지 클래스 + data-status (AC-021, CK-14), 라벨 텍스트로 색상 외 전달
  * - 사진 빈 값 / 로드 오류 → 정적 리소스 propertyPlaceholder (AC-022)
  * - 클릭·Enter(·Space) → LMS PropertySelected__c { recordId } 발행 (AD-01, 구독은 WI-1.005 propertyDetail)
- * - [MOCKUP 호환] CustomEvent 'propertyselect' 도 함께 보냄 — 목업 propertyExplorer(안 B) 가 WI-1.005 전까지 사용
- *   TODO(WI-1.005, code-review M-2): 안 A(LMS) 확정 시 CustomEvent·propertyList.handleSelect·"[목업 호환]" Jest 케이스 제거.
- *   WI-1.003 에서는 컨테이너가 부모 상태로 상세를 연결하므로 유지 (2026-10-28 결정)
+ * - (ENHANCED 2026-10-29 WI-1.005, code-review M-2) 안 A(LMS) 확정 — 목업 호환 CustomEvent 'propertyselect' 제거, LMS 만 사용
  */
 export default class PropertyTile extends LightningElement {
   _property = {};
@@ -36,6 +34,12 @@ export default class PropertyTile extends LightningElement {
   @api selected = false;
 
   imageFailed = false;
+
+  /**
+   * AC-068: 텍스트 블록 끝의 공백 텍스트 노드. LWC 는 요소 사이 공백을 지우므로, axe(label-content-name-mismatch)가
+   * 보이는 텍스트를 이어 붙일 때 "서울침실" 처럼 단어가 붙지 않게 한다. 화면 표시에는 영향 없음
+   */
+  space = " ";
 
   @wire(MessageContext)
   messageContext;
@@ -62,10 +66,27 @@ export default class PropertyTile extends LightningElement {
     return badgeClass(this.property?.Status__c);
   }
 
-  /** AC-048 기반: "매물명, ₩가격" */
+  /** 주소 줄 — 화면 표시와 aria-label 이 같은 문자열을 쓰도록 공용 */
+  get addressLine() {
+    return `${this.property?.Address__c ?? ""} · ${this.property?.City__c ?? ""}`;
+  }
+
+  /**
+   * AC-048: "매물명, ₩가격" 으로 시작.
+   * (ENHANCED 2026-10-29 WI-1.005, AC-068 axe label-content-name-mismatch) 보이는 텍스트 전체(매물명·가격·주소·침실/욕실·상태)를
+   * 같은 순서·같은 문자열로 포함 — 접근 가능한 이름이 보이는 라벨을 포함해야 한다(WCAG 2.5.3).
+   */
   get ariaLabel() {
     const name = this.property?.Name ?? "";
-    return this.priceLabel ? `${name}, ${this.priceLabel}` : name;
+    return [
+      name,
+      this.priceLabel,
+      this.addressLine,
+      this.rooms,
+      this.statusText
+    ]
+      .filter((part) => part && part.trim())
+      .join(", ");
   }
 
   get ariaPressed() {
@@ -93,8 +114,5 @@ export default class PropertyTile extends LightningElement {
       return;
     }
     publish(this.messageContext, PROPERTY_SELECTED, { recordId });
-    this.dispatchEvent(
-      new CustomEvent("propertyselect", { detail: { recordId } })
-    );
   }
 }

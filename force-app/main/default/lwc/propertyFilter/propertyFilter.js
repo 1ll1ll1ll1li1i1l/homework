@@ -28,6 +28,8 @@ export default class PropertyFilter extends LightningElement {
   minBedrooms = "0";
   bedroomOptions = BEDROOM_OPTIONS;
   timer;
+  /** code-review WI-1.004 L-3: clearInput 의 다음 틱 복원 타이머 — 분리 시 정리 */
+  clearTimers = new Set();
 
   @wire(MessageContext)
   messageContext;
@@ -77,11 +79,13 @@ export default class PropertyFilter extends LightningElement {
   clearInput(input) {
     input.value = "0";
     // eslint-disable-next-line @lwc/lwc/no-async-operation
-    setTimeout(() => {
+    const id = setTimeout(() => {
+      this.clearTimers.delete(id);
       input.value = "";
       input.setCustomValidity("");
       input.reportValidity();
     }, 0);
+    this.clearTimers.add(id);
   }
 
   handleBedrooms(event) {
@@ -131,5 +135,7 @@ export default class PropertyFilter extends LightningElement {
 
   disconnectedCallback() {
     clearTimeout(this.timer);
+    this.clearTimers.forEach((id) => clearTimeout(id));
+    this.clearTimers.clear();
   }
 }
