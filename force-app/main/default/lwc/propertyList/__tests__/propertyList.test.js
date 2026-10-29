@@ -3,7 +3,10 @@ import PropertyList from "c/propertyList";
 import getProperties from "@salesforce/apex/PropertyController.getProperties";
 import { refreshApex } from "@salesforce/apex";
 import { subscribe, unsubscribe } from "lightning/messageService";
+import { getRecords } from "lightning/uiRecordApi";
 import PROPERTY_FILTER from "@salesforce/messageChannel/PropertyFilter__c";
+import PROPERTY_SELECTED from "@salesforce/messageChannel/PropertySelected__c";
+import PROPERTY_UPDATED from "@salesforce/messageChannel/PropertyUpdated__c";
 // sfdx-lwc-jest 스텁은 ShowToastEventName 을 export 하지 않음 → 이벤트명 직접 사용
 const ShowToastEventName = "lightning__showtoast";
 
@@ -66,6 +69,23 @@ const mount = (props = {}) => {
 };
 const q = (el, id) => el.shadowRoot.querySelector(`[data-testid="${id}"]`);
 const tiles = (el) => el.shadowRoot.querySelectorAll("c-property-tile");
+/** subscribe 호출 중 해당 채널의 콜백 */
+const handlerFor = (channel) =>
+  subscribe.mock.calls.find((call) => call[1] === channel)[2];
+/** LDS getRecords 응답 모양 { results: [{ statusCode, result: { id, fields } }] } */
+const ldsOf = (records) => ({
+  results: records.map((r) => ({
+    statusCode: 200,
+    result: {
+      id: r.Id,
+      fields: Object.fromEntries(
+        Object.entries(r)
+          .filter(([k]) => k !== "Id")
+          .map(([k, value]) => [k, { value }])
+      )
+    }
+  }))
+});
 
 describe("c-property-list (WI-1.003 + WI-1.004)", () => {
   afterEach(() => {
@@ -166,20 +186,24 @@ describe("c-property-list (WI-1.003 + WI-1.004)", () => {
     expect(refreshApex).toHaveBeenCalled();
   });
 
-  it("WI-1.004 PropertyFilter__c 를 구독하고 분리 시 해제한다", async () => {
+  it("WI-1.004/1.005 PropertyFilter__c·PropertySelected__c·PropertyUpdated__c 를 구독하고 분리 시 모두 해제한다", async () => {
     const el = mount();
     await flush();
-    expect(subscribe).toHaveBeenCalledTimes(1);
-    expect(subscribe.mock.calls[0][1]).toBe(PROPERTY_FILTER);
+    expect(subscribe).toHaveBeenCalledTimes(3);
+    expect(subscribe.mock.calls.map((c) => c[1])).toEqual([
+      PROPERTY_FILTER,
+      PROPERTY_SELECTED,
+      PROPERTY_UPDATED
+    ]);
     document.body.removeChild(el);
-    expect(unsubscribe).toHaveBeenCalledTimes(1);
+    expect(unsubscribe).toHaveBeenCalledTimes(3);
   });
 
   it("WI-1.004 필터 수신 → filter 갱신 → getProperties 재호출 인자(서버 측 필터) + 스피너", async () => {
     const el = mount();
     getProperties.emit(TEN);
     await flush();
-    const onMessage = subscribe.mock.calls[0][2];
+    const onMessage = handlerFor(PROPERTY_FILTER);
     onMessage({
       keyword: "서울",
       minPrice: null,
@@ -208,7 +232,7 @@ describe("c-property-list (WI-1.003 + WI-1.004)", () => {
     const el = mount();
     getProperties.emit(TEN);
     await flush();
-    const onMessage = subscribe.mock.calls[0][2];
+    const onMessage = handlerFor(PROPERTY_FILTER);
     onMessage({ keyword: "부산", extra: "x" });
     await flush();
     const config = getProperties.getLastConfig();
@@ -231,7 +255,7 @@ describe("c-property-list (WI-1.003 + WI-1.004)", () => {
     const el = mount();
     getProperties.emit(TEN);
     await flush();
-    const onMessage = subscribe.mock.calls[0][2];
+    const onMessage = handlerFor(PROPERTY_FILTER);
     onMessage({ keyword: "강릉" });
     await flush();
     getProperties.emit([]);
@@ -266,16 +290,123 @@ describe("c-property-list (WI-1.003 + WI-1.004)", () => {
     expect(tiles(el).length).toBe(0);
   });
 
-  it("selectedId 카드 하이라이트", async () => {
-    const el = mount({ selectedId: TEN[2].Id });
+  it("WI-1.005 PropertySelected__c 수신 → 선택 카드 하이라이트", async () => {
+    const el = mount();
     getProperties.emit(TEN);
+    await flush();
+    expect([...tiles(el)].filter((t) => t.selected).length).toBe(0);
+    handlerFor(PROPERTY_SELECTED)({ recordId: TEN[2].Id });
     await flush();
     const selected = [...tiles(el)].filter((t) => t.selected);
     expect(selected.length).toBe(1);
     expect(selected[0].property.Id).toBe(TEN[2].Id);
   });
 
-  it("[목업 호환 — WI-1.005 제거 예정] 타일 propertyselect → 선택 레코드 포함 재발행", async () => {
+  it("AC-042 기반 PropertyUpdated__c 수신 → refreshApex(wire 결과) 호출, 건수 유지", async () => {
+    const el = mount();
+    getProperties.emit(TEN);
+    await flush();
+    const config = getProperties.getLastConfig();
+    handlerFor(PROPERTY_UPDATED)({ recordId: TEN[1].Id });
+    await flush();
+    expect(refreshApex).toHaveBeenCalledTimes(1);
+    expect(getProperties.getLastConfig()).toBe(config); // 조건 변경 없음
+    expect(q(el, "result-count").textContent).toBe("10건");
+  });
+
+  it("AC-043 기반 필터(대전) 적용 중 PropertyUpdated__c 수신 → filter 유지한 채 refreshApex 만", async () => {
+    const el = mount();
+    getProperties.emit(TEN);
+    await flush();
+    handlerFor(PROPERTY_FILTER)({ keyword: "대전" });
+    await flush();
+    getProperties.emit([TEN[8]]);
+    await flush();
+    const config = getProperties.getLastConfig();
+    handlerFor(PROPERTY_UPDATED)({ recordId: TEN[8].Id });
+    await flush();
+    expect(refreshApex).toHaveBeenCalledTimes(1);
+    expect(getProperties.getLastConfig()).toBe(config);
+    expect(getProperties.getLastConfig().filter.keyword).toBe("대전");
+    getProperties.emit([{ ...TEN[8], Status__c: "Sold" }]);
+    await flush();
+    expect(q(el, "result-count").textContent).toBe("1건");
+    expect(tiles(el)[0].property.Status__c).toBe("Sold");
+  });
+
+  it("refresh() 진행 중 재호출은 같은 요청을 공유한다 (중복 조회 방지)", async () => {
+    const el = mount();
+    getProperties.emit(TEN);
+    await flush();
+    let resolve;
+    refreshApex.mockImplementationOnce(() => new Promise((r) => (resolve = r)));
+    const first = el.refresh();
+    const second = el.refresh();
+    expect(refreshApex).toHaveBeenCalledTimes(1);
+    resolve();
+    await Promise.all([first, second]);
+    await flush();
+    expect(q(el, "loading-spinner")).toBeNull();
+  });
+
+  it("AC-044 (I-10) 표시 중 레코드를 LDS getRecords 로 추적한다 (optionalFields — FLS 안전)", async () => {
+    mount();
+    getProperties.emit(TEN);
+    await flush();
+    const config = getRecords.getLastConfig();
+    expect(config.records).toHaveLength(1);
+    expect(config.records[0].recordIds).toEqual(TEN.map((p) => p.Id));
+    expect(config.records[0].optionalFields.map((f) => f.fieldApiName)).toEqual(
+      expect.arrayContaining(["Status__c", "Price__c", "Name"])
+    );
+    expect(config.records[0].fields).toBeUndefined();
+  });
+
+  it("AC-044 (I-10) LDS 값이 카드와 같으면 재조회하지 않는다", async () => {
+    mount();
+    getProperties.emit(TEN);
+    await flush();
+    getRecords.emit(ldsOf(TEN));
+    await flush();
+    expect(refreshApex).not.toHaveBeenCalled();
+  });
+
+  it("AC-044 (I-10) 표준 레코드 페이지 저장으로 LDS 값이 바뀌면(탭 재연결 없이) refreshApex — 같은 스냅샷 반복 시 1회만", async () => {
+    const el = mount();
+    getProperties.emit(TEN);
+    await flush();
+    const changed = TEN.map((p, i) => {
+      return i === 2 ? { ...p, Status__c: "Available" } : p;
+    });
+    getRecords.emit(ldsOf(changed));
+    await flush();
+    expect(refreshApex).toHaveBeenCalledTimes(1);
+    getProperties.emit(changed);
+    await flush();
+    expect(tiles(el)[2].property.Status__c).toBe("Available");
+    // 루프 방지: Apex 가 아직 낡은 값을 줘도 같은 LDS 스냅샷으로는 다시 조회하지 않음
+    getProperties.emit(TEN);
+    await flush();
+    getRecords.emit(ldsOf(changed));
+    await flush();
+    expect(refreshApex).toHaveBeenCalledTimes(1);
+  });
+
+  it("AC-044 (I-10) LDS 가 받지 못한 필드(FLS)는 비교하지 않는다", async () => {
+    mount();
+    getProperties.emit(TEN);
+    await flush();
+    getRecords.emit({
+      results: TEN.map((p) => ({
+        statusCode: 200,
+        result: { id: p.Id, fields: { Status__c: { value: p.Status__c } } }
+      }))
+    });
+    await flush();
+    expect(refreshApex).not.toHaveBeenCalled();
+  });
+
+  it("WI-1.005 M-2: 목업 propertyselect CustomEvent 경로 없음", async () => {
     const el = mount();
     getProperties.emit(TEN);
     await flush();
@@ -284,10 +415,6 @@ describe("c-property-list (WI-1.003 + WI-1.004)", () => {
     tiles(el)[4].dispatchEvent(
       new CustomEvent("propertyselect", { detail: { recordId: TEN[4].Id } })
     );
-    expect(handler).toHaveBeenCalledTimes(1);
-    expect(handler.mock.calls[0][0].detail).toEqual({
-      recordId: TEN[4].Id,
-      property: TEN[4]
-    });
+    expect(handler).not.toHaveBeenCalled();
   });
 });

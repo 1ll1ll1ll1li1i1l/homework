@@ -473,6 +473,8 @@ test("AC-023 KRW 전체 금액", { tag: "@explore" }, async ({ page }) => {
 
 ## 6. 수락 기준 (AC 매핑)
 
+> (ENHANCED 2026-10-29: WI-1.005 전체 UI 회귀(test_engineer, DH-DEV, 역할 세션 agent=Minimum Access / admin·noaccess=Standard Platform User) — 전체 49 passed / 2 failed(flaky) / 5 skipped. 이월 AC-020·021·022·023 통과(agent 세션). AC-068 axe(propertyTile aria-label 수정 후) 통과)
+
 > **[이월→WI-1.005]** = 1차 검증(Jest/CLI)은 이 WI, E2E 최종 검증은 WI-1.005 전체 UI 회귀(PHASE-PLAN-01 §3.4). **[이월→Lab 12]** = SIT/UAT 오그 실행.
 
 - [x] **AC-007** 샘플 10건 적재·분포 — Given: "빈 Scratch Org(DH-DEV)에 REQ-001 메타데이터 배포 완료" / When: "`sf data import tree --plan <plan.json> -o DH-DEV` 실행 후 `SELECT Status__c, COUNT(Id) FROM Property__c GROUP BY Status__c`" / Then: "총 10건, Available 6 / Under Contract 2 / Sold 2, City 고유값 7개(서울·부산·성남·수원·대전·제주·인천), 각 레코드 값이 §1.4 표와 일치" → CLI, **이 WI 에서 완료**

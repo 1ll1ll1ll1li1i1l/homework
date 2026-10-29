@@ -541,6 +541,8 @@ test(
 
 ## 6. 수락 기준 (AC 매핑)
 
+> (ENHANCED 2026-10-29: WI-1.005 전체 UI 회귀(test_engineer, DH-DEV, 역할 세션 agent=Minimum Access / admin·noaccess=Standard Platform User) — 전체 49 passed / 2 failed(flaky) / 5 skipped. 이월 AC-027~031·033·059 통과(AC-030 combobox 열기 재시도 보강). AC-034(Should) 는 1차 통과, 2차 전체 실행에서 50ms 간격 입력 중 공백이 빠져 '송파잠실' → 0건 1회 실패(단독 3/3 통과 — 빠른 입력 시 문자 유실 의심, frontend 확인 요청). AC-057/058 잠정 fixme, AC-064 @perf)
+
 > **[이월→WI-1.005]** = 1차 검증(Apex/Jest)은 이 WI, `매물 탐색` 탭이 필요한 E2E 는 **WI-1.005 전체 UI 회귀**에서 최종 검증(PHASE-PLAN-01 §3.4, I-01). **[이월→Lab 12]** = DH-SIT 측정. 잠정 AC 는 CK 해소 전 완료 조건 제외.
 
 **Apex (이 WI 에서 완료)**

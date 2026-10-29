@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- WI-1.004 (MWI-1.004 승계 — ENHANCED). LMS PropertyFilter__c 발행. App Page 배치(WI-1.005) 대비 노출. 목업 컨테이너 propertyExplorer 의 자식으로도 사용 -->
+<!-- WI-1.004 (MWI-1.004 승계 — ENHANCED). LMS PropertyFilter__c 발행. App Page Property_Explorer region1 (WI-1.005) -->
 <LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>67.0</apiVersion>
     <isExposed>true</isExposed>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomTab xmlns="http://soap.sforce.com/2006/04/metadata">
-    <description>매물 탐색 (Lightning App Page 탭). 목업에서 생성, 본 개발 WI-1.005 가 승계</description>
+    <description>매물 탐색 (Lightning App Page 탭). 목업에서 생성, 본 개발 WI-1.005 가 승계 — App Page Property_Explorer(3영역)</description>
     <flexiPage>Property_Explorer</flexiPage>
     <label>매물 탐색</label>
     <motif>Custom24: Building</motif>

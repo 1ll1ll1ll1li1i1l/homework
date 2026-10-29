@@ -1,5 +1,5 @@
 // 공용 E2E 헬퍼 — 검색·필터 패널(propertyFilter) 입력 (AC 문서 §1.6 testid + 접근성 역할만 사용, §1.2)
-import type { Locator, Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
 export const filterPanel = (page: Page): Locator => page.getByTestId('filter-panel');
 /** lightning-input type=search → role searchbox (라벨 `키워드`) */
@@ -17,8 +17,13 @@ export const BEDROOM_LABELS = ['전체', '1개 이상', '2개 이상', '3개 이
 
 /** `filter-min-bedrooms` 에서 선택지 라벨로 선택 */
 export async function selectBedrooms(page: Page, label: (typeof BEDROOM_LABELS)[number]): Promise<void> {
-  await bedroomsCombobox(page).click();
-  await page.getByTestId('filter-min-bedrooms').getByRole('option', { name: label, exact: true }).click();
+  // (ENHANCED 2026-10-29) 전체 회귀에서 드롭다운 클릭이 무시돼 타임아웃된 사례(AC-030) → 열릴 때까지 재시도
+  const option = page.getByTestId('filter-min-bedrooms').getByRole('option', { name: label, exact: true });
+  await expect(async () => {
+    if (!(await option.isVisible())) await bedroomsCombobox(page).click();
+    await expect(option).toBeVisible({ timeout: 3_000 });
+  }).toPass({ timeout: 30_000 });
+  await option.click();
 }
 
 /**

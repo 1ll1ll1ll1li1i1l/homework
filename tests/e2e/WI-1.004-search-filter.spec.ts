@@ -148,8 +148,12 @@ test.describe('agent — 검색·필터', () => {
   test('AC-030 최소 침실 수 필터', { tag: '@explore' }, async ({ page }) => {
     // 선택지(§1.5): 전체, 1개 이상 ~ 5개 이상 — 초기값 '전체'
     expect(await comboboxText(page)).toBe('전체');
-    await bedroomsCombobox(page).click();
     const options = page.getByTestId('filter-min-bedrooms').getByRole('option');
+    // (ENHANCED 2026-10-29) 회귀 중 첫 클릭이 무시되는 사례 → 열릴 때까지 재시도
+    await expect(async () => {
+      if (!(await options.first().isVisible())) await bedroomsCombobox(page).click();
+      await expect(options.first()).toBeVisible({ timeout: 3_000 });
+    }).toPass({ timeout: 30_000 });
     await expect(options).toHaveText([...BEDROOM_LABELS]);
     await bedroomsCombobox(page).press('Escape');
     // When: '3개 이상' → Then: 7개 '7건'

@@ -323,6 +323,29 @@ private class PropertyControllerTest {
         Assert.areEqual(0, namesFor('%\') OR (Name != \'', null, null, null).size(), '괄호 탈출 시도 → 0건');
     }
 
+    // ---- (ADDED 2026-10-29: WI-1.005, 코드 리뷰 L-1) LIKE 와일드카드는 문자 그대로 일치 ----
+    @IsTest
+    static void l1_keywordPercentIsLiteral_0() {
+        Assert.areEqual(0, namesFor('%', null, null, null).size(), '\'%\' → 0건(와일드카드 아님)');
+    }
+
+    @IsTest
+    static void l1_keywordUnderscoreIsLiteral_0() {
+        Assert.areEqual(0, namesFor('_', null, null, null).size(), '\'_\' → 0건(와일드카드 아님)');
+        Assert.areEqual(0, namesFor('서_', null, null, null).size(), '\'서_\' → 0건(서울/서면 미일치)');
+    }
+
+    @IsTest
+    static void l1_keywordBackslashDoesNotThrow_0() {
+        Assert.areEqual(0, namesFor('\\', null, null, null).size(), '\'\\\' → 예외 없이 0건');
+    }
+
+    @IsTest
+    static void l1_escapeLikeWildcards() {
+        Assert.areEqual('a\\%b\\_c\\\\d', PropertyController.escapeLikeWildcards('a%b_c\\d'), '\\ → \\\\, % → \\%, _ → \\_');
+        Assert.areEqual('서울', PropertyController.escapeLikeWildcards('서울'), '일반 문자는 그대로');
+    }
+
     // ---- AC-055 (재확인): 조건이 있는 동적 조회도 권한 없는 사용자는 차단 ----
     @IsTest
     static void ac055_noAccessUserBlockedWithFilter() {

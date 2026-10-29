@@ -37,4 +37,8 @@ npx playwright show-report
 - 다른 사용자 상태 파일 사용: `$env:E2E_STORAGE_STATE = "tests/e2e/.auth/agent.json"`.
 - `tests/e2e/.auth/`, `playwright-report/`, `test-results/` 는 커밋 금지(.gitignore 처리됨).
 - 공용 헬퍼: `tests/e2e/support/explorer.ts` — `gotoExplorer(page)`("매물 탐색" `/lightning/n/Property_Explorer` 진입·대기), `cardByName()`, `storageStateFor('agent'|'admin')`(역할 파일이 없으면 기본 state.json 으로 대체하고 리포트에 `auth` annotation).
-- 역할 사용자(`agent`/`admin`/`noaccess`) 생성·`.auth/<role>.json` 저장 스크립트는 아직 없음(이월). 만들 때 프로필은 `Minimum Access - Salesforce`(코드 리뷰 H-2), Property__c 권한은 권한 세트로만 부여.
+- ~~역할 사용자 생성·`.auth/<role>.json` 저장 스크립트는 아직 없음(이월).~~ (ENHANCED 2026-10-29, WI-1.005) `node tests/e2e/global-setup.mjs` 가 state.json 에 이어
+  `tests/e2e/setup-users.mjs`(정의: `config/users/<role>-user-def.json`, 멱등, org 가드)로 `agent`/`admin`/`noaccess` 사용자를 만들고 `.auth/agent.json`·`admin.json`·`noaccess.json` 을 저장한다.
+  - 사용자명: `dh-<role>.<orgId15 소문자>@example.invalid`. 프로필: 기본 `Minimum Access - Salesforce`(H-2) — 단, 프로필+권한 세트에 `LightningExperienceUser` 가 없으면(현재 DreamHouse_* 권한 세트에 없음) 로그인 시 Classic 으로 가므로 `Standard Platform User` 로 대체(라이선스 부족 시에도 대체). Property__c 권한은 권한 세트로만.
+  - 세션: Minimum Access/Platform 사용자는 `sf org open -o <username>` 불가(API 미허용)·Login As 불가(org 설정) → 매 실행 1회용 무작위 암호를 관리자 익명 Apex `System.setPassword`(stdin)로 지정해 로그인 화면으로 로그인(암호 변경·전화번호 등록 화면 자동 처리). 암호·URL·토큰은 출력/저장하지 않는다.
+  - 옵션: `E2E_ROLES=agent,admin`(일부만) / `E2E_ROLES=none`(생략) / `E2E_SKIP_USERS=1`(사용자 점검 생략).

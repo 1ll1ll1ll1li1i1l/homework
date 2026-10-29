@@ -507,6 +507,8 @@ test(
 
 ## 6. 수락 기준 (AC 매핑)
 
+> (ENHANCED 2026-10-29: WI-1.005 전체 UI 회귀(test_engineer, DH-DEV, 역할 세션 agent=Minimum Access / admin·noaccess=Standard Platform User) — 전체 49 passed / 2 failed(flaky) / 5 skipped. 이월 AC-024·025·032·046·047 통과. AC-044(Should) 는 1차 회귀 통과, 2차 전체 실행에서 표준 Edit 모달 상태 드롭다운 미열림으로 1회 타임아웃(단독 재실행 통과 — 테스트 환경 flaky, 데이터 복원 확인). AC-063 @perf 는 Lab 12)
+
 > **[이월→WI-1.005]** = 1차 검증(Apex/Jest)은 이 WI, `매물 탐색` 탭이 필요한 E2E 는 **WI-1.005 전체 UI 회귀**에서 최종 검증(PHASE-PLAN-01 §3.4, I-01). 필터 입력 로직의 Jest 1차 확인은 WI-1.004. **[이월→Lab 12]** = DH-SIT 측정. 잠정 AC 는 CK 해소 전 완료 조건 제외.
 
 - [x] **AC-004 (조회부)** — Given: "`DreamHouse_Agent` 권한 세트 할당, SD-01~SD-10 존재" / When: "`System.runAs(agent)` 에서 `PropertyController.getProperties`(조건 없음) 호출" / Then: "조회 결과 10건" → Apex `ac004_agentQueryReturns10` (WI-1.001 권한 벡터에서 이월된 부분), **이 WI 에서 완료** (ENHANCED 2026-10-29: backend_developer — DH-DEV 배포 0Afgw000000b35OCAQ, 0Afgw000000bCGkCAM · RunLocalTests 707gw000002KPOb 18건 전부 Pass · PropertyController 100%, 조직 100%)

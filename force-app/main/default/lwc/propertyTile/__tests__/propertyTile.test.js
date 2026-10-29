@@ -38,7 +38,6 @@ const SD10 = {
   Picture_URL__c: "https://invalid.example.invalid/none.jpg"
 };
 
-const WON = "₩"; // 반각 ₩ (I-06)
 const FULLWIDTH_WON = "￦";
 
 const mount = (property) => {
@@ -168,20 +167,33 @@ describe("c-property-tile", () => {
 
   it("AC-023·I-06 aria-label 가격 = 반각 ₩ 원 단위 전체 금액, 억/만원/$/KRW 없음", () => {
     const label = q(mount(SD01), "property-card").getAttribute("aria-label");
-    expect(label).toBe(`강남 래미안 아파트, ${WON}2,500,000,000`);
+    expect(label.startsWith("강남 래미안 아파트, ₩2,500,000,000")).toBe(true);
     ["억", "만원", "$", "KRW", FULLWIDTH_WON].forEach((s) =>
       expect(label).not.toContain(s)
     );
   });
 
-  it("AC-048 기반 접근성: role=button, tabindex=0, aria-label = 매물명 + 가격", () => {
-    const card = q(mount(SD02), "property-card");
+  it("AC-048·AC-068 aria-label = 보이는 텍스트 전체(매물명, 가격, 주소 · 도시, 침실·욕실, 상태) — 같은 문자열 포함", () => {
+    const el = mount(SD02);
+    const card = q(el, "property-card");
     expect(card.getAttribute("role")).toBe("button");
     expect(card.getAttribute("tabindex")).toBe("0");
-    expect(card.getAttribute("aria-label")).toBe(
-      `해운대 오션뷰, ${WON}850,000,000`
-    );
     expect(card.getAttribute("aria-pressed")).toBe("false");
+    const label = card.getAttribute("aria-label");
+    expect(label).toBe(
+      "해운대 오션뷰, ₩850,000,000, 부산광역시 해운대구 해운대해변로 22 · 부산, 침실 3 · 욕실 2, 판매중"
+    );
+    // AC-068: 보이는 텍스트를 이어 붙여도 단어가 붙지 않도록 각 블록 끝에 공백 텍스트 노드
+    expect(card.textContent.replace(/s+/g, " ")).toContain(
+      "부산광역시 해운대구 해운대해변로 22 · 부산 침실 3 · 욕실 2 판매중"
+    );
+    // 화면의 텍스트 요소가 모두 라벨에 같은 문자열로 들어 있음
+    [
+      "property-card-name",
+      "property-card-address",
+      "property-card-rooms",
+      "property-status-badge"
+    ].forEach((id) => expect(label).toContain(q(el, id).textContent.trim()));
   });
 
   it("selected=true → 선택 테두리 클래스, aria-pressed=true", async () => {
@@ -210,15 +222,13 @@ describe("c-property-tile", () => {
     expect(publish).toHaveBeenCalledTimes(1);
   });
 
-  it("[목업 호환] 클릭 시 propertyselect CustomEvent 도 보낸다", () => {
+  it("WI-1.005 M-2: 선택은 LMS 만 — propertyselect CustomEvent 를 보내지 않는다", () => {
     const el = mount(SD02);
     const handler = jest.fn();
     el.addEventListener("propertyselect", handler);
     q(el, "property-card").click();
-    expect(handler).toHaveBeenCalledTimes(1);
-    expect(handler.mock.calls[0][0].detail).toEqual({
-      recordId: "a00000000000002"
-    });
+    expect(handler).not.toHaveBeenCalled();
+    expect(publish).toHaveBeenCalledTimes(1);
   });
 
   it("Id 가 없으면 발행하지 않는다", () => {

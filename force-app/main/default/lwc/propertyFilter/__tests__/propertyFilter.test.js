@@ -250,6 +250,17 @@ describe("c-property-filter (WI-1.004)", () => {
     expect(publish).not.toHaveBeenCalled();
   });
 
+  it("code-review WI-1.004 L-3: 분리 시 clearInput 복원 타이머도 정리", () => {
+    const el = mount();
+    const max = q(el, "filter-max-price");
+    type(max, "abc");
+    expect(max.value).toBe("0"); // 임시 값 — 다음 틱 복원 예정
+    document.body.removeChild(el);
+    jest.advanceTimersByTime(1000);
+    expect(max.value).toBe("0"); // 분리 후에는 타이머가 실행되지 않음
+    expect(publish).not.toHaveBeenCalled();
+  });
+
   it("분리 시 대기 중 발행 취소", () => {
     const el = mount();
     type(q(el, "filter-keyword"), "서울");

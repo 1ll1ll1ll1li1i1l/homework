@@ -1,6 +1,7 @@
 /**
  * WI-1.003 — 매물 조회 컨트롤러 (기본 조회).
  * (ENHANCED 2026-10-29: WI-1.004) 조건 확장 — 키워드 Name/City__c 부분 일치, 가격 경계 포함, 침실 이상.
+ * (ENHANCED 2026-10-29: WI-1.005) 코드 리뷰 L-1 — 키워드 LIKE 와일드카드(\, %, _) 이스케이프 → 문자 그대로 일치.
  * REQ-005, REQ-007, REQ-008, REQ-011, REQ-012 · AC-004(조회부), 013~019, 055, 056, 057(잠정), 062(잠정), 065, 066, 070
  * 보안(AC-065): with sharing + AccessLevel.USER_MODE(CRUD/FLS 강제). WHERE 절은 상수 조각만 조합하고
  * 사용자 입력 값은 모두 바인드 변수(Database.queryWithBinds)로만 전달 — 문자열 연결 SOQL 없음. 루프 내 SOQL/DML 없음.
@@ -58,7 +59,7 @@ public with sharing class PropertyController {
         String keyword = String.isBlank(f.keyword) ? null : f.keyword.trim(); // CK-04 (잠정)
         if (keyword != null) {
             conditions.add(COND_KEYWORD);
-            binds.put('keywordLike', '%' + keyword + '%'); // 값은 바인드로만 전달 (AC-056)
+            binds.put('keywordLike', '%' + escapeLikeWildcards(keyword) + '%'); // 값은 바인드로만 전달 (AC-056)
         }
         if (f.minPrice != null) {
             conditions.add(COND_MIN_PRICE);
@@ -74,5 +75,16 @@ public with sharing class PropertyController {
         }
 
         return conditions.isEmpty() ? '' : ' WHERE ' + String.join(conditions, ' AND ');
+    }
+
+    /**
+     * LIKE 패턴용 이스케이프 (WI-1.004 코드 리뷰 L-1) — 사용자 입력의 '\', '%', '_' 를 문자 그대로 일치시킨다.
+     * 백슬래시를 먼저 처리해야 뒤에서 붙인 이스케이프 문자가 다시 이스케이프되지 않는다.
+     * @param value trim 된 키워드 (null 아님)
+     * @return 이스케이프된 문자열
+     */
+    @TestVisible
+    private static String escapeLikeWildcards(String value) {
+        return value.replace('\\', '\\\\').replace('%', '\\%').replace('_', '\\_');
     }
 }
