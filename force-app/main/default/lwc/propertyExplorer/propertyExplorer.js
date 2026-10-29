@@ -1,5 +1,5 @@
-import { LightningElement } from "lwc";
-import { ShowToastEvent } from "lightning/platformShowToastEvent";
+import { LightningElement } from 'lwc';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 /**
  * [MOCKUP] 매물 탐색 컨테이너 — MWI-1.005 (App Page "매물 탐색" = Property_Explorer).
@@ -11,50 +11,49 @@ import { ShowToastEvent } from "lightning/platformShowToastEvent";
  * 본 개발(WI-1.005)은 안 A(LMS, App Page 3열 배치)가 기본안 — 안 B 로 확정 시 이 컨테이너를 승계, 안 A 면 삭제.
  */
 export default class PropertyExplorer extends LightningElement {
-  filter = {};
-  selectedProperty = null;
-  role = "agent";
+    filter = {};
+    selectedProperty = null;
+    role = 'agent';
 
-  get selectedId() {
-    return this.selectedProperty?.Id;
-  }
-
-  get agentVariant() {
-    return this.role === "agent" ? "brand" : "neutral";
-  }
-
-  get adminVariant() {
-    return this.role === "admin" ? "brand" : "neutral";
-  }
-
-  get isAdmin() {
-    return this.role === "admin";
-  }
-
-  handleRoleChange(event) {
-    this.role = event.currentTarget.dataset.value;
-  }
-
-  handleFilterChange(event) {
-    this.filter = { ...event.detail };
-  }
-
-  handleSelect(event) {
-    this.selectedProperty = event.detail?.property ?? null;
-  }
-
-  handleSave(event) {
-    const changes = event.detail;
-    if (this.selectedProperty?.Id === changes.Id) {
-      this.selectedProperty = { ...this.selectedProperty, ...changes };
+    get selectedId() {
+        return this.selectedProperty?.Id;
     }
-    this.dispatchEvent(
-      new ShowToastEvent({
-        title: "저장되지 않았습니다 (목업).",
-        message:
-          "실제 저장은 WI-1.005 에서 구현됩니다. 상세 패널에만 임시 반영되었습니다.",
-        variant: "warning"
-      })
-    );
-  }
+
+    get agentVariant() {
+        return this.role === 'agent' ? 'brand' : 'neutral';
+    }
+
+    get adminVariant() {
+        return this.role === 'admin' ? 'brand' : 'neutral';
+    }
+
+    get isAdmin() {
+        return this.role === 'admin';
+    }
+
+    handleRoleChange(event) {
+        this.role = event.currentTarget.dataset.value;
+    }
+
+    handleFilterChange(event) {
+        this.filter = { ...event.detail };
+    }
+
+    handleSelect(event) {
+        this.selectedProperty = event.detail?.property ?? null;
+    }
+
+    handleSave(event) {
+        const changes = event.detail;
+        if (this.selectedProperty?.Id === changes.Id) {
+            this.selectedProperty = { ...this.selectedProperty, ...changes };
+        }
+        this.dispatchEvent(
+            new ShowToastEvent({
+                title: '저장되지 않았습니다 (목업).',
+                message: '실제 저장은 WI-1.005 에서 구현됩니다. 상세 패널에만 임시 반영되었습니다.',
+                variant: 'warning'
+            })
+        );
+    }
 }
