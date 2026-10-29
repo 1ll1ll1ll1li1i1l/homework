@@ -29,6 +29,9 @@ npx playwright show-report
 
 - spec 규칙: `tests/e2e/WI-p.nnn-<기능>.spec.ts`, 각 test 에 `// AC-nnn / REQ-nnn / WI-p.nnn` 주석.
 - 매물 탐색 탭이 필요한 테스트는 `{ tag: '@explore' }` (PHASE-PLAN-01 §3.3). `$env:E2E_SKIP_EXPLORE = "1"` 로도 제외 가능.
+- 필터 입력 → 서버 조회 조건 연결(WI-1.004)이 필요한 테스트는 `@filter` 를 추가로 단다. WI-1.004 이전: `npx playwright test tests/e2e/WI-1.003 --grep-invert "@filter|@perf"`. 성능 AC(`@perf`)는 `SF_TARGET_ORG=DH-SIT`(또는 `E2E_PERF=1`)일 때만 실행.
+- Aura 네트워크 모의 헬퍼: `tests/e2e/support/aura.ts` — `delayGetProperties`(AC-046), `failGetProperties`(AC-047), `emptyGetProperties`(빈 결과). boxcar 요청 안에서 `PropertyController.getProperties` action 만 바꾼다.
+- 데이터를 바꾸는 테스트(AC-044)는 `afterEach` 에서 `sf data update record` 로 복원한다(대상 org = `SF_TARGET_ORG`).
 - 다른 사용자 상태 파일 사용: `$env:E2E_STORAGE_STATE = "tests/e2e/.auth/agent.json"`.
 - `tests/e2e/.auth/`, `playwright-report/`, `test-results/` 는 커밋 금지(.gitignore 처리됨).
 - 공용 헬퍼: `tests/e2e/support/explorer.ts` — `gotoExplorer(page)`("매물 탐색" `/lightning/n/Property_Explorer` 진입·대기), `cardByName()`, `storageStateFor('agent'|'admin')`(역할 파일이 없으면 기본 state.json 으로 대체하고 리포트에 `auth` annotation).
