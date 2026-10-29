@@ -175,7 +175,7 @@ Cheatsheet_for_ProjectManager ──▶ "어떻게" — Lab 5~13 에서 Claude �
 
 - [x] 🤖 `docs/DELIVERABLES.md` + 추적성 매트릭스 — documentation_writer (ENHANCED 2026-10-29: [DELIVERABLES.md](DELIVERABLES.md) — 산출물 인덱스·AC 단위 매트릭스·테스트 결과·Release Notes·알려진 이슈·회고, 끊긴 사슬 B-01~B-07 별도 표시)
 - [ ] 🤖 태그 `v1.0-sprint1` · 회고 · (학습 종료 시) Scratch Org 삭제 (ENHANCED 2026-10-29: 아래 3줄로 분리)
-  - [ ] 태그 `v1.0-sprint1` — `git tag v1.0-sprint1 ; git push origin v1.0-sprint1` (미생성)
+  - [x] 태그 `v1.0-sprint1` — 생성·push 완료 (ENHANCED 2026-10-29: eaf398c)
   - [x] 회고 — DELIVERABLES §6 (잘된 점 / 막힌 점 L-01~L-10 / 개선)
   - [ ] Scratch Org 삭제 (DH-DEV/SIT/UAT) — **의도적으로 보류**: 제출·검토가 끝난 뒤 삭제 (만료 2026-11-27)
 - [ ] (선택) STEP 13 피드백 사이클 — 잠정 CK-03/04/05/06, 코드 리뷰 Low 잔여, 문서 Status 갱신 (DELIVERABLES §5) (ADDED 2026-10-29)

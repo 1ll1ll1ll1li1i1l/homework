@@ -48,7 +48,7 @@ synced_at: null # Sync 타임스탬프
 | Phase                           | Phase 1 — MVP (2026-10-29 ~ 2026-10-30, 1 스프린트)                                                                                                                                                                                                                                               |
 | 모듈                            | LWC(`propertyDetail`, `propertyList` ENHANCE) · LMS(`PropertyUpdated__c`) · 앱/App Page/탭 · 보안(권한 세트 ENHANCE)                                                                                                                                                                              |
 | 우선순위                        | **Must** (분류 GAP, REQ-010 은 FIT) — AC-068 만 Should                                                                                                                                                                                                                                            |
-| 상태                            | [ ] 미착수 (Not Started)                                                                                                                                                                                                                                                                          |
+| 상태                            | [X] 완료 (PROD 2026-10-29) (ENHANCED 2026-10-29: ~~미착수~~ → DevOps Center WI-000005 CLOSED, WI-1.005 전체 UI 회귀 — DEV 49 passed/2 flaky/5 skipped, SIT 52/1(AC-044 테스트 코드 timeout 수정 후 통과)/3, UAT 51/0/5)                                                                           |
 | 선행 (Depends-on)               | **WI-1.003, WI-1.004**                                                                                                                                                                                                                                                                            |
 | 후행                            | WI-1.006, WI-1.007 (Could · 선택)                                                                                                                                                                                                                                                                 |
 | 예상 소요                       | **0.35 M/D (2.75h)** = REQ-009 1.5h + REQ-010 0.5h + REQ-011 0.5h + REQ-012 0.25h                                                                                                                                                                                                                 |
@@ -56,6 +56,8 @@ synced_at: null # Sync 타임스탬프
 | 담당 에이전트                   | frontend_developer(LWC·App Page) · backend_developer(앱·탭·권한 세트) · test_engineer(전체 UI 회귀) · code_reviewer                                                                                                                                                                               |
 | 대상 오그                       | DH-DEV                                                                                                                                                                                                                                                                                            |
 | 커밋명                          | `WI-1.005-property-detail-app-page` (PROJECT-PLAN §5.2·PHASE-PLAN-01 §8 과 동일)                                                                                                                                                                                                                  |
+
+> (ENHANCED 2026-10-29: 문서 상태 정리(DELIVERABLES §2.4 B-03, project_manager) — 상태 `[X]` 완료(PROD 2026-10-29), 실행 결과 기준으로 선행 조건·AC·통합 체크리스트 갱신. 미완 유지: 잠정 AC-057/058/061 회귀(CK 미해소, `test.fixme`), AC-067 `git ls-files` 수동 기록, CI(미도입). WI ID·선행·공수 변경 없음)
 
 ## 1. 상세 개요
 
@@ -107,14 +109,14 @@ synced_at: null # Sync 타임스탬프
 
 ## 2. 선행 조건
 
-- [ ] **선행 WI-1.003, WI-1.004 `[X]` 확인** (PROJECT-PLAN §5 / PHASE-PLAN-01 §1.2) — CLAUDE.md 진행 규칙 1. 간접 선행 WI-1.001·1.002 도 `[X]`
-- [ ] 이 작업에 `.claude/agents/` 전문 에이전트(frontend_developer / backend_developer / test_engineer / code_reviewer) 사용 — 진행 규칙 0
-- [ ] `git checkout main ; git pull` 후 DevOps Center 가 만든 WI-1.005 Feature Branch fetch/checkout
-- [ ] DH-DEV 에 선행 산출물 배포 확인: `propertyTile`(WI-1.002, `PropertySelected__c` 발행), `propertyList`(WI-1.003, `@api refresh()`), `propertyFilter`(WI-1.004, `PropertyFilter__c`), `PropertyController`, `Property__c` 탭·권한 세트(WI-1.001), 샘플 SD-01~SD-10
+- [x] **선행 WI-1.003, WI-1.004 `[X]` 확인** (PROJECT-PLAN §5 / PHASE-PLAN-01 §1.2) — CLAUDE.md 진행 규칙 1. 간접 선행 WI-1.001·1.002 도 `[X]` (ENHANCED 2026-10-29: 문서 상태 정리 — 선행 WI 는 실제 구현·검증·병합 후 착수했고 문서 Status 갱신만 지연(B-03))
+- [x] 이 작업에 `.claude/agents/` 전문 에이전트(frontend_developer / backend_developer / test_engineer / code_reviewer) 사용 — 진행 규칙 0 (ENHANCED 2026-10-29: 전문 에이전트 사용 — backend_developer / frontend_developer / test_engineer / code_reviewer, code_reviewer 리뷰 후 PR 병합)
+- [x] `git checkout main ; git pull` 후 DevOps Center 가 만든 WI-1.005 Feature Branch fetch/checkout (ENHANCED 2026-10-29: Feature Branch `WI-000005`)
+- [x] DH-DEV 에 선행 산출물 배포 확인: `propertyTile`(WI-1.002, `PropertySelected__c` 발행), `propertyList`(WI-1.003, `@api refresh()`), `propertyFilter`(WI-1.004, `PropertyFilter__c`), `PropertyController`, `Property__c` 탭·권한 세트(WI-1.001), 샘플 SD-01~SD-10 (ENHANCED 2026-10-29: WI-1.001~1.004 배포·샘플 10건 확인)
 - [x] Playwright 사용자 3명(agent/admin/noaccess) 인증 상태 `tests/e2e/.auth/*.json` 준비(커밋 금지) (ENHANCED 2026-10-29: `node tests/e2e/global-setup.mjs` → `setup-users.mjs`(config/users/*.json) 생성·세션 저장. Minimum Access 프로필+권한 세트에 LightningExperienceUser 가 없어 3명 모두 `Standard Platform User`)
-- [ ] 이전 WI spec 4개(`WI-1.001-property-crud`, `WI-1.002-property-tile`, `WI-1.003-property-list`, `WI-1.004-search-filter`)의 `@explore` 테스트 존재 확인
-- [ ] AC-068 용 `@axe-core/playwright` devDependency 확인(없으면 test_engineer 가 추가)
-- [ ] 미결 고객 결정 확인: CK-09(문구) · CK-11(State__c / `detail-state`) · CK-03/04/05(잠정 AC-058/057/061) — 미확정이면 잠정 AC 는 완료 조건 제외
+- [x] 이전 WI spec 4개(`WI-1.001-property-crud`, `WI-1.002-property-tile`, `WI-1.003-property-list`, `WI-1.004-search-filter`)의 `@explore` 테스트 존재 확인 (ENHANCED 2026-10-29: 4개 spec `@explore` 존재, WI-1.001 spec 은 신규 작성)
+- [x] AC-068 용 `@axe-core/playwright` devDependency 확인(없으면 test_engineer 가 추가) (ENHANCED 2026-10-29: devDependency 추가(test_engineer), AC-068 통과)
+- [x] 미결 고객 결정 확인: CK-09(문구) · CK-11(State__c / `detail-state`) · CK-03/04/05(잠정 AC-058/057/061) — 미확정이면 잠정 AC 는 완료 조건 제외 (ENHANCED 2026-10-29: 확인 — CK-03/04/05 미해소로 AC-057/058/061 잠정 제외)
 
 ## 3. 세부 작업 (Numbered sub-tasks)
 
@@ -534,7 +536,7 @@ test("AC-068 axe (Should)", async ({ page }) => {
 - [x] **AC-048** 접근성 라벨·키보드 — Given: "`agent`" / When: "`getByLabel('키워드'|'최소 가격'|'최대 가격'|'최소 침실 수')`, Tab 으로 SD-01 카드 포커스 후 Enter" / Then: "4개 라벨 각 1개 요소, 카드 `aria-label` 에 매물명+가격(`강남 래미안 아파트, ₩2,500,000,000`), Enter 시 `detail-name` = `강남 래미안 아파트`" → Playwright (ENHANCED 2026-10-29: Playwright 전체 회귀 통과 — DH-DEV, 역할 세션 agent/admin/noaccess)
 - [x] **AC-054** 상담원 편집 UI 없음 — Given: "`agent`, 매물 탐색 탭" / When: "SD-02 클릭 후 상세·카드 확인" / Then: "`detail-edit-button`·`detail-edit-form`·`detail-status-input` 0개, 배지는 표시 전용(상태 변경 메뉴 없음)" → Playwright(agent) + Jest (ENHANCED 2026-10-29: Playwright 전체 회귀 통과 — DH-DEV, 역할 세션 agent/admin/noaccess)
 - [x] **AC-055 (UI)** 권한 세트 미할당 사용자 차단 — Given: "`noaccess`(Standard User, 권한 세트 없음)" / When: "앱 런처에서 `DreamHouse Lite` 검색" / Then: "검색 결과 0건" → Playwright(noaccess). Apex 부분은 WI-1.003 완료분 (ENHANCED 2026-10-29: Playwright 전체 회귀 통과 — DH-DEV, 역할 세션 agent/admin/noaccess)
-- [ ] **AC-067** 비밀정보 미커밋 — Given: "커밋 직전 저장소" / When: "`git ls-files | grep -E "\.auth/|sfdx-url|accessToken"`, `.gitignore` 확인" / Then: "0줄, `.gitignore` 에 `tests/e2e/.auth/`" → 수동 QA
+- [ ] **AC-067** 비밀정보 미커밋 — Given: "커밋 직전 저장소" / When: "`git ls-files | grep -E "\.auth/|sfdx-url|accessToken"`, `.gitignore` 확인" / Then: "0줄, `.gitignore` 에 `tests/e2e/.auth/`" → 수동 QA (ENHANCED 2026-10-29: 미완 유지 — `.gitignore` 의 `tests/e2e/.auth/` 포함은 확인, `git ls-files` 0줄 수동 확인 결과 기록 없음(DELIVERABLES B-03/B-07) — 다음 커밋 직전 1회 기록 후 체크)
 - [x] **AC-068 (Should)** 자동 접근성 검사 — Given: "`agent`, SD-01 상세가 열린 매물 탐색 탭" / When: "axe 를 `filter-panel`·`property-list`·`property-detail` 로 한정 실행" / Then: "`serious`·`critical` 0건, `alt` 누락 0건, 배지는 텍스트로도 상태 전달" → Playwright + `@axe-core/playwright`. 일정 지연 시 이 AC 만 이월 가능(PROJECT-PLAN §3.4 ⑤) (ENHANCED 2026-10-29: Playwright 실패 — axe serious `label-content-name-mismatch` x10: property-card 의 aria-label 이 화면 표시 텍스트를 포함하지 않음(AC-048 aria-label 규정과 충돌 가능). frontend/requirements 판단 대기) (ENHANCED 2026-10-29: frontend propertyTile 수정 배포 후 재실행 통과 — serious/critical 0건)
 
 ## 6. 전체 UI 회귀 — 이월 AC (PHASE-PLAN-01 §3.4)
@@ -593,24 +595,24 @@ test("AC-068 axe (Should)", async ({ page }) => {
 
 ## 8. 통합 체크리스트
 
-- [ ] 전문 에이전트 사용 확인 (frontend_developer / backend_developer / test_engineer / code_reviewer)
-- [ ] 선행 WI-1.003, WI-1.004 `[X]` 확인, Feature Branch checkout
+- [x] 전문 에이전트 사용 확인 (frontend_developer / backend_developer / test_engineer / code_reviewer) (ENHANCED 2026-10-29: 전문 에이전트 사용 — backend_developer / frontend_developer / test_engineer / code_reviewer, code_reviewer 리뷰 후 PR 병합)
+- [x] 선행 WI-1.003, WI-1.004 `[X]` 확인, Feature Branch checkout (ENHANCED 2026-10-29: 문서 상태 정리 — 선행 WI 는 실제 구현·검증·병합 후 착수했고 문서 Status 갱신만 지연(B-03). Feature Branch `WI-000005`)
 - [x] `propertyDetail`: `PropertySelected__c` 구독, `detail-empty`, 전체 속성·큰 사진·대체 이미지, testid 규약 (ENHANCED 2026-10-29: frontend_developer — `getRecord`(optionalFields) + 로딩/조회 오류 표시, `detail-state` 는 `SHOW_STATE=false`(OQ-01) 뒤에만. DH-DEV 1440px 실측: SD-07 전체 값 일치, 상세 이미지 427px > 카드 117px)
 - [x] 관리자 전용 `detail-edit-button`(상담원 미노출), 편집 폼·상태 입력·저장 (ENHANCED 2026-10-29: frontend_developer — `lightning-record-edit-form`(Name·Price__c·Status__c, 취소 버튼, 저장 중 비활성, 오류 토스트). DH-DEV 스모크(시스템 관리자): SD-02 → 계약중 저장, 토스트 0.9s, 카드 `data-status=Under Contract`, `10건`, `__noReload` 유지, URL 불변 — 데이터 복원 완료)
 - [x] LMS 채널 `PropertyUpdated__c` 생성, `propertyDetail` 발행(+`notifyRecordUpdateAvailable`) / `propertyList` 구독 → `refresh()` (ENHANCED 2026-10-29: frontend_developer — `propertyList` 는 `PropertySelected__c` 도 구독해 선택 하이라이트(목업 CustomEvent `propertyselect` 경로·[목업 호환] Jest 제거 — code-review M-2). AC-044(I-10): LDS `getRecords`(표시 중 레코드, optionalFields)로 레코드 캐시 변경 감지 → 카드 값과 다르면 `refresh()`(같은 스냅샷 1회, 진행 중 refresh 공유). WI-1.003 AC-044 Playwright 통과)
 - [x] 앱 `DreamHouse Lite` + App Page `매물 탐색`(3영역) + `Property_Explorer` 탭, `매물` 탭은 내비게이션에 추가만 (ENHANCED 2026-10-29: frontend_developer — 템플릿 `flexipage:appHomeTemplateThreeColumns` region1/2/3. 목업 컨테이너 `propertyExplorer`(역할 토글 포함) 삭제 — post-destructive, 목업 전용 `propertyUtils.filterProperties` 제거)
 - [x] 375px 반응형 확인 → 안 A 유지 / 안 B 전환 결정 기록 (ENHANCED 2026-10-29: frontend_developer — **안 A 유지**. DH-DEV 실측 375×812: filter(y260) → list(y660, 행당 카드 1) → detail(y3993) 세로 적층, 우리 컴포넌트의 가로 넘침 0. 단 `scrollWidth` 442~646 은 관리자 세션 상단의 DevOps Center 작업 항목 칩(`devops_center-create-review`) 때문 — test_engineer 확인 필요(agent 세션은 미표시 예상). 1440: x 16 < 489 < 963, 첫 행 카드 3. 균등 3열이라 카드 가격 글꼴 0.875rem + 줄바꿈 허용(잘림 방지))
 - [x] 권한 세트 `applicationVisibilities` + `tabSettings(Property_Explorer)` ENHANCE, `noaccess` 앱 미노출 (ENHANCED 2026-10-29: backend_developer — Agent/Admin 배포 0Afgw000000cBgnCAE, 목업 권한 세트 `DreamHouse_Mockup` 삭제 0Afgw000000cBnFCAU. `noaccess` UI 확인은 AC-055 Playwright) (ENHANCED 2026-10-29: 회귀 D-1 — 두 권한 세트에 userPermissions `LightningExperienceUser` 추가(Minimum Access 사용자 Classic 진입 방지), 배포 0Afgw000000c5rWCAQ)
-- [ ] `sf project deploy start --dry-run -o DH-DEV` 성공 → `sf project deploy start -o DH-DEV`
+- [x] `sf project deploy start --dry-run -o DH-DEV` 성공 → `sf project deploy start -o DH-DEV` (ENHANCED 2026-10-29: DH-DEV dry-run → deploy 후 DevOps Center Promote DEV → SIT → UAT → PROD(DH-HUB) 2026-10-29 완료)
 - [x] Jest `npm run test:unit` 통과 (ENHANCED 2026-10-29: frontend_developer — 4 suites / 76 tests 통과, ESLint 0)
 - [x] Apex `RunLocalTests` 실패 0, 커버리지 ≥ 75% (ENHANCED 2026-10-29: 47/47 Pass, Org Wide 100% — WI-1.004 리뷰 L-1 LIKE 와일드카드 이스케이프 포함)
-- [ ] 정적 분석: `sf code-analyzer run --workspace . --view table` — High 이상 0건
-- [ ] Playwright `WI-1.005-property-detail.spec.ts`, `WI-1.005-layout-a11y.spec.ts` 통과
-- [ ] **전체 UI 회귀 `npx playwright test` 전체 통과** (§6), PHASE-PLAN-01 §3.4 이월 완료 칸 `[X]` (실패 시 완료 불가)
-- [ ] AC-067 비밀정보 0줄 확인
-- [ ] CI(선택·미도입) — GitHub Actions 미구성, 해당 없음
-- [ ] PROJECT-PLAN §5 / PHASE-PLAN-01 §1.2·§8.7 / 이 문서의 체크리스트·Status `[X]`
-- [ ] 커밋 `WI-1.005-property-detail-app-page` (본문에 회귀 결과·반응형 결정 요약)
+- [x] 정적 분석: `sf code-analyzer run --workspace . --view table` — High 이상 0건 (ENHANCED 2026-10-29: Code Analyzer High·Critical 0건(Critical 1건은 flow 엔진 Python 미설치 환경 오류, 코드 결함 아님) — DELIVERABLES AC-065)
+- [x] Playwright `WI-1.005-property-detail.spec.ts`, `WI-1.005-layout-a11y.spec.ts` 통과 (ENHANCED 2026-10-29: DEV/SIT/UAT 통과(AC-068 Should 포함))
+- [x] **전체 UI 회귀 `npx playwright test` 전체 통과** (§6), PHASE-PLAN-01 §3.4 이월 완료 칸 `[X]` (실패 시 완료 불가) (ENHANCED 2026-10-29: WI-1.005 전체 UI 회귀 — DEV 49 passed/2 flaky/5 skipped, SIT 52/1(AC-044 테스트 코드 timeout 수정 후 통과)/3, UAT 51/0/5. PHASE-PLAN-01 §3.4 `[X]`)
+- [ ] AC-067 비밀정보 0줄 확인 (ENHANCED 2026-10-29: 미완 유지 — `.gitignore` 의 `tests/e2e/.auth/` 포함은 확인, `git ls-files` 0줄 수동 확인 결과 기록 없음(DELIVERABLES B-03/B-07) — 다음 커밋 직전 1회 기록 후 체크)
+- [ ] CI(선택·미도입) — GitHub Actions 미구성, 해당 없음 (ENHANCED 2026-10-29: 미완 유지 — CI(GitHub Actions) 미도입 — 해당 없음(N/A), 안정화 후 선택 도입)
+- [x] PROJECT-PLAN §5 / PHASE-PLAN-01 §1.2·§8.7 / 이 문서의 체크리스트·Status `[X]` (ENHANCED 2026-10-29: 문서 상태 정리(DELIVERABLES §2.4 B-03) — PROJECT-PLAN v1.4 · PHASE-PLAN-01 v1.3 · 이 문서 갱신)
+- [x] 커밋 `WI-1.005-property-detail-app-page` (본문에 회귀 결과·반응형 결정 요약) (ENHANCED 2026-10-29: `WI-1.005-property-detail-app-page` 이름으로 커밋, Feature Branch `WI-000005` PR 병합 → PROD 2026-10-29 CLOSED)
 
 ## 9. 이슈 / 확인 필요
 

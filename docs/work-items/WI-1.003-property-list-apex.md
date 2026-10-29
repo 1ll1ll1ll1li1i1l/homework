@@ -47,13 +47,15 @@ synced_at: null # Sync 타임스탬프
 | Phase                           | Phase 1 — MVP                                                                                                                                                                                                                                                                                                           |
 | 모듈                            | Apex `PropertyFilter`·`PropertyController`·`PropertyControllerTest` · LWC `propertyList` · 권한 세트 Apex 클래스 접근 ENHANCE                                                                                                                                                                                           |
 | 우선순위                        | **Must** (분류 GAP, REQ-011 은 OQ-11 에 따라 NUD 가능)                                                                                                                                                                                                                                                                  |
-| 상태                            | [ ] 미착수 (Not Started)                                                                                                                                                                                                                                                                                                |
+| 상태                            | [X] 완료 (PROD 2026-10-29) (ENHANCED 2026-10-29: ~~미착수~~ → DevOps Center WI-000002 CLOSED, Apex·Jest·회귀·AC-063 통과)                                                                                                                                                                                               |
 | 선행 (Depends-on)               | **WI-1.002**                                                                                                                                                                                                                                                                                                            |
 | 후행                            | WI-1.004, WI-1.005                                                                                                                                                                                                                                                                                                      |
 | 예상 소요                       | **0.5 M/D (3.75h)** = REQ-005 1.5h + REQ-007 1.5h + REQ-011 0.5h + REQ-012 0.25h                                                                                                                                                                                                                                        |
 | 일정                            | 2026-10-29(목) 15:45–19:30 (Lab 9) — 마일스톤 **M3**                                                                                                                                                                                                                                                                    |
 | 담당 에이전트                   | backend_developer(Apex) · frontend_developer(LWC) · test_engineer · code_reviewer                                                                                                                                                                                                                                       |
 | 커밋명                          | `WI-1.003-property-list-apex`                                                                                                                                                                                                                                                                                           |
+
+> (ENHANCED 2026-10-29: 문서 상태 정리(DELIVERABLES §2.4 B-03, project_manager) — 상태 `[X]` 완료(PROD 2026-10-29), 실행 결과 기준으로 선행 조건·AC·통합 체크리스트 갱신. 미완 유지: AC-062(잠정 CK-06, Apex 는 LIMIT 200 임시값으로 통과), AC-067 `git ls-files` 수동 기록, CI(미도입). WI ID·선행·공수 변경 없음)
 
 ## 1. 상세 개요
 
@@ -83,12 +85,12 @@ synced_at: null # Sync 타임스탬프
 
 ## 3. 선행 조건
 
-- [ ] **선행 WI-1.002 Status `[X]` 확인** — 미완이면 시작 금지 (WI-1.001 도 `[X]`)
-- [ ] DH-DEV 에 `Property__c`·권한 세트·`propertyTile`·`PropertySelected__c`·샘플 10건 배포/적재 완료
+- [x] **선행 WI-1.002 Status `[X]` 확인** — 미완이면 시작 금지 (WI-1.001 도 `[X]`) (ENHANCED 2026-10-29: 문서 상태 정리 — 선행 WI 는 실제 구현·검증·병합 후 착수했고 문서 Status 갱신만 지연(B-03))
+- [x] DH-DEV 에 `Property__c`·권한 세트·`propertyTile`·`PropertySelected__c`·샘플 10건 배포/적재 완료 (ENHANCED 2026-10-29: WI-1.001·1.002 배포·샘플 10건 적재 완료)
 - [x] `PropertyTestDataFactory`(WI-1.001) 존재 — 이 WI 에서 `createUserWithoutPermSet` ENHANCE
-- [ ] 전문 에이전트 사용(backend_developer / frontend_developer / test_engineer / code_reviewer)
-- [ ] `git checkout main ; git pull` → WI-1.003 Feature Branch checkout
-- [ ] 미결: CK-06/OQ-09(정렬·LIMIT), I-10(탭 재진입 시 cacheable 캐시), I-04/§보안(noaccess 사용자 프로필 권한)
+- [x] 전문 에이전트 사용(backend_developer / frontend_developer / test_engineer / code_reviewer) (ENHANCED 2026-10-29: 전문 에이전트 사용 — backend_developer / frontend_developer / test_engineer / code_reviewer, code_reviewer 리뷰 후 PR 병합)
+- [x] `git checkout main ; git pull` → WI-1.003 Feature Branch checkout (ENHANCED 2026-10-29: Feature Branch `WI-000002`)
+- [x] 미결: CK-06/OQ-09(정렬·LIMIT), I-10(탭 재진입 시 cacheable 캐시), I-04/§보안(noaccess 사용자 프로필 권한) (ENHANCED 2026-10-29: 확인 — CK-06 미확정은 임시 정렬·LIMIT 200 으로 진행(AC-062 잠정), I-10 은 AC-044 회귀 통과)
 
 ## 4. 세부 작업 (Numbered sub-tasks)
 
@@ -516,18 +518,18 @@ test(
 - [x] **AC-018** 0건은 빈 목록 — Given: "AC-013 과 같음" / When: "keyword `강릉` 으로 호출" / Then: "예외 없이 `size() = 0` 인 List 반환(null 아님)" → 이 WI: 데이터 0건 상황으로 1차 Apex / 키워드 `강릉` 재확인은 WI-1.004 (ENHANCED 2026-10-29: backend_developer — DH-DEV 배포 0Afgw000000b35OCAQ, 0Afgw000000bCGkCAM · RunLocalTests 707gw000002KPOb 18건 전부 Pass · PropertyController 100%, 조직 100%)
 - [x] **AC-019** 반환 필드 — Given: "AC-013 과 같음" / When: "keyword `래미안` 으로 호출" / Then: "Id, Name=`강남 래미안 아파트`, Address__c, City__c=`서울`, Price__c=2500000000, Bedrooms__c=4, Bathrooms__c=2, Picture_URL__c(값 존재), Status__c=`Available` 접근 시 `SObjectException` 없음" → Apex(키워드 대신 Name 으로 찾음), 완료 (ENHANCED 2026-10-29: backend_developer — DH-DEV 배포 0Afgw000000b35OCAQ, 0Afgw000000bCGkCAM · RunLocalTests 707gw000002KPOb 18건 전부 Pass · PropertyController 100%, 조직 100%)
 - [x] **AC-055 (Apex)** 권한 세트 미할당 차단 — Given: "`noaccess` 사용자(Standard User, 권한 세트 없음)" / When: "`System.runAs(noaccess)` 에서 `getProperties`(조건 없음) 호출" / Then: "예외 발생(`AuraHandledException` 또는 `QueryException`), 데이터 반환 없음" → Apex, 완료 (UI 부분은 WI-1.005) (ENHANCED 2026-10-29: backend_developer — DH-DEV 배포 0Afgw000000b35OCAQ, 0Afgw000000bCGkCAM · RunLocalTests 707gw000002KPOb 18건 전부 Pass · PropertyController 100%, 조직 100%)
-- [ ] **AC-062 (잠정 — CK-06)** 건수 상한 — Given: "Property__c 를 상한 N + 1 건 생성" / When: "조건 없이 호출" / Then: "반환 건수 = N, 예외 없음" → Apex, CK-06 해소 후 (ENHANCED 2026-10-29: Apex `ac062_resultCappedAtMaxResults` 작성·통과(N=200 임시) — CK-06 해소 전 미체크 유지)
-- [ ] **AC-024** 초기 목록과 건수 — Given: "`agent` 로그인" / When: ""매물 탐색" 탭에 진입" / Then: "`property-card` 10개, `result-count` = `10건`, `empty-state` 미표시, 판매완료 카드(SD-05, SD-08) 포함" → 1차 Jest / **E2E [이월→WI-1.005]** (ENHANCED 2026-10-29: 1차 Jest 통과 — propertyList.test.js, E2E 는 WI-1.005 이월로 미체크)
-- [ ] **AC-025** 결과 0건 안내 — Given: "AC-024 상태" / When: "`filter-keyword` 에 `강릉` 입력" / Then: "1초 이내 `property-card` 0개, `result-count` = `0건`, `empty-state` 텍스트 `조건에 맞는 매물이 없습니다.`" → 1차 Jest(0건 분기) / **E2E [이월→WI-1.005]** (ENHANCED 2026-10-29: 1차 Jest 통과 — propertyList.test.js, E2E 는 WI-1.005 이월로 미체크)
-- [ ] **AC-032** 판매완료 기본 노출 — Given: "AC-024 상태" / When: "`filter-min-price` `900000000` 입력" / Then: "결과 5개(SD-01·03·05·07·08) `5건`. `data-status="Sold"` 2개, `Under Contract` 2개. "판매완료 제외" 류 옵션 없음" → 1차: 이 WI 는 상태 조건이 없음을 Apex(AC-013)로 확인, 가격 조건 Apex 는 WI-1.004 / **E2E [이월→WI-1.005]**
-- [ ] **AC-046** 로딩 스피너 — Given: "`agent` 로그인, `getProperties` 응답 1,500ms 지연" / When: "`filter-keyword` 에 `부산` 입력" / Then: "대기 중 `loading-spinner` 표시(대체 텍스트 `로딩 중`), 응답 후 사라지고 카드 2개" → 1차 Jest / **E2E [이월→WI-1.005]** (ENHANCED 2026-10-29: 1차 Jest 통과 — propertyList.test.js, E2E 는 WI-1.005 이월로 미체크)
-- [ ] **AC-047** 조회 오류 토스트 — Given: "`agent` 로그인, `getProperties` 응답을 오류로 모의" / When: "`filter-keyword` 에 `서울` 입력" / Then: "error 토스트 `매물 정보를 불러오지 못했습니다.`, `loading-spinner` 미표시, 빈 흰 화면 없음" → 1차 Jest / **E2E [이월→WI-1.005]** (ENHANCED 2026-10-29: 1차 Jest 통과 — propertyList.test.js, E2E 는 WI-1.005 이월로 미체크)
-- [ ] **AC-063** 초기 목록 1초 — Given: "DH-SIT, `agent`, SD-01~SD-10, 캐시 미적용 5회" / When: ""매물 탐색" 탭 진입" / Then: "요청 시작 → 카드 10개 렌더까지 중앙값 ≤ 1,000ms, 최대 ≤ 1,500ms" → **[이월→Lab 12]** (CK-07)
-- [ ] **AC-065** Apex 보안·정적 분석 — Given: "WI-1.003 / WI-1.004 의 Apex 소스" / When: "code_reviewer 리뷰와 `sf code-analyzer run --workspace . --view table`" / Then: "모든 클래스 `with sharing`, 모든 SOQL `WITH USER_MODE`(또는 `AccessLevel.USER_MODE`), 사용자 입력 문자열 연결 SOQL 0건, 루프 내 SOQL/DML 0건, High 이상 0건" → 완료 (WI-1.004 재확인) (ENHANCED 2026-10-29: Code Analyzer 코드 High·Critical 0건(Critical 1건은 flow 엔진 Python 미설치 환경 오류), Moderate 는 테스트 메서드명 규칙·팩토리 파라미터 수. code_reviewer 리뷰 대기로 미체크)
+- [ ] **AC-062 (잠정 — CK-06)** 건수 상한 — Given: "Property__c 를 상한 N + 1 건 생성" / When: "조건 없이 호출" / Then: "반환 건수 = N, 예외 없음" → Apex, CK-06 해소 후 (ENHANCED 2026-10-29: Apex `ac062_resultCappedAtMaxResults` 작성·통과(N=200 임시) — CK-06 해소 전 미체크 유지) (ENHANCED 2026-10-29: 미완 유지 — CK-06 미해소 — Apex 는 LIMIT 200 임시값으로 통과, 완료 조건 제외)
+- [x] **AC-024** 초기 목록과 건수 — Given: "`agent` 로그인" / When: ""매물 탐색" 탭에 진입" / Then: "`property-card` 10개, `result-count` = `10건`, `empty-state` 미표시, 판매완료 카드(SD-05, SD-08) 포함" → 1차 Jest / **E2E [이월→WI-1.005]** (ENHANCED 2026-10-29: 1차 Jest 통과 — propertyList.test.js, E2E 는 WI-1.005 이월로 미체크) (ENHANCED 2026-10-29: E2E WI-1.005 전체 UI 회귀 — DEV 49 passed/2 flaky/5 skipped, SIT 52/1(AC-044 테스트 코드 timeout 수정 후 통과)/3, UAT 51/0/5)
+- [x] **AC-025** 결과 0건 안내 — Given: "AC-024 상태" / When: "`filter-keyword` 에 `강릉` 입력" / Then: "1초 이내 `property-card` 0개, `result-count` = `0건`, `empty-state` 텍스트 `조건에 맞는 매물이 없습니다.`" → 1차 Jest(0건 분기) / **E2E [이월→WI-1.005]** (ENHANCED 2026-10-29: 1차 Jest 통과 — propertyList.test.js, E2E 는 WI-1.005 이월로 미체크) (ENHANCED 2026-10-29: E2E 회귀 DEV/SIT/UAT 통과)
+- [x] **AC-032** 판매완료 기본 노출 — Given: "AC-024 상태" / When: "`filter-min-price` `900000000` 입력" / Then: "결과 5개(SD-01·03·05·07·08) `5건`. `data-status="Sold"` 2개, `Under Contract` 2개. "판매완료 제외" 류 옵션 없음" → 1차: 이 WI 는 상태 조건이 없음을 Apex(AC-013)로 확인, 가격 조건 Apex 는 WI-1.004 / **E2E [이월→WI-1.005]** (ENHANCED 2026-10-29: E2E 회귀 DEV/SIT/UAT 통과(WI-1.004 공동))
+- [x] **AC-046** 로딩 스피너 — Given: "`agent` 로그인, `getProperties` 응답 1,500ms 지연" / When: "`filter-keyword` 에 `부산` 입력" / Then: "대기 중 `loading-spinner` 표시(대체 텍스트 `로딩 중`), 응답 후 사라지고 카드 2개" → 1차 Jest / **E2E [이월→WI-1.005]** (ENHANCED 2026-10-29: 1차 Jest 통과 — propertyList.test.js, E2E 는 WI-1.005 이월로 미체크) (ENHANCED 2026-10-29: E2E 회귀 DEV/SIT/UAT 통과)
+- [x] **AC-047** 조회 오류 토스트 — Given: "`agent` 로그인, `getProperties` 응답을 오류로 모의" / When: "`filter-keyword` 에 `서울` 입력" / Then: "error 토스트 `매물 정보를 불러오지 못했습니다.`, `loading-spinner` 미표시, 빈 흰 화면 없음" → 1차 Jest / **E2E [이월→WI-1.005]** (ENHANCED 2026-10-29: 1차 Jest 통과 — propertyList.test.js, E2E 는 WI-1.005 이월로 미체크) (ENHANCED 2026-10-29: E2E 회귀 DEV/SIT/UAT 통과)
+- [x] **AC-063** 초기 목록 1초 — Given: "DH-SIT, `agent`, SD-01~SD-10, 캐시 미적용 5회" / When: ""매물 탐색" 탭 진입" / Then: "요청 시작 → 카드 10개 렌더까지 중앙값 ≤ 1,000ms, 최대 ≤ 1,500ms" → **[이월→Lab 12]** (CK-07) (ENHANCED 2026-10-29: Lab 12 DH-SIT 중앙값 571ms·최대 698ms 통과)
+- [x] **AC-065** Apex 보안·정적 분석 — Given: "WI-1.003 / WI-1.004 의 Apex 소스" / When: "code_reviewer 리뷰와 `sf code-analyzer run --workspace . --view table`" / Then: "모든 클래스 `with sharing`, 모든 SOQL `WITH USER_MODE`(또는 `AccessLevel.USER_MODE`), 사용자 입력 문자열 연결 SOQL 0건, 루프 내 SOQL/DML 0건, High 이상 0건" → 완료 (WI-1.004 재확인) (ENHANCED 2026-10-29: Code Analyzer 코드 High·Critical 0건(Critical 1건은 flow 엔진 Python 미설치 환경 오류), Moderate 는 테스트 메서드명 규칙·팩토리 파라미터 수. code_reviewer 리뷰 대기로 미체크) (ENHANCED 2026-10-29: code_reviewer 리뷰 완료(PR 병합). Code Analyzer High·Critical 0건(Critical 1건은 flow 엔진 Python 미설치 환경 오류, 코드 결함 아님) — DELIVERABLES AC-065)
 - [x] **AC-066** 커버리지 — Given: "`PropertyModelTest`, `PropertyControllerTest`" / When: "`sf apex run test -l RunLocalTests -c -r human`" / Then: "실패 0건, 조직 ≥ 75%, `PropertyController` ≥ 85%(목표). 양성·음성·권한 케이스 포함" → 완료 (ENHANCED 2026-10-29: backend_developer — DH-DEV 배포 0Afgw000000b35OCAQ, 0Afgw000000bCGkCAM · RunLocalTests 707gw000002KPOb 18건 전부 Pass · PropertyController 100%, 조직 100%)
-- [ ] **AC-067** 비밀정보 미커밋 — Then: "`git ls-files | grep -E "\.auth/|sfdx-url|accessToken"` 0줄, `.gitignore` 에 `tests/e2e/.auth/`" → 수동
-- [ ] **AC-044 (Should)** 표준 페이지 변경 후 복귀 반영 — Given: "`admin`, "매물 탐색" 탭 로드해 SD-03 배지 `계약중` 확인" / When: "`매물` 탭 → SD-03 레코드에서 상태 `판매중` 저장 → `매물 탐색` 탭 클릭(새로고침 없음)" / Then: "SD-03 배지 = `판매중`(캐시로 인한 `계약중` 없음). 복원 `Under Contract`" → 1차 Jest(`refresh` → `refreshApex`) / **E2E [이월→WI-1.005]** (I-10, 실패 시 Should 이월) (ENHANCED 2026-10-29: 1차 Jest 통과 — propertyList.test.js, E2E 는 WI-1.005 이월로 미체크)
-- [ ] **AC-070 (Should)** 조회 성능 설계 — Given: "`PropertyController`, `propertyFilter` 소스" / When: "code_reviewer 리뷰" / Then: "`@AuraEnabled(cacheable=true)`, 상수 `LIMIT`, 디바운스 300ms(±50ms), 파라미터 객체 `PropertyFilter`" → 이 WI: cacheable·LIMIT·파라미터 객체 / 디바운스는 WI-1.004 재확인
+- [ ] **AC-067** 비밀정보 미커밋 — Then: "`git ls-files | grep -E "\.auth/|sfdx-url|accessToken"` 0줄, `.gitignore` 에 `tests/e2e/.auth/`" → 수동 (ENHANCED 2026-10-29: 미완 유지 — `.gitignore` 의 `tests/e2e/.auth/` 포함은 확인, `git ls-files` 0줄 수동 확인 결과 기록 없음(DELIVERABLES B-03/B-07) — 다음 커밋 직전 1회 기록 후 체크)
+- [x] **AC-044 (Should)** 표준 페이지 변경 후 복귀 반영 — Given: "`admin`, "매물 탐색" 탭 로드해 SD-03 배지 `계약중` 확인" / When: "`매물` 탭 → SD-03 레코드에서 상태 `판매중` 저장 → `매물 탐색` 탭 클릭(새로고침 없음)" / Then: "SD-03 배지 = `판매중`(캐시로 인한 `계약중` 없음). 복원 `Under Contract`" → 1차 Jest(`refresh` → `refreshApex`) / **E2E [이월→WI-1.005]** (I-10, 실패 시 Should 이월) (ENHANCED 2026-10-29: 1차 Jest 통과 — propertyList.test.js, E2E 는 WI-1.005 이월로 미체크) (ENHANCED 2026-10-29: DEV flaky(단독 재실행 통과), SIT 테스트 코드 timeout 수정 후 통과, UAT 통과)
+- [x] **AC-070 (Should)** 조회 성능 설계 — Given: "`PropertyController`, `propertyFilter` 소스" / When: "code_reviewer 리뷰" / Then: "`@AuraEnabled(cacheable=true)`, 상수 `LIMIT`, 디바운스 300ms(±50ms), 파라미터 객체 `PropertyFilter`" → 이 WI: cacheable·LIMIT·파라미터 객체 / 디바운스는 WI-1.004 재확인 (ENHANCED 2026-10-29: code_reviewer 리뷰·PCT `ac070_filterParameterObject` 통과, 디바운스는 WI-1.004 재확인 통과)
 
 ## 7. 테스트 요구
 
@@ -540,8 +542,8 @@ test(
 
 ## 8. 통합 체크리스트
 
-- [ ] 전문 에이전트 사용 확인
-- [ ] 선행 WI-1.002 `[X]` 확인
+- [x] 전문 에이전트 사용 확인 (ENHANCED 2026-10-29: 전문 에이전트 사용 — backend_developer / frontend_developer / test_engineer / code_reviewer, code_reviewer 리뷰 후 PR 병합)
+- [x] 선행 WI-1.002 `[X]` 확인 (ENHANCED 2026-10-29: 문서 상태 정리 — 선행 WI 는 실제 구현·검증·병합 후 착수했고 문서 Status 갱신만 지연(B-03))
 - [x] `PropertyFilter` 파라미터 객체
 - [x] `PropertyController`(`with sharing`, cacheable, `WITH USER_MODE`, 임시 정렬·LIMIT 주석, 빈 List, 접근 거부 처리)
 - [x] 권한 세트 2종에 `PropertyController` 클래스 접근 ENHANCE
@@ -550,12 +552,12 @@ test(
 - [x] Jest 통과 (ENHANCED 2026-10-29: `npx sfdx-lwc-jest` 2 suites / 29 tests 전부 Pass — `propertyList.test.js` 11건(@wire `createApexTestWireAdapter` 10건/0건/오류/스피너/refresh/재연결/그리드/임시필터/선택) + `propertyTile.test.js` 18건. `jest.config.js` 에 `tests/e2e/` testPathIgnorePatterns 추가(Playwright spec 이 Jest 에 수집되던 문제))
 - [x] `sf project deploy start --dry-run -o DH-DEV` 성공 → `sf project deploy start -o DH-DEV` (ENHANCED 2026-10-29: LWC — manifest(lwc 6 bundles) + `--post-destructive-changes`(propertyMockData) dry-run 성공 → deploy 0Afgw000000bzitCAA Succeeded(7 components, propertyMockData 삭제 확인 — Tooling 조회 0건). 사후 재검증 `--source-dir lwc` dry-run 0Afgw000000c69FCAQ Succeeded. Apex 배포는 아래 Apex 항목 참조)
 - [x] Apex: `sf apex run test -l RunLocalTests -o DH-DEV -c -r human` 실패 0, 조직 ≥ 75%, PropertyController ≥ 85% (AC-066) (ENHANCED 2026-10-29: backend_developer — DH-DEV 배포 0Afgw000000b35OCAQ, 0Afgw000000bCGkCAM · RunLocalTests 707gw000002KPOb 18건 전부 Pass · PropertyController 100%, 조직 100%)
-- [ ] 정적 분석: `sf code-analyzer run --workspace . --view table` High 이상 0건 (AC-065), code_reviewer 보안 리뷰 메모
+- [x] 정적 분석: `sf code-analyzer run --workspace . --view table` High 이상 0건 (AC-065), code_reviewer 보안 리뷰 메모 (ENHANCED 2026-10-29: Code Analyzer High·Critical 0건(Critical 1건은 flow 엔진 Python 미설치 환경 오류, 코드 결함 아님) — DELIVERABLES AC-065, code_reviewer 보안 리뷰 반영)
 - [x] Playwright `WI-1.003-property-list.spec.ts` 작성(`@explore`) — 1차 실행 대상 없음, PHASE-PLAN-01 §3.4 기록 (ENHANCED 2026-10-29: 매물 탐색 탭이 DH-DEV 에 이미 있어 실데이터로 실행 — 통과 AC-024, 025, 025(보조 0건 모의), 032, 046(보조 초기 지연), 047(보조 초기 오류) / 실패 AC-046·047 본문(`@filter` — 필터가 아직 클라이언트 측이라 서버 요청 없음, WI-1.004 서버 조건 연결 후 재실행), AC-044(Should — 저장은 서버 반영됐으나 탭 복귀 시 배지 `계약중` 유지, I-10) / skip AC-063(`@perf`, DH-SIT Lab 12). WI-1.002 spec 실데이터 회귀 4/4 통과) (ENHANCED 2026-10-29: test_engineer — WI-1.004 서버 조건·LMS 배포 후 DH-DEV 재실행: `@filter` AC-025·032·046·047 본문 **4건 모두 통과**. spec 보정: AC-047 "빈 흰 화면 없음" 판정을 `result-count` 대신 인라인 오류(role=alert) 또는 건수로(오류 상태에서 건수 숨김), AC-044 상태 콤보박스 열기 재시도(toPass). AC-044 는 여전히 실패 — 저장은 서버 반영·탭 복귀 후 배지 `계약중` 유지(제품 결함, I-10 Should 이월), afterEach 복원 확인(Under Contract). 대상 org 가드(코드 리뷰 L-4): `support/org.ts` `assertSafeOrg()`/`sfResult()` — AC-044 beforeAll·sf 명령에 적용, DH-HUB/core 등은 throw)
-- [ ] AC-067 0줄 확인
-- [ ] CI(선택·미도입) — 해당 없음
-- [ ] PROJECT-PLAN §5 / PHASE-PLAN-01 §1.2·§6.7 / 이 문서 체크리스트·Status `[X]`
-- [ ] 커밋 `WI-1.003-property-list-apex`
+- [ ] AC-067 0줄 확인 (ENHANCED 2026-10-29: 미완 유지 — `.gitignore` 의 `tests/e2e/.auth/` 포함은 확인, `git ls-files` 0줄 수동 확인 결과 기록 없음(DELIVERABLES B-03/B-07) — 다음 커밋 직전 1회 기록 후 체크)
+- [ ] CI(선택·미도입) — 해당 없음 (ENHANCED 2026-10-29: 미완 유지 — CI(GitHub Actions) 미도입 — 해당 없음(N/A), 안정화 후 선택 도입)
+- [x] PROJECT-PLAN §5 / PHASE-PLAN-01 §1.2·§6.7 / 이 문서 체크리스트·Status `[X]` (ENHANCED 2026-10-29: 문서 상태 정리(DELIVERABLES §2.4 B-03) — PROJECT-PLAN v1.4 · PHASE-PLAN-01 v1.3 · 이 문서 갱신)
+- [x] 커밋 `WI-1.003-property-list-apex` (ENHANCED 2026-10-29: `WI-1.003-property-list-apex` 이름으로 커밋, Feature Branch `WI-000002` PR 병합 → PROD 2026-10-29 CLOSED)
 
 ## 9. 참고 자료
 

@@ -8,11 +8,13 @@
 
 ## 산출물
 
-| 문서                                                   | 경로                                                               |
-| ------------------------------------------------------ | ------------------------------------------------------------------ |
-| 입력(RFP)                                              | [docs/inputs/RFP.md](docs/inputs/RFP.md)                           |
-| 요구사항                                               | [docs/REQUIREMENT.md](docs/REQUIREMENT.md)                         |
-| Phase 0 — FIT/GAP/NUD                                  | [docs/phase-0/FIT-GAP-NUD.md](docs/phase-0/FIT-GAP-NUD.md)         |
-| Phase 0 — 인수기준                                     | docs/phase-0/ACCEPTANCE-CRITERIA.md (작성 예정)                    |
-| 프로젝트 / 단계 계획 · 워크아이템                      | docs/PROJECT-PLAN.md · docs/phases/ · docs/work-items/ (작성 예정) |
-| 산출물 인덱스 · 추적성 매트릭스 · Release Notes · 회고 | [docs/DELIVERABLES.md](docs/DELIVERABLES.md)                       |
+| 문서                                                   | 경로                                                                                                                                               |
+| ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **과제 제출서 (평가자용 요약)**                        | [docs/SUBMISSION.md](docs/SUBMISSION.md)                                                                                                           |
+| 입력(RFP)                                              | [docs/inputs/RFP.md](docs/inputs/RFP.md)                                                                                                           |
+| 요구사항                                               | [docs/REQUIREMENT.md](docs/REQUIREMENT.md)                                                                                                         |
+| Phase 0 — FIT/GAP/NUD                                  | [docs/phase-0/FIT-GAP-NUD.md](docs/phase-0/FIT-GAP-NUD.md)                                                                                         |
+| Phase 0 — 인수기준                                     | [docs/phase-0/ACCEPTANCE-CRITERIA.md](docs/phase-0/ACCEPTANCE-CRITERIA.md)                                                                         |
+| 프로젝트 / 단계 계획 · 워크아이템                      | [docs/PROJECT-PLAN.md](docs/PROJECT-PLAN.md) · [docs/phases/PHASE-PLAN-01.md](docs/phases/PHASE-PLAN-01.md) · [docs/work-items/](docs/work-items/) |
+| 목업 계획 · 리뷰                                       | [docs/mockup/MOCKUP-PROJECT-PLAN.md](docs/mockup/MOCKUP-PROJECT-PLAN.md) · [docs/mockup/reviews/REVIEW-01.md](docs/mockup/reviews/REVIEW-01.md)    |
+| 산출물 인덱스 · 추적성 매트릭스 · Release Notes · 회고 | [docs/DELIVERABLES.md](docs/DELIVERABLES.md)                                                                                                       |

@@ -72,12 +72,12 @@
 
 ### 1.4 릴리스
 
-| #    | 산출물                  | 위치                                        | 상태                                               |
-| ---- | ----------------------- | ------------------------------------------- | -------------------------------------------------- |
-| R-01 | DevOps Center Promotion | DEV → SIT → UAT → PROD (DH-HUB), 2026-10-29 | 완료                                               |
-| R-02 | DevOps Center Work Item | WI-000001~WI-000005 (CLOSED)                | 완료                                               |
-| R-03 | Git 태그                | `v1.0-sprint1`                              | 대기 — 태그 생성 후 갱신 (현재 저장소에 태그 없음) |
-| R-04 | Release Notes           | 이 문서 §4                                  | 완료                                               |
+| #    | 산출물                  | 위치                                        | 상태                                                               |
+| ---- | ----------------------- | ------------------------------------------- | ------------------------------------------------------------------ |
+| R-01 | DevOps Center Promotion | DEV → SIT → UAT → PROD (DH-HUB), 2026-10-29 | 완료                                                               |
+| R-02 | DevOps Center Work Item | WI-000001~WI-000005 (CLOSED)                | 완료                                                               |
+| R-03 | Git 태그                | `v1.0-sprint1`                              | ✅ 생성·push 완료 (2026-10-29, 커밋 eaf398c) (ENHANCED 2026-10-29) |
+| R-04 | Release Notes           | 이 문서 §4                                  | 완료                                                               |
 
 ---
 
@@ -171,7 +171,7 @@
 | NFR-001             | AC-064          | 검색 1초 이내                         | WI-1.004                        | spec `WI-1.004-search-filter` `@perf`                                                          | SKIP (`@perf` 는 DH-SIT 전용)                                                            | PASS — 서버 중앙값 210ms (≤1,000) · 마지막 입력→갱신 중앙값 서울 732 / 3개 이상 992 / 최대 20억 964ms (≤1,300) | SKIP (`@perf`)                |
 | NFR-003/007         | AC-065          | Apex 보안·정적 분석                   | WI-1.003 / WI-1.004             | `sf code-analyzer run` + code_reviewer                                                         | PASS — High·Critical 0 (Critical 1건은 flow 엔진 Python 미설치 환경 오류)                | N/A                                                                                                            | N/A                           |
 | NFR-006             | AC-066          | Apex 커버리지                         | WI-1.003 / WI-1.004             | `sf apex run test -l RunLocalTests -c`                                                         | PASS — 47/47, Org Wide 100%                                                              | PASS — 배포 시 45/45                                                                                           | N/A (PROD RunLocalTests 성공) |
-| NFR-005             | AC-067          | 비밀정보 미커밋                       | 전 WI                           | `.gitignore` (`tests/e2e/.auth/`, `playwright-report/`, `test-results/`)                       | 수동 QA — `.gitignore` 확인. WI 문서 체크리스트(`git ls-files` 0줄 확인)는 미체크        | N/A                                                                                                            | N/A                           |
+| NFR-005             | AC-067          | 비밀정보 미커밋                       | 전 WI                           | `.gitignore` (`tests/e2e/.auth/`, `playwright-report/`, `test-results/`)                       | 수동 QA — `.gitignore` 확인. `git ls-files` 비밀정보 0건 확인 (ENHANCED 2026-10-29)      | N/A                                                                                                            | N/A                           |
 | NFR-008             | AC-068 (Should) | axe 자동 접근성                       | WI-1.005                        | spec `WI-1.005-layout-a11y` · `@axe-core/playwright`                                           | PASS (1차 `label-content-name-mismatch` ×10 → `propertyTile` 수정 후 serious/critical 0) | PASS                                                                                                           | PASS                          |
 | NFR-010             | AC-069 (Should) | 변경 추적성                           | Phase 1 종료 (Lab 13)           | 이 문서                                                                                        | PASS — 이 매트릭스로 확인 (끊긴 사슬은 §2.4)                                             | —                                                                                                              | —                             |
 | NFR-002             | AC-070 (Should) | 조회 성능 설계 규칙                   | WI-1.003 / WI-1.004             | PCT `ac070_filterParameterObject` · Jest propertyFilter · 코드 리뷰                            | PASS                                                                                     | PASS                                                                                                           | N/A                           |
@@ -180,15 +180,15 @@
 
 ### 2.4 끊긴 사슬 / 불일치 (Lab 13.2 추적성 검증 결과)
 
-| #    | 위치                               | 내용                                                                                                                                                                                                                             | 조치 제안                                                                               |
-| ---- | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| B-01 | AC-049~052 → WI-1.006/1.007 → spec | WI 미등록, spec 파일 없음 (Could 미착수)                                                                                                                                                                                         | Phase 2 이관 시 ENHANCE 기록 (PROJECT-PLAN §5 규칙)                                     |
-| B-02 | AC-057/058/061/062                 | CK-03/04/05/06 미해소 → `test.fixme` 또는 임시값(LIMIT 200)으로 통과. 완료 조건 제외                                                                                                                                             | STEP 13 고객 리뷰에서 CK 해소 → AC ENHANCE → fixme 해제                                 |
-| B-03 | 문서 Status                        | 실행 결과는 WI 문서 ENHANCE 로 남았으나 WI-1.001~1.005 헤더 "상태", PROJECT-PLAN §5 Status·§3.5 M1~M6·§5.2 체크리스트, PHASE-PLAN-01 §3.4 이월 완료 칸, WI 문서 §8 일부 체크(정적 분석·AC-067·dry-run·커밋)가 `[ ]` 로 남아 있음 | project_manager / work_item_manager 가 결과 기준으로 `[X]` 갱신 (CLAUDE.md 진행 규칙 3) |
-| B-04 | Apex 건수                          | 저장소의 `@IsTest` 메서드는 45개(PMT 7 + PCT 38). DEV 기록 47/47 과 2개 차이 — DH-DEV 에만 남아 있던 테스트가 포함된 것으로 보이나 저장소 기록으로는 확인 불가. SIT 45/45 는 저장소와 일치                                       | 필요 시 DH-DEV `ApexTestResult` 조회로 확인                                             |
-| B-05 | AC-008                             | SIT/UAT 적재·분포(10건·6/2/2·도시 7) 기록은 있으나 WI-1.002 문서의 "`ORDER BY Name` 비교" 결과 기록은 없음, 체크박스 `[ ]`                                                                                                       | WI-1.002 AC-008 ENHANCE                                                                 |
-| B-06 | AC-063/064                         | SIT 에서만 측정(설계대로). UAT 는 `@perf` SKIP                                                                                                                                                                                   | 해당 없음 (CK-07 측정 정의대로)                                                         |
-| B-07 | AC-065/067                         | SIT/UAT 단계 재확인 기록 없음 (정적 분석·`git ls-files` 는 저장소 단위 검사라 환경 무관)                                                                                                                                         | 다음 사이클 커밋 직전 1회 기록                                                          |
+| #    | 위치                               | 내용                                                                                                                                                                                                                             | 조치 제안                                                                                                                      |
+| ---- | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| B-01 | AC-049~052 → WI-1.006/1.007 → spec | WI 미등록, spec 파일 없음 (Could 미착수)                                                                                                                                                                                         | Phase 2 이관 시 ENHANCE 기록 (PROJECT-PLAN §5 규칙)                                                                            |
+| B-02 | AC-057/058/061/062                 | CK-03/04/05/06 미해소 → `test.fixme` 또는 임시값(LIMIT 200)으로 통과. 완료 조건 제외                                                                                                                                             | STEP 13 고객 리뷰에서 CK 해소 → AC ENHANCE → fixme 해제                                                                        |
+| B-03 | 문서 Status                        | 실행 결과는 WI 문서 ENHANCE 로 남았으나 WI-1.001~1.005 헤더 "상태", PROJECT-PLAN §5 Status·§3.5 M1~M6·§5.2 체크리스트, PHASE-PLAN-01 §3.4 이월 완료 칸, WI 문서 §8 일부 체크(정적 분석·AC-067·dry-run·커밋)가 `[ ]` 로 남아 있음 | ✅ 해소 (ENHANCED 2026-10-29: PROJECT-PLAN v1.4 · PHASE-PLAN-01 v1.3 · WI 문서 헤더 [X] 완료. 미완 항목은 각 문서에 사유 기록) |
+| B-04 | Apex 건수                          | 저장소의 `@IsTest` 메서드는 45개(PMT 7 + PCT 38). DEV 기록 47/47 과 2개 차이 — DH-DEV 에만 남아 있던 테스트가 포함된 것으로 보이나 저장소 기록으로는 확인 불가. SIT 45/45 는 저장소와 일치                                       | 필요 시 DH-DEV `ApexTestResult` 조회로 확인                                                                                    |
+| B-05 | AC-008                             | SIT/UAT 적재·분포(10건·6/2/2·도시 7) 기록은 있으나 WI-1.002 문서의 "`ORDER BY Name` 비교" 결과 기록은 없음, 체크박스 `[ ]`                                                                                                       | WI-1.002 AC-008 ENHANCE                                                                                                        |
+| B-06 | AC-063/064                         | SIT 에서만 측정(설계대로). UAT 는 `@perf` SKIP                                                                                                                                                                                   | 해당 없음 (CK-07 측정 정의대로)                                                                                                |
+| B-07 | AC-065/067                         | SIT/UAT 단계 재확인 기록 없음 (정적 분석·`git ls-files` 는 저장소 단위 검사라 환경 무관)                                                                                                                                         | 다음 사이클 커밋 직전 1회 기록                                                                                                 |
 
 ---
 
@@ -236,7 +236,7 @@
 | 경로        | DevOps Center Pipeline `DreamHouse Pipeline` — DEV(DH-DEV) → SIT(DH-SIT) → UAT(DH-UAT) → PROD(DH-HUB) |
 | Work Item   | WI-000001 ~ WI-000005 — 전부 **CLOSED**                                                               |
 | PROD 게이트 | Apex RunLocalTests 성공                                                                               |
-| Git 태그    | `v1.0-sprint1` — 생성 대기 (`git tag v1.0-sprint1 ; git push origin v1.0-sprint1`)                    |
+| Git 태그    | `v1.0-sprint1` — ✅ 생성·push 완료 (2026-10-29, eaf398c)                                              |
 
 ### 4.1 포함 기능
 

@@ -28,13 +28,15 @@ synced_at: null # Sync 타임스탬프
 | Phase                           | Phase 1 — MVP                                                                                                                                                                                                                          |
 | 모듈                            | 샘플 데이터(데이터 플랜) · LWC `propertyTile` · 정적 리소스 `propertyPlaceholder` · LMS 채널 `PropertySelected__c`                                                                                                                     |
 | 우선순위                        | **Must** (분류 GAP, REQ-003 은 FIT)                                                                                                                                                                                                    |
-| 상태                            | [ ] 미착수 (Not Started)                                                                                                                                                                                                               |
+| 상태                            | [X] 완료 (PROD 2026-10-29) (ENHANCED 2026-10-29: ~~미착수~~ → DevOps Center WI-000001 CLOSED, Jest·회귀 AC-020~023 통과)                                                                                                               |
 | 선행 (Depends-on)               | **WI-1.001**                                                                                                                                                                                                                           |
 | 후행                            | WI-1.003                                                                                                                                                                                                                               |
 | 예상 소요                       | **0.3 M/D (2.25h)** = REQ-003 0.5h + REQ-006 1.5h + REQ-012 0.25h                                                                                                                                                                      |
 | 일정                            | 2026-10-29(목) 13:30–15:45 (Lab 9)                                                                                                                                                                                                     |
 | 담당 에이전트                   | frontend_developer(LWC) · backend_developer(데이터 플랜) · test_engineer · code_reviewer                                                                                                                                               |
 | 커밋명                          | `WI-1.002-sample-data-property-tile`                                                                                                                                                                                                   |
+
+> (ENHANCED 2026-10-29: 문서 상태 정리(DELIVERABLES §2.4 B-03, project_manager) — 상태 `[X]` 완료(PROD 2026-10-29), 실행 결과 기준으로 선행 조건·AC·통합 체크리스트 갱신. 미완 유지: AC-008 `ORDER BY Name` 행 비교 기록(B-05), AC-067 `git ls-files` 수동 기록, CI(미도입). WI ID·선행·공수 변경 없음)
 
 ## 1. 상세 개요
 
@@ -64,12 +66,12 @@ UI 로는 목록 그리드의 단위 요소인 **매물 카드 LWC `propertyTile
 
 ## 3. 선행 조건
 
-- [ ] **선행 WI-1.001 Status `[X]` 확인** — 미완이면 시작 금지 (CLAUDE.md 진행 규칙 1)
-- [ ] `Property__c`·필드·권한 세트가 DH-DEV 에 배포되어 있음, DH-DEV 기본 통화 KRW (WI-1.001 점검표)
-- [ ] 전문 에이전트 사용(frontend_developer / backend_developer / test_engineer / code_reviewer)
-- [ ] `git checkout main ; git pull` → WI-1.002 Feature Branch checkout
-- [ ] (권장) Lab 7 목업 리뷰 결정 `docs/mockup/reviews/REVIEW-01.md` 확인 — 결정이 AC 와 다르면 AC 를 먼저 ENHANCE
-- [ ] 미결: CK-10/OQ-05(유효 사진 URL 도메인·CSP), CK-14(배지 색상 톤), I-06(`₩` 문자 형태)
+- [x] **선행 WI-1.001 Status `[X]` 확인** — 미완이면 시작 금지 (CLAUDE.md 진행 규칙 1) (ENHANCED 2026-10-29: 문서 상태 정리 — 선행 WI 는 실제 구현·검증·병합 후 착수했고 문서 Status 갱신만 지연(B-03))
+- [x] `Property__c`·필드·권한 세트가 DH-DEV 에 배포되어 있음, DH-DEV 기본 통화 KRW (WI-1.001 점검표) (ENHANCED 2026-10-29: WI-1.001 배포·DH-DEV KRW 조정 완료)
+- [x] 전문 에이전트 사용(frontend_developer / backend_developer / test_engineer / code_reviewer) (ENHANCED 2026-10-29: 전문 에이전트 사용 — backend_developer / frontend_developer / test_engineer / code_reviewer, code_reviewer 리뷰 후 PR 병합)
+- [x] `git checkout main ; git pull` → WI-1.002 Feature Branch checkout (ENHANCED 2026-10-29: Feature Branch `WI-000001`)
+- [x] (권장) Lab 7 목업 리뷰 결정 `docs/mockup/reviews/REVIEW-01.md` 확인 — 결정이 AC 와 다르면 AC 를 먼저 ENHANCE (ENHANCED 2026-10-29: REVIEW-01 목업 승인, DROP/ENHANCE/ADD 없음 — AC 변경 불필요)
+- [x] 미결: CK-10/OQ-05(유효 사진 URL 도메인·CSP), CK-14(배지 색상 톤), I-06(`₩` 문자 형태) (ENHANCED 2026-10-29: 확인 — CK-10·CK-14 미확정은 임시 사진·SLDS 기본 테마로 진행, I-06 은 반각 `₩` 확인)
 
 ## 4. 세부 작업 (Numbered sub-tasks)
 
@@ -479,12 +481,12 @@ test("AC-023 KRW 전체 금액", { tag: "@explore" }, async ({ page }) => {
 
 - [x] **AC-007** 샘플 10건 적재·분포 — Given: "빈 Scratch Org(DH-DEV)에 REQ-001 메타데이터 배포 완료" / When: "`sf data import tree --plan <plan.json> -o DH-DEV` 실행 후 `SELECT Status__c, COUNT(Id) FROM Property__c GROUP BY Status__c`" / Then: "총 10건, Available 6 / Under Contract 2 / Sold 2, City 고유값 7개(서울·부산·성남·수원·대전·제주·인천), 각 레코드 값이 §1.4 표와 일치" → CLI, **이 WI 에서 완료**
   - 결과 붙여 넣기: `(실행 후 기입)` (ENHANCED 2026-10-28: backend_developer DH-DEV 적재 결과 — `pwsh -File scripts/load-sample-data.ps1 -TargetOrg DH-DEV`: 적재 전 SD 0건 → `sf data import tree` 10건(SD01~SD10) 생성 / 전체 10건, Available=6, Under Contract=2, Sold=2 / `COUNT_DISTINCT(City__c)`=7 (서울 3, 부산 2, 성남·수원·대전·제주·인천 각 1) / `scripts/soql/sample-data-check.soql`(ORDER BY Name) 10행 값이 §1.4 표와 일치(SD-09 Picture null, SD-10 `https://invalid.example.invalid/none.jpg`))
-- [ ] **AC-008** 오그 간 재현성 (ENHANCED 2026-10-28: 이 WI 범위 완료 — DH-DEV 재실행 시 SD 10건 감지 → 적재 건너뜀, 10건 유지(20건 아님). 절차: `scripts/load-sample-data.ps1`(매물명 기준 COUNT 0 → 적재 / 10 → 건너뜀 / 그 외 → 중단) + `scripts/apex/reset-sample-data.apex`(Scratch/Sandbox 가드, DH-DEV 에서 Savepoint 롤백으로 10건 삭제 동작 확인). SIT·UAT 적재·`ORDER BY Name` 비교는 Lab 12 이월로 체크 보류) — Given: "AC-007 을 통과한 동일 데이터 플랜 파일" / When: "DH-SIT 와 DH-UAT 에 같은 명령으로 적재" / Then: "두 오그 모두 `ORDER BY Name` 결과 10행이 DH-DEV 와 완전히 같음. 재실행 시 중복 적재되지 않거나(20건 아님) 중복 방지 절차가 문서화" → 이 WI: 절차 문서 + DH-DEV 재실행 시 COUNT 확인 / **SIT·UAT 적재 [이월→Lab 12]**
-- [ ] **AC-020** 카드 요약 정보 — Given: "`agent` 로그인, "매물 탐색" 탭, 조건 없음" / When: "`data-name="해운대 오션뷰"` 인 `property-card` 를 찾는다" / Then: "`property-card-name` = `해운대 오션뷰`, `property-card-price` = `₩850,000,000`, `property-card-address` 에 `부산광역시 해운대구 해운대해변로 22` 와 `부산` 포함, `property-card-rooms` = `침실 3 · 욕실 2`, `property-status-badge` = `판매중`, `property-card-image` 의 `alt` = `해운대 오션뷰`" → 1차 Jest / **E2E [이월→WI-1.005]** (ENHANCED 2026-10-28: 1차 Jest `propertyTile.test.js` 통과 — 체크는 E2E(WI-1.005) 통과 후)
-- [ ] **AC-021** 배지 색상 매핑 — Given: "AC-020 과 같음" / When: "SD-01, SD-03, SD-05 카드의 `property-status-badge` 확인" / Then: "SD-01 → `판매중`, `data-status="Available"`, `slds-theme_success` / SD-03 → `계약중`, `Under Contract`, `slds-theme_warning` / SD-05 → `판매완료`, `Sold`, 초록·주황 클래스 없음. 전체 배지 판매중 6, 계약중 2, 판매완료 2" → 1차 Jest / **E2E [이월→WI-1.005]** (CK-14) (ENHANCED 2026-10-28: 1차 Jest `propertyTile.test.js` 통과 — 체크는 E2E(WI-1.005) 통과 후)
-- [ ] **AC-022** 대체 이미지 — Given: "AC-020 과 같음" / When: "SD-09(빈 값), SD-10(깨진 URL) 카드의 `property-card-image` 확인" / Then: "두 카드 모두 `src` 에 `propertyPlaceholder` 포함, `naturalWidth > 0`, `alt` = 각 매물명. SD-02 카드는 `propertyPlaceholder` 미포함" → 1차 Jest(분기) / **`naturalWidth` 포함 E2E [이월→WI-1.005]** (CK-10) (ENHANCED 2026-10-28: 1차 Jest `propertyTile.test.js` 통과 — 체크는 E2E(WI-1.005) 통과 후)
-- [ ] **AC-023** KRW 전체 금액 — Given: "AC-020 과 같음" / When: "SD-01, SD-09 카드 가격과 그리드 전체 텍스트 확인" / Then: "SD-01 = `₩2,500,000,000`, SD-09 = `₩350,000,000`. `property-list` 텍스트에 `억`, `만원`, `$`, `KRW` 없음" → 1차 Jest(가능 범위) / **E2E [이월→WI-1.005]** (CK-02, I-06) (ENHANCED 2026-10-28: 1차 Jest `propertyTile.test.js` 통과 — 체크는 E2E(WI-1.005) 통과 후)
-- [ ] **AC-067** 비밀정보 미커밋 — Given: "커밋 직전 저장소" / When: "`git ls-files | grep -E "\.auth/|sfdx-url|accessToken"`" / Then: "0줄, `.gitignore` 에 `tests/e2e/.auth/`" → 수동 QA
+- [ ] **AC-008** 오그 간 재현성 (ENHANCED 2026-10-28: 이 WI 범위 완료 — DH-DEV 재실행 시 SD 10건 감지 → 적재 건너뜀, 10건 유지(20건 아님). 절차: `scripts/load-sample-data.ps1`(매물명 기준 COUNT 0 → 적재 / 10 → 건너뜀 / 그 외 → 중단) + `scripts/apex/reset-sample-data.apex`(Scratch/Sandbox 가드, DH-DEV 에서 Savepoint 롤백으로 10건 삭제 동작 확인). SIT·UAT 적재·`ORDER BY Name` 비교는 Lab 12 이월로 체크 보류) — Given: "AC-007 을 통과한 동일 데이터 플랜 파일" / When: "DH-SIT 와 DH-UAT 에 같은 명령으로 적재" / Then: "두 오그 모두 `ORDER BY Name` 결과 10행이 DH-DEV 와 완전히 같음. 재실행 시 중복 적재되지 않거나(20건 아님) 중복 방지 절차가 문서화" → 이 WI: 절차 문서 + DH-DEV 재실행 시 COUNT 확인 / **SIT·UAT 적재 [이월→Lab 12]** (ENHANCED 2026-10-29: 미완 유지 — DH-SIT/UAT 같은 명령 적재·분포(10건·6/2/2·도시 7개) 일치 PASS(Lab 12). `ORDER BY Name` 10행 비교 결과 기록 없음(DELIVERABLES B-05) — 기록 후 체크)
+- [x] **AC-020** 카드 요약 정보 — Given: "`agent` 로그인, "매물 탐색" 탭, 조건 없음" / When: "`data-name="해운대 오션뷰"` 인 `property-card` 를 찾는다" / Then: "`property-card-name` = `해운대 오션뷰`, `property-card-price` = `₩850,000,000`, `property-card-address` 에 `부산광역시 해운대구 해운대해변로 22` 와 `부산` 포함, `property-card-rooms` = `침실 3 · 욕실 2`, `property-status-badge` = `판매중`, `property-card-image` 의 `alt` = `해운대 오션뷰`" → 1차 Jest / **E2E [이월→WI-1.005]** (ENHANCED 2026-10-28: 1차 Jest `propertyTile.test.js` 통과 — 체크는 E2E(WI-1.005) 통과 후) (ENHANCED 2026-10-29: E2E WI-1.005 전체 UI 회귀 — DEV 49 passed/2 flaky/5 skipped, SIT 52/1(AC-044 테스트 코드 timeout 수정 후 통과)/3, UAT 51/0/5)
+- [x] **AC-021** 배지 색상 매핑 — Given: "AC-020 과 같음" / When: "SD-01, SD-03, SD-05 카드의 `property-status-badge` 확인" / Then: "SD-01 → `판매중`, `data-status="Available"`, `slds-theme_success` / SD-03 → `계약중`, `Under Contract`, `slds-theme_warning` / SD-05 → `판매완료`, `Sold`, 초록·주황 클래스 없음. 전체 배지 판매중 6, 계약중 2, 판매완료 2" → 1차 Jest / **E2E [이월→WI-1.005]** (CK-14) (ENHANCED 2026-10-28: 1차 Jest `propertyTile.test.js` 통과 — 체크는 E2E(WI-1.005) 통과 후) (ENHANCED 2026-10-29: E2E 회귀 DEV/SIT/UAT 통과)
+- [x] **AC-022** 대체 이미지 — Given: "AC-020 과 같음" / When: "SD-09(빈 값), SD-10(깨진 URL) 카드의 `property-card-image` 확인" / Then: "두 카드 모두 `src` 에 `propertyPlaceholder` 포함, `naturalWidth > 0`, `alt` = 각 매물명. SD-02 카드는 `propertyPlaceholder` 미포함" → 1차 Jest(분기) / **`naturalWidth` 포함 E2E [이월→WI-1.005]** (CK-10) (ENHANCED 2026-10-28: 1차 Jest `propertyTile.test.js` 통과 — 체크는 E2E(WI-1.005) 통과 후) (ENHANCED 2026-10-29: E2E(`naturalWidth` 포함) 회귀 DEV/SIT/UAT 통과)
+- [x] **AC-023** KRW 전체 금액 — Given: "AC-020 과 같음" / When: "SD-01, SD-09 카드 가격과 그리드 전체 텍스트 확인" / Then: "SD-01 = `₩2,500,000,000`, SD-09 = `₩350,000,000`. `property-list` 텍스트에 `억`, `만원`, `$`, `KRW` 없음" → 1차 Jest(가능 범위) / **E2E [이월→WI-1.005]** (CK-02, I-06) (ENHANCED 2026-10-28: 1차 Jest `propertyTile.test.js` 통과 — 체크는 E2E(WI-1.005) 통과 후) (ENHANCED 2026-10-29: E2E 회귀 DEV/SIT/UAT 통과)
+- [ ] **AC-067** 비밀정보 미커밋 — Given: "커밋 직전 저장소" / When: "`git ls-files | grep -E "\.auth/|sfdx-url|accessToken"`" / Then: "0줄, `.gitignore` 에 `tests/e2e/.auth/`" → 수동 QA (ENHANCED 2026-10-29: 미완 유지 — `.gitignore` 의 `tests/e2e/.auth/` 포함은 확인, `git ls-files` 0줄 수동 확인 결과 기록 없음(DELIVERABLES B-03/B-07) — 다음 커밋 직전 1회 기록 후 체크)
 
 ## 7. 테스트 요구
 
@@ -497,24 +499,24 @@ test("AC-023 KRW 전체 금액", { tag: "@explore" }, async ({ page }) => {
 
 ## 8. 통합 체크리스트
 
-- [ ] 전문 에이전트 사용 확인
-- [ ] 선행 WI-1.001 `[X]` 확인
+- [x] 전문 에이전트 사용 확인 (ENHANCED 2026-10-29: 전문 에이전트 사용 — backend_developer / frontend_developer / test_engineer / code_reviewer, code_reviewer 리뷰 후 PR 병합)
+- [x] 선행 WI-1.001 `[X]` 확인 (ENHANCED 2026-10-29: 문서 상태 정리 — 선행 WI 는 실제 구현·검증·병합 후 착수했고 문서 Status 갱신만 지연(B-03))
 - [x] 데이터 플랜 SD-01~SD-10 커밋, DH-DEV 적재 → 10건·6/2/2·도시 7개 (AC-007) (ENHANCED 2026-10-28: `data/sample/property-plan.json` + `Property__c.json` 작성·DH-DEV 적재 완료(커밋은 WI 커밋 시). plan 의 `saveRefs`/`resolveRefs` 는 현 sf CLI 가 무시·경고하므로 제거. SD-01~08 유효 사진 URL 은 CK-10/OQ-05 확정 전 임시로 정적 리소스 `/resource/propertySamplePhotos/sdNN.svg`(신규, 같은 오그 경로라 CSP 불필요, `propertyPlaceholder` 문자열 미포함 → AC-022 대조군 SD-02 충족), DH-DEV 배포 0Afgw000000bCjlCAE)
 - [x] 재실행 중복 방지 절차·초기화 스크립트 (AC-008) (ENHANCED 2026-10-28: `scripts/load-sample-data.ps1`(PS7, DH-HUB/core 차단, 적재 후 분포 자동 검증 exit 1) · `scripts/apex/reset-sample-data.apex` · `scripts/soql/sample-data-check.soql`. README 기록은 documentation_writer 에 위임 필요)
 - [x] 정적 리소스 `propertyPlaceholder` (ENHANCED 2026-10-28: MWI-1.002 목업 SVG 400×300 그대로 승계, DH-DEV 배포 0Afgw000000b1WcCAI)
 - [x] LMS 채널 `PropertySelected__c` (ENHANCED 2026-10-28: `messageChannels/PropertySelected.messageChannel-meta.xml`(필드 `recordId`, isExposed) DH-DEV 배포 0Afgw000000bCjlCAE)
 - [x] `propertyTile`: testid 규약, KRW 포맷, 배지 매핑 + `data-status`, `aria-label`, 키보드 Enter, 발행 (ENHANCED 2026-10-28: 목업 승계 — `lightning-formatted-number` KRW, `c/propertyUtils` 매핑 재사용, 사진 빈 값·onerror → `propertyPlaceholder`(레코드 교체 시 초기화), 클릭·Enter·Space → LMS `PropertySelected__c { recordId }` 발행 + 목업 호환 `propertyselect` CustomEvent 병행(WI-1.003/1.005 에서 제거 검토). DH-DEV 배포 0Afgw000000b1WcCAI)
-- [ ] `₩` 문자 형태 확인 (I-06) 결과 기록 (ENHANCED 2026-10-28: Jest(Node Intl ko-KR) aria-label = 반각 U+20A9 확인, 전각 U+FFE6 아님. DH-DEV `lightning-formatted-number` 화면 출력 확인은 WI-1.005 Playwright 로 이월)
+- [x] `₩` 문자 형태 확인 (I-06) 결과 기록 (ENHANCED 2026-10-28: Jest(Node Intl ko-KR) aria-label = 반각 U+20A9 확인, 전각 U+FFE6 아님. DH-DEV `lightning-formatted-number` 화면 출력 확인은 WI-1.005 Playwright 로 이월) (ENHANCED 2026-10-29: 회귀 AC-020·023 에서 화면 출력 `₩850,000,000`·`₩2,500,000,000` 확인)
 - [x] Jest 통과 (ENHANCED 2026-10-28: `npx sfdx-lwc-jest -- propertyTile` 18/18 통과)
 - [x] `WI-1.002-property-tile.spec.ts` 작성(`@explore`) — 1차 실행 대상 없음(`--grep-invert @explore` 시 0건 정상), PHASE-PLAN-01 §3.4 기록 (ENHANCED 2026-10-28: test_engineer — AC-020~023 test() 4건 전부 `@explore`, 공용 헬퍼 `tests/e2e/support/explorer.ts`. `--grep-invert "@explore"` 는 0건이라 "No tests found" 로 종료코드 1 → 1차 실행 시 `--pass-with-no-tests` 추가. 참고 실행(DH-DEV, 목업 `매물 탐색` 탭·목업 데이터 소스, 기본 세션 state.json — agent.json 미생성): 4/4 통과. 실데이터·agent 세션 최종 검증은 WI-1.005 회귀)
-- [ ] code_reviewer 리뷰(SLDS·접근성)
-- [ ] `sf project deploy start --dry-run -o DH-DEV` 성공 → `sf project deploy start -o DH-DEV`
-- [ ] Apex: `sf apex run test -l RunLocalTests -o DH-DEV -c -r human` 실패 0
-- [ ] 정적 분석: `sf code-analyzer run --workspace . --view table` — High 이상 0건
-- [ ] AC-067 0줄 확인
-- [ ] CI(선택·미도입) — 해당 없음
-- [ ] PROJECT-PLAN §5 / PHASE-PLAN-01 §1.2·§5.7 / 이 문서 체크리스트·Status `[X]`
-- [ ] 커밋 `WI-1.002-sample-data-property-tile`
+- [x] code_reviewer 리뷰(SLDS·접근성) (ENHANCED 2026-10-29: code_reviewer 리뷰 후 PR 병합)
+- [x] `sf project deploy start --dry-run -o DH-DEV` 성공 → `sf project deploy start -o DH-DEV` (ENHANCED 2026-10-29: DH-DEV dry-run → deploy 후 DevOps Center Promote DEV → SIT → UAT → PROD(DH-HUB) 2026-10-29 완료)
+- [x] Apex: `sf apex run test -l RunLocalTests -o DH-DEV -c -r human` 실패 0 (ENHANCED 2026-10-29: RunLocalTests DH-DEV 47/47 Pass·Org Wide 100%, DH-SIT 배포 시 45/45, PROD 프로모션 RunLocalTests 성공)
+- [x] 정적 분석: `sf code-analyzer run --workspace . --view table` — High 이상 0건 (ENHANCED 2026-10-29: Code Analyzer High·Critical 0건(Critical 1건은 flow 엔진 Python 미설치 환경 오류, 코드 결함 아님) — DELIVERABLES AC-065)
+- [ ] AC-067 0줄 확인 (ENHANCED 2026-10-29: 미완 유지 — `.gitignore` 의 `tests/e2e/.auth/` 포함은 확인, `git ls-files` 0줄 수동 확인 결과 기록 없음(DELIVERABLES B-03/B-07) — 다음 커밋 직전 1회 기록 후 체크)
+- [ ] CI(선택·미도입) — 해당 없음 (ENHANCED 2026-10-29: 미완 유지 — CI(GitHub Actions) 미도입 — 해당 없음(N/A), 안정화 후 선택 도입)
+- [x] PROJECT-PLAN §5 / PHASE-PLAN-01 §1.2·§5.7 / 이 문서 체크리스트·Status `[X]` (ENHANCED 2026-10-29: 문서 상태 정리(DELIVERABLES §2.4 B-03) — PROJECT-PLAN v1.4 · PHASE-PLAN-01 v1.3 · 이 문서 갱신)
+- [x] 커밋 `WI-1.002-sample-data-property-tile` (ENHANCED 2026-10-29: `WI-1.002-sample-data-property-tile` 이름으로 커밋, Feature Branch `WI-000001` PR 병합 → PROD 2026-10-29 CLOSED)
 
 ## 9. 참고 자료
 

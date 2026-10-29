@@ -51,13 +51,15 @@ synced_at: null # Sync 타임스탬프
 | Phase                           | Phase 1 — MVP                                                                                                                                                                                                                                         |
 | 모듈                            | LWC `propertyFilter` · LMS 채널 `PropertyFilter__c` · `propertyList` 구독 ENHANCE · Apex `PropertyController` 조건 확장 · `PropertyControllerTest` 확장                                                                                               |
 | 우선순위                        | **Must** (분류 GAP) — AC-034·070 은 Should                                                                                                                                                                                                            |
-| 상태                            | [ ] 미착수 (Not Started)                                                                                                                                                                                                                              |
+| 상태                            | [X] 완료 (PROD 2026-10-29) (ENHANCED 2026-10-29: ~~미착수~~ → DevOps Center WI-000004 CLOSED, Apex·Jest·회귀·AC-064 통과)                                                                                                                             |
 | 선행 (Depends-on)               | **WI-1.003**                                                                                                                                                                                                                                          |
 | 후행                            | WI-1.005                                                                                                                                                                                                                                              |
 | 예상 소요                       | **0.35 M/D (2.75h)** = REQ-005 0.5h + REQ-008 2.0h + REQ-012 0.25h                                                                                                                                                                                    |
 | 일정                            | 2026-10-30(금) 09:00–11:45 (Lab 9)                                                                                                                                                                                                                    |
 | 담당 에이전트                   | backend_developer(Apex) · frontend_developer(LWC) · test_engineer · code_reviewer                                                                                                                                                                     |
 | 커밋명                          | `WI-1.004-search-filter`                                                                                                                                                                                                                              |
+
+> (ENHANCED 2026-10-29: 문서 상태 정리(DELIVERABLES §2.4 B-03, project_manager) — 상태 `[X]` 완료(PROD 2026-10-29), 실행 결과 기준으로 선행 조건·AC·통합 체크리스트 갱신. 미완 유지: AC-057(잠정 CK-04)·AC-058(잠정 CK-03)·min > max 처리, AC-067 `git ls-files` 수동 기록, CI(미도입). WI ID·선행·공수 변경 없음)
 
 ## 1. 상세 개요
 
@@ -90,11 +92,11 @@ synced_at: null # Sync 타임스탬프
 
 ## 3. 선행 조건
 
-- [ ] **선행 WI-1.003 Status `[X]` 확인** — 미완이면 시작 금지 (WI-1.001·1.002 도 `[X]`)
-- [ ] DH-DEV 에 `PropertyController`(기본 조회)·`PropertyFilter`·`propertyList`·`PropertyControllerTest` 배포 완료
-- [ ] 전문 에이전트 사용(backend_developer / frontend_developer / test_engineer / code_reviewer)
-- [ ] `git checkout main ; git pull` → WI-1.004 Feature Branch checkout
-- [ ] 미결: CK-03(min > max 동작), CK-04(공백 키워드 trim), CK-02(원 단위 입력 수용) — 미확정이면 아래 기본값으로 진행
+- [x] **선행 WI-1.003 Status `[X]` 확인** — 미완이면 시작 금지 (WI-1.001·1.002 도 `[X]`) (ENHANCED 2026-10-29: 문서 상태 정리 — 선행 WI 는 실제 구현·검증·병합 후 착수했고 문서 Status 갱신만 지연(B-03))
+- [x] DH-DEV 에 `PropertyController`(기본 조회)·`PropertyFilter`·`propertyList`·`PropertyControllerTest` 배포 완료 (ENHANCED 2026-10-29: WI-1.003 배포 완료)
+- [x] 전문 에이전트 사용(backend_developer / frontend_developer / test_engineer / code_reviewer) (ENHANCED 2026-10-29: 전문 에이전트 사용 — backend_developer / frontend_developer / test_engineer / code_reviewer, code_reviewer 리뷰 후 PR 병합)
+- [x] `git checkout main ; git pull` → WI-1.004 Feature Branch checkout (ENHANCED 2026-10-29: Feature Branch `WI-000004`)
+- [x] 미결: CK-03(min > max 동작), CK-04(공백 키워드 trim), CK-02(원 단위 입력 수용) — 미확정이면 아래 기본값으로 진행 (ENHANCED 2026-10-29: 확인 — CK-03/04 미확정은 기본값(min > max 미구현, 공백 trim)으로 진행, AC-057/058 잠정)
 
 ## 4. 세부 작업 (Numbered sub-tasks)
 
@@ -556,29 +558,29 @@ test(
 
 **화면 (1차 Jest/Apex → E2E [이월→WI-1.005])**
 
-- [ ] **AC-027** 키워드 실시간 — Given: "AC-024 상태" / When: "`filter-keyword` 에 `서울` 입력(Enter 없음)" / Then: "마지막 입력 후 1,300ms 이내 `property-card` 3개(SD-01·04·08), `result-count` = `3건`" → 1차 Jest(디바운스 → 발행 인자) (ENHANCED 2026-10-29: test_engineer — E2E DH-DEV 실데이터 `npx playwright test tests/e2e/WI-1.004` 통과 — `AC-027 키워드 실시간 필터`(1,300ms 예산 내 3건) + 보조 `강남구`(주소) 0건 안내. 최종 회귀는 WI-1.005 → 미체크 유지)
-- [ ] **AC-028** 최대 가격 — When: "`filter-max-price` 에 `1000000000`" / Then: "`property-card` 6개, `6건`, SD-01 카드 없음" → 1차 Apex(AC-015c) + Jest (ENHANCED 2026-10-29: test_engineer — E2E DH-DEV 실데이터 `npx playwright test tests/e2e/WI-1.004` 통과 — 6건, SD-01 없음. 최종 회귀는 WI-1.005 → 미체크 유지)
-- [ ] **AC-029** 가격 범위 — When: "(a) min `500000000` + max `1000000000`, (b) 둘 다 `850000000`" / Then: "(a) 4개 `4건`, (b) 1개(SD-02) `1건`" → 1차 Apex + Jest (ENHANCED 2026-10-29: test_engineer — E2E DH-DEV 실데이터 `npx playwright test tests/e2e/WI-1.004` 통과 — (a) 4건 (b) 850,000,000 경계 1건. 최종 회귀는 WI-1.005 → 미체크 유지)
-- [ ] **AC-030** 최소 침실 — When: "`3개 이상` 선택, 이어서 `4개 이상`" / Then: "`3개 이상` → 7개 `7건`, `4개 이상` → 3개(SD-01·05·07) `3건`" → 1차 Apex + Jest(선택지 값) (ENHANCED 2026-10-29: test_engineer — E2E DH-DEV 실데이터 `npx playwright test tests/e2e/WI-1.004` 통과 — 선택지 6종 확인, 7건 → 3건. 최종 회귀는 WI-1.005 → 미체크 유지)
-- [ ] **AC-031** 복합 + 판매완료 — When: "`서울` → `3개 이상` → 최대 `2000000000`" / Then: "3 → 2 → 1건. 최종 `송파 잠실 아파트`, `₩1,980,000,000`, 배지 `판매완료`(`data-status="Sold"`)" → 1차 Apex(AC-017a) (ENHANCED 2026-10-29: test_engineer — E2E DH-DEV 실데이터 `npx playwright test tests/e2e/WI-1.004` 통과 — 3 → 2 → 1건, SD-08 `₩1,980,000,000`·`판매완료`·`data-status=Sold`. 최종 회귀는 WI-1.005 → 미체크 유지)
-- [ ] **AC-032** 판매완료 기본 노출 — When: "`filter-min-price` `900000000`" / Then: "5개(SD-01·03·05·07·08) `5건`, `Sold` 2개, `Under Contract` 2개, "판매완료 제외" 옵션 없음" → 1차 Apex(가격 조건) — WI-1.003 과 공동 매핑 (ENHANCED 2026-10-29: test_engineer — E2E DH-DEV 실데이터 `npx playwright test tests/e2e/WI-1.004` 통과 — 5건, Sold 2·Under Contract 2, 판매완료 제외 옵션 없음 (WI-1.003 spec 의 AC-032 도 통과). 최종 회귀는 WI-1.005 → 미체크 유지)
-- [ ] **AC-033** 필터 초기화 — Given: "AC-031 최종 상태(1건)" / When: "`filter-reset` 클릭" / Then: "키워드·최소·최대 가격 빈 문자열, `filter-min-bedrooms` = `전체`, `property-card` 10개 `10건`" → 1차 Jest (ENHANCED 2026-10-29: test_engineer — E2E DH-DEV 실데이터 `npx playwright test tests/e2e/WI-1.004` 통과 — 입력값 빈 문자열·`전체`·10건 + 보조(음수 오류 후 초기화 → aria-invalid 해제). 최종 회귀는 WI-1.005 → 미체크 유지)
-- [ ] **AC-059** 음수·비숫자 — When: "`filter-max-price` 에 `-100`, 이어서 `abc`" / Then: "`-100` → `aria-invalid="true"`, 10건 유지 / `abc` → 값 빈 문자열, 10건 유지" → 1차 Jest(`reportValidity` 모의, 발행 안 함). 실제 차단은 Playwright 가 최종 근거 (ENHANCED 2026-10-29: test_engineer — E2E DH-DEV 실데이터 `npx playwright test tests/e2e/WI-1.004` **실패(제품 결함)** — `-100` → aria-invalid·조회 요청 0·10건 유지는 통과. `abc` 입력 시 값이 `b` 로 남음: lightning-input type=number 가 type=text+inputmode=decimal 로 렌더링되고 k/m/b 축약 입력을 허용 → AC 의 "값 빈 문자열" 불충족(목록은 10건 유지, 토스트 없음). frontend 처리(비숫자 정리) 또는 AC 문구 ENHANCE(CK 신규) 필요)
+- [x] **AC-027** 키워드 실시간 — Given: "AC-024 상태" / When: "`filter-keyword` 에 `서울` 입력(Enter 없음)" / Then: "마지막 입력 후 1,300ms 이내 `property-card` 3개(SD-01·04·08), `result-count` = `3건`" → 1차 Jest(디바운스 → 발행 인자) (ENHANCED 2026-10-29: test_engineer — E2E DH-DEV 실데이터 `npx playwright test tests/e2e/WI-1.004` 통과 — `AC-027 키워드 실시간 필터`(1,300ms 예산 내 3건) + 보조 `강남구`(주소) 0건 안내. 최종 회귀는 WI-1.005 → 미체크 유지) (ENHANCED 2026-10-29: 최종 회귀 WI-1.005 전체 UI 회귀 — DEV 49 passed/2 flaky/5 skipped, SIT 52/1(AC-044 테스트 코드 timeout 수정 후 통과)/3, UAT 51/0/5)
+- [x] **AC-028** 최대 가격 — When: "`filter-max-price` 에 `1000000000`" / Then: "`property-card` 6개, `6건`, SD-01 카드 없음" → 1차 Apex(AC-015c) + Jest (ENHANCED 2026-10-29: test_engineer — E2E DH-DEV 실데이터 `npx playwright test tests/e2e/WI-1.004` 통과 — 6건, SD-01 없음. 최종 회귀는 WI-1.005 → 미체크 유지) (ENHANCED 2026-10-29: 최종 회귀 DEV/SIT/UAT 통과)
+- [x] **AC-029** 가격 범위 — When: "(a) min `500000000` + max `1000000000`, (b) 둘 다 `850000000`" / Then: "(a) 4개 `4건`, (b) 1개(SD-02) `1건`" → 1차 Apex + Jest (ENHANCED 2026-10-29: test_engineer — E2E DH-DEV 실데이터 `npx playwright test tests/e2e/WI-1.004` 통과 — (a) 4건 (b) 850,000,000 경계 1건. 최종 회귀는 WI-1.005 → 미체크 유지) (ENHANCED 2026-10-29: 최종 회귀 DEV/SIT/UAT 통과)
+- [x] **AC-030** 최소 침실 — When: "`3개 이상` 선택, 이어서 `4개 이상`" / Then: "`3개 이상` → 7개 `7건`, `4개 이상` → 3개(SD-01·05·07) `3건`" → 1차 Apex + Jest(선택지 값) (ENHANCED 2026-10-29: test_engineer — E2E DH-DEV 실데이터 `npx playwright test tests/e2e/WI-1.004` 통과 — 선택지 6종 확인, 7건 → 3건. 최종 회귀는 WI-1.005 → 미체크 유지) (ENHANCED 2026-10-29: 최종 회귀 DEV/SIT/UAT 통과)
+- [x] **AC-031** 복합 + 판매완료 — When: "`서울` → `3개 이상` → 최대 `2000000000`" / Then: "3 → 2 → 1건. 최종 `송파 잠실 아파트`, `₩1,980,000,000`, 배지 `판매완료`(`data-status="Sold"`)" → 1차 Apex(AC-017a) (ENHANCED 2026-10-29: test_engineer — E2E DH-DEV 실데이터 `npx playwright test tests/e2e/WI-1.004` 통과 — 3 → 2 → 1건, SD-08 `₩1,980,000,000`·`판매완료`·`data-status=Sold`. 최종 회귀는 WI-1.005 → 미체크 유지) (ENHANCED 2026-10-29: 최종 회귀 DEV/SIT/UAT 통과)
+- [x] **AC-032** 판매완료 기본 노출 — When: "`filter-min-price` `900000000`" / Then: "5개(SD-01·03·05·07·08) `5건`, `Sold` 2개, `Under Contract` 2개, "판매완료 제외" 옵션 없음" → 1차 Apex(가격 조건) — WI-1.003 과 공동 매핑 (ENHANCED 2026-10-29: test_engineer — E2E DH-DEV 실데이터 `npx playwright test tests/e2e/WI-1.004` 통과 — 5건, Sold 2·Under Contract 2, 판매완료 제외 옵션 없음 (WI-1.003 spec 의 AC-032 도 통과). 최종 회귀는 WI-1.005 → 미체크 유지) (ENHANCED 2026-10-29: 최종 회귀 DEV/SIT/UAT 통과)
+- [x] **AC-033** 필터 초기화 — Given: "AC-031 최종 상태(1건)" / When: "`filter-reset` 클릭" / Then: "키워드·최소·최대 가격 빈 문자열, `filter-min-bedrooms` = `전체`, `property-card` 10개 `10건`" → 1차 Jest (ENHANCED 2026-10-29: test_engineer — E2E DH-DEV 실데이터 `npx playwright test tests/e2e/WI-1.004` 통과 — 입력값 빈 문자열·`전체`·10건 + 보조(음수 오류 후 초기화 → aria-invalid 해제). 최종 회귀는 WI-1.005 → 미체크 유지) (ENHANCED 2026-10-29: 최종 회귀 DEV/SIT/UAT 통과)
+- [x] **AC-059** 음수·비숫자 — When: "`filter-max-price` 에 `-100`, 이어서 `abc`" / Then: "`-100` → `aria-invalid="true"`, 10건 유지 / `abc` → 값 빈 문자열, 10건 유지" → 1차 Jest(`reportValidity` 모의, 발행 안 함). 실제 차단은 Playwright 가 최종 근거 (ENHANCED 2026-10-29: test_engineer — E2E DH-DEV 실데이터 `npx playwright test tests/e2e/WI-1.004` **실패(제품 결함)** — `-100` → aria-invalid·조회 요청 0·10건 유지는 통과. `abc` 입력 시 값이 `b` 로 남음: lightning-input type=number 가 type=text+inputmode=decimal 로 렌더링되고 k/m/b 축약 입력을 허용 → AC 의 "값 빈 문자열" 불충족(목록은 10건 유지, 토스트 없음). frontend 처리(비숫자 정리) 또는 AC 문구 ENHANCE(CK 신규) 필요) (ENHANCED 2026-10-29: 비숫자·축약 입력 결함 수정 후 회귀 DEV/SIT/UAT 통과)
       (ENHANCED 2026-10-29: lightning-input type=number 가 k/m/b 축약을 허용해 `abc` → `b` 가 남던 결함 수정 — 비숫자·축약(`abc`/`1b`/`1k`)·해석 불가 입력(value "" + validity.valid=false)은 필드를 빈 문자열로 비우고 발행 안 함, `-100` 은 aria-invalid 유지. Jest 53/53, Playwright AC-059 통과 @ DH-DEV 0Afgw000000byIBCAY)
-- [ ] **AC-034 (Should)** 디바운스 — Given: "Aura 요청 카운터 0" / When: "`송파 잠실` 을 50ms 간격 `pressSequentially` 후 1,000ms 대기" / Then: "조회 요청 1회(최대 2회), 최종 1개(SD-08)" → 1차 Jest(가짜 타이머 → 발행 1회) (ENHANCED 2026-10-29: test_engineer — E2E DH-DEV 실데이터 `npx playwright test tests/e2e/WI-1.004` 통과 — `송파 잠실` 50ms 순차 입력 → getProperties 요청 1~2회, 최종 SD-08 1건. 최종 회귀는 WI-1.005 → 미체크 유지)
+- [x] **AC-034 (Should)** 디바운스 — Given: "Aura 요청 카운터 0" / When: "`송파 잠실` 을 50ms 간격 `pressSequentially` 후 1,000ms 대기" / Then: "조회 요청 1회(최대 2회), 최종 1개(SD-08)" → 1차 Jest(가짜 타이머 → 발행 1회) (ENHANCED 2026-10-29: test_engineer — E2E DH-DEV 실데이터 `npx playwright test tests/e2e/WI-1.004` 통과 — `송파 잠실` 50ms 순차 입력 → getProperties 요청 1~2회, 최종 SD-08 1건. 최종 회귀는 WI-1.005 → 미체크 유지) (ENHANCED 2026-10-29: DEV flaky(단독 재실행 통과), SIT/UAT 통과)
 
 **잠정 (CK 해소 전 완료 조건 제외)**
 
-- [ ] **AC-057 (잠정 — CK-04)** 빈 값·공백 키워드 — When: "keyword `''`, `'   '` 호출 / UI 공백 3자" / Then: "모두 키워드 조건 미적용으로 10건(`10건`)" → Apex(trim 구현됨) + UI `test.fixme` (ENHANCED 2026-10-29: test_engineer — UI spec 은 `test.fixme`(E2E_CK04=1 로 활성). 참고 실행(E2E_CK04=1) 통과 — 공백 3자 → 10건. CK-04 해소 전 미체크)
-- [ ] **AC-058 (잠정 — CK-03)** min > max — When: "min `1000000000`, max `500000000`" / Then: "`filter-price-error` 에 `최소 가격이 최대 가격보다 클 수 없습니다.`, 0개 `0건`, 오류 토스트 없음" → CK-03 해소 후 구현 (ENHANCED 2026-10-29: test_engineer — UI spec 은 `test.fixme`(E2E_CK03=1 로 활성). 참고 실행 실패 — `filter-price-error` 미구현(CK-03 미확정, 예상대로))
+- [ ] **AC-057 (잠정 — CK-04)** 빈 값·공백 키워드 — When: "keyword `''`, `'   '` 호출 / UI 공백 3자" / Then: "모두 키워드 조건 미적용으로 10건(`10건`)" → Apex(trim 구현됨) + UI `test.fixme` (ENHANCED 2026-10-29: test_engineer — UI spec 은 `test.fixme`(E2E_CK04=1 로 활성). 참고 실행(E2E_CK04=1) 통과 — 공백 3자 → 10건. CK-04 해소 전 미체크) (ENHANCED 2026-10-29: 미완 유지 — CK-04 미해소 — Apex 통과, UI `test.fixme`, 완료 조건 제외)
+- [ ] **AC-058 (잠정 — CK-03)** min > max — When: "min `1000000000`, max `500000000`" / Then: "`filter-price-error` 에 `최소 가격이 최대 가격보다 클 수 없습니다.`, 0개 `0건`, 오류 토스트 없음" → CK-03 해소 후 구현 (ENHANCED 2026-10-29: test_engineer — UI spec 은 `test.fixme`(E2E_CK03=1 로 활성). 참고 실행 실패 — `filter-price-error` 미구현(CK-03 미확정, 예상대로)) (ENHANCED 2026-10-29: 미완 유지 — CK-03 미해소 — `filter-price-error` 미구현, `test.fixme`, 완료 조건 제외)
 
 **비기능·공통**
 
-- [ ] **AC-064** 검색 응답 1초 — Given: "DH-SIT, `agent`, 5회" / When: "`서울`, `3개 이상`, `2000000000` 각각 입력" / Then: "서버 응답 중앙값 ≤ 1,000ms, 마지막 입력 → 갱신 ≤ 1,300ms" → **[이월→Lab 12]** (CK-07) (ENHANCED 2026-10-29: test_engineer — spec 작성(`@perf`, SF_TARGET_ORG=DH-SIT 또는 E2E_PERF=1 에서만 실행) — DH-DEV 실행에서는 skip, Lab 12 이월)
-- [ ] **AC-065** Apex 보안·정적 분석 — Then: "`with sharing`, `WITH USER_MODE`/`AccessLevel.USER_MODE`, 문자열 연결 SOQL 0건(바인드만), 루프 내 SOQL/DML 0건, Code Analyzer High 이상 0건" → code_reviewer + Code Analyzer, 완료
-- [ ] **AC-066** 커버리지 — Then: "실패 0건, 조직 ≥ 75%, `PropertyController` ≥ 85%" → `RunLocalTests`, 완료
-- [ ] **AC-067** 비밀정보 미커밋 → 수동, 완료
-- [ ] **AC-070 (Should)** 성능 설계 — Then: "`cacheable=true`, 상수 `LIMIT`, 디바운스 300ms(±50ms), 파라미터 객체 `PropertyFilter`" → code_reviewer, 완료
+- [x] **AC-064** 검색 응답 1초 — Given: "DH-SIT, `agent`, 5회" / When: "`서울`, `3개 이상`, `2000000000` 각각 입력" / Then: "서버 응답 중앙값 ≤ 1,000ms, 마지막 입력 → 갱신 ≤ 1,300ms" → **[이월→Lab 12]** (CK-07) (ENHANCED 2026-10-29: test_engineer — spec 작성(`@perf`, SF_TARGET_ORG=DH-SIT 또는 E2E_PERF=1 에서만 실행) — DH-DEV 실행에서는 skip, Lab 12 이월) (ENHANCED 2026-10-29: Lab 12 DH-SIT 서버 중앙값 210ms, UI 732~992ms 통과)
+- [x] **AC-065** Apex 보안·정적 분석 — Then: "`with sharing`, `WITH USER_MODE`/`AccessLevel.USER_MODE`, 문자열 연결 SOQL 0건(바인드만), 루프 내 SOQL/DML 0건, Code Analyzer High 이상 0건" → code_reviewer + Code Analyzer, 완료 (ENHANCED 2026-10-29: code_reviewer 리뷰 완료(PR 병합). Code Analyzer High·Critical 0건(Critical 1건은 flow 엔진 Python 미설치 환경 오류, 코드 결함 아님) — DELIVERABLES AC-065)
+- [x] **AC-066** 커버리지 — Then: "실패 0건, 조직 ≥ 75%, `PropertyController` ≥ 85%" → `RunLocalTests`, 완료 (ENHANCED 2026-10-29: RunLocalTests DH-DEV 47/47 Pass·Org Wide 100%, DH-SIT 배포 시 45/45, PROD 프로모션 RunLocalTests 성공)
+- [ ] **AC-067** 비밀정보 미커밋 → 수동, 완료 (ENHANCED 2026-10-29: 미완 유지 — `.gitignore` 의 `tests/e2e/.auth/` 포함은 확인, `git ls-files` 0줄 수동 확인 결과 기록 없음(DELIVERABLES B-03/B-07) — 다음 커밋 직전 1회 기록 후 체크)
+- [x] **AC-070 (Should)** 성능 설계 — Then: "`cacheable=true`, 상수 `LIMIT`, 디바운스 300ms(±50ms), 파라미터 객체 `PropertyFilter`" → code_reviewer, 완료 (ENHANCED 2026-10-29: PCT `ac070_filterParameterObject`·Jest 디바운스·code_reviewer 리뷰 통과)
 
 ## 7. 테스트 요구
 
@@ -591,23 +593,23 @@ test(
 
 ## 8. 통합 체크리스트
 
-- [ ] 전문 에이전트 사용 확인
-- [ ] 선행 WI-1.003 `[X]` 확인
+- [x] 전문 에이전트 사용 확인 (ENHANCED 2026-10-29: 전문 에이전트 사용 — backend_developer / frontend_developer / test_engineer / code_reviewer, code_reviewer 리뷰 후 PR 병합)
+- [x] 선행 WI-1.003 `[X]` 확인 (ENHANCED 2026-10-29: 문서 상태 정리 — 선행 WI 는 실제 구현·검증·병합 후 착수했고 문서 Status 갱신만 지연(B-03))
 - [x] Apex 조건(키워드 Name/City 부분 일치·가격 경계 포함·침실 이상, 바인드 변수, 공백 trim)
 - [x] `PropertyControllerTest` 확장 통과 (AC-014~017, 018 `강릉`, 056)
 - [x] LMS 채널 `PropertyFilter__c` (frontend_developer 2026-10-29 — DH-DEV 배포 0Afgw000000c93uCAA)
 - [x] `propertyFilter`: 라벨 4종, 침실 선택지 `전체`~`5개 이상`, 300ms 디바운스, `filter-reset`, 음수·비숫자 차단 (frontend_developer 2026-10-29 — Jest 1차, 실제 브라우저 차단은 WI-1.005 Playwright)
-- [ ] min > max 처리 — CK-03 확정 시에만
+- [ ] min > max 처리 — CK-03 확정 시에만 (ENHANCED 2026-10-29: 미완 유지 — CK-03 미해소 — AC-058 잠정)
 - [x] `propertyList` `PropertyFilter__c` 구독 (frontend_developer 2026-10-29 — 임시 clientFilter 제거, 서버 측 필터)
 - [x] Jest 통과 (frontend_developer 2026-10-29 — `npx sfdx-lwc-jest` 3 suites / 43 tests)
-- [ ] `sf project deploy start --dry-run -o DH-DEV` 성공 → `sf project deploy start -o DH-DEV`
-- [ ] Apex: `sf apex run test -l RunLocalTests -o DH-DEV -c -r human` 실패 0, 커버리지 기준 충족 (AC-066)
-- [ ] 정적 분석: `sf code-analyzer run --workspace . --view table` High 이상 0건 (AC-065), code_reviewer 메모(바인드·디바운스·AC-070)
+- [x] `sf project deploy start --dry-run -o DH-DEV` 성공 → `sf project deploy start -o DH-DEV` (ENHANCED 2026-10-29: DH-DEV dry-run → deploy 후 DevOps Center Promote DEV → SIT → UAT → PROD(DH-HUB) 2026-10-29 완료)
+- [x] Apex: `sf apex run test -l RunLocalTests -o DH-DEV -c -r human` 실패 0, 커버리지 기준 충족 (AC-066) (ENHANCED 2026-10-29: RunLocalTests DH-DEV 47/47 Pass·Org Wide 100%, DH-SIT 배포 시 45/45, PROD 프로모션 RunLocalTests 성공)
+- [x] 정적 분석: `sf code-analyzer run --workspace . --view table` High 이상 0건 (AC-065), code_reviewer 메모(바인드·디바운스·AC-070) (ENHANCED 2026-10-29: Code Analyzer High·Critical 0건(Critical 1건은 flow 엔진 Python 미설치 환경 오류, 코드 결함 아님) — DELIVERABLES AC-065, code_reviewer 메모 반영(L-1 LIKE 이스케이프))
 - [x] Playwright `WI-1.004-search-filter.spec.ts` 작성(`@explore`/`fixme`) — 1차 실행 대상 없음, PHASE-PLAN-01 §3.4 기록 (ENHANCED 2026-10-29: test_engineer — spec 작성(AC-027~034·059 `@explore`, 보조 negative 4건(주소 키워드·인젝션 문자열·오류 후 초기화 등), AC-057/058 `test.fixme`(E2E_CK04/E2E_CK03), AC-064 `@perf`). 공용 헬퍼 `tests/e2e/support/filter.ts`(가격 입력은 클릭→전체선택→삭제→입력: lightning-input 이 포커스 시 표시값을 바꿔 fill 이 이어붙는 문제). 매물 탐색 탭이 DH-DEV 에 있어 실데이터 실행: 통과 13 / 실패 1(AC-059 `abc` — 제품 결함) / skip 3(AC-057·058 fixme, AC-064 perf). WI-1.003 @filter 재실행 결과는 WI-1.003 문서 참조. 코드 리뷰 L-4 이월: 대상 org 가드 `tests/e2e/support/org.ts`(DH-DEV/SIT/UAT 만, Scratch Org·baseURL 일치 검증) → WI-1.003 spec 적용)
-- [ ] AC-067 0줄 확인
-- [ ] CI(선택·미도입) — 해당 없음
-- [ ] PROJECT-PLAN §5 / PHASE-PLAN-01 §1.2·§7.7 / 이 문서 체크리스트·Status `[X]`
-- [ ] 커밋 `WI-1.004-search-filter`
+- [ ] AC-067 0줄 확인 (ENHANCED 2026-10-29: 미완 유지 — `.gitignore` 의 `tests/e2e/.auth/` 포함은 확인, `git ls-files` 0줄 수동 확인 결과 기록 없음(DELIVERABLES B-03/B-07) — 다음 커밋 직전 1회 기록 후 체크)
+- [ ] CI(선택·미도입) — 해당 없음 (ENHANCED 2026-10-29: 미완 유지 — CI(GitHub Actions) 미도입 — 해당 없음(N/A), 안정화 후 선택 도입)
+- [x] PROJECT-PLAN §5 / PHASE-PLAN-01 §1.2·§7.7 / 이 문서 체크리스트·Status `[X]` (ENHANCED 2026-10-29: 문서 상태 정리(DELIVERABLES §2.4 B-03) — PROJECT-PLAN v1.4 · PHASE-PLAN-01 v1.3 · 이 문서 갱신)
+- [x] 커밋 `WI-1.004-search-filter` (ENHANCED 2026-10-29: `WI-1.004-search-filter` 이름으로 커밋, Feature Branch `WI-000004` PR 병합 → PROD 2026-10-29 CLOSED)
 
 ## 9. 참고 자료
 
