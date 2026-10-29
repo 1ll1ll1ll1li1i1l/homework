@@ -1,10 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!-- [MOCKUP] MWI-1.005 매물 탐색 컨테이너. App Page Property_Explorer 에 배치 -->
 <LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>67.0</apiVersion>
     <isExposed>true</isExposed>
     <masterLabel>Property Explorer (Mockup)</masterLabel>
-    <description>매물 탐색 목업 컨테이너 — 실제 목록(PropertyController) + 임시 필터·상세 패널</description>
+    <description
+  >매물 탐색 목업 컨테이너 — 실제 목록(PropertyController) + 임시 필터·상세 패널</description>
     <targets>
         <target>lightning__AppPage</target>
     </targets>

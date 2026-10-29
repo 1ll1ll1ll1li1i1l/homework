@@ -1,62 +1,82 @@
 <template>
-    <!-- MWI-1.005 (↔ WI-1.005) "매물 탐색" 화면 (S1 + S2) — 좌 필터 / 중앙 카드 그리드 / 우 상세 -->
-    <div class="property-explorer">
-        <div class="slds-page-header slds-m-bottom_small">
-            <div class="slds-page-header__row">
-                <div class="slds-page-header__col-title">
-                    <div class="slds-media">
-                        <div class="slds-media__figure">
-                            <lightning-icon icon-name="custom:custom24" size="medium" alternative-text=""></lightning-icon>
-                        </div>
-                        <div class="slds-media__body">
-                            <h1 class="slds-page-header__title">매물 탐색</h1>
-                            <p class="slds-text-body_small slds-text-color_weak">
-                                목업 컨테이너 — 목록은 실제 매물(PropertyController), 필터는 화면 내 임시 처리, 편집 저장은 WI-1.005 에서 구현됩니다.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="slds-page-header__col-actions">
-                    <!-- 목업 전용 컨트롤: 본 개발에서는 권한 세트(DreamHouse_Agent/Admin)로 결정됨 -->
-                    <div class="role-toggle" data-testid="mockup-role-toggle">
-                        <span class="slds-text-body_small slds-text-color_weak slds-m-right_x-small">역할 (목업 전용)</span>
-                        <lightning-button-group>
-                            <lightning-button
-                                label="상담원"
-                                data-value="agent"
-                                variant={agentVariant}
-                                onclick={handleRoleChange}
-                            ></lightning-button>
-                            <lightning-button
-                                label="관리자"
-                                data-value="admin"
-                                variant={adminVariant}
-                                onclick={handleRoleChange}
-                            ></lightning-button>
-                        </lightning-button-group>
-                    </div>
-                </div>
+  <!-- MWI-1.005 (↔ WI-1.005) "매물 탐색" 화면 (S1 + S2) — 좌 필터 / 중앙 카드 그리드 / 우 상세 -->
+  <div class="property-explorer">
+    <div class="slds-page-header slds-m-bottom_small">
+      <div class="slds-page-header__row">
+        <div class="slds-page-header__col-title">
+          <div class="slds-media">
+            <div class="slds-media__figure">
+              <lightning-icon
+                icon-name="custom:custom24"
+                size="medium"
+                alternative-text=""
+              ></lightning-icon>
             </div>
+            <div class="slds-media__body">
+              <h1 class="slds-page-header__title">매물 탐색</h1>
+              <p class="slds-text-body_small slds-text-color_weak">
+                목업 컨테이너 — 목록·필터는 실제 매물(PropertyController 서버
+                조건, LMS PropertyFilter__c), 편집 저장은 WI-1.005 에서
+                구현됩니다.
+              </p>
+            </div>
+          </div>
         </div>
-
-        <lightning-layout multiple-rows>
-            <lightning-layout-item size="12" large-device-size="3" padding="around-small">
-                <c-property-filter onfilterchange={handleFilterChange}></c-property-filter>
-            </lightning-layout-item>
-            <lightning-layout-item size="12" large-device-size="6" padding="around-small">
-                <c-property-list
-                    client-filter={filter}
-                    selected-id={selectedId}
-                    onpropertyselect={handleSelect}
-                ></c-property-list>
-            </lightning-layout-item>
-            <lightning-layout-item size="12" large-device-size="3" padding="around-small">
-                <c-property-detail
-                    property={selectedProperty}
-                    can-edit={isAdmin}
-                    onpropertysave={handleSave}
-                ></c-property-detail>
-            </lightning-layout-item>
-        </lightning-layout>
+        <div class="slds-page-header__col-actions">
+          <!-- 목업 전용 컨트롤: 본 개발에서는 권한 세트(DreamHouse_Agent/Admin)로 결정됨 -->
+          <div class="role-toggle" data-testid="mockup-role-toggle">
+            <span
+              class="slds-text-body_small slds-text-color_weak slds-m-right_x-small"
+              >역할 (목업 전용)</span
+            >
+            <lightning-button-group>
+              <lightning-button
+                label="상담원"
+                data-value="agent"
+                variant={agentVariant}
+                onclick={handleRoleChange}
+              ></lightning-button>
+              <lightning-button
+                label="관리자"
+                data-value="admin"
+                variant={adminVariant}
+                onclick={handleRoleChange}
+              ></lightning-button>
+            </lightning-button-group>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <lightning-layout multiple-rows>
+      <lightning-layout-item
+        size="12"
+        large-device-size="3"
+        padding="around-small"
+      >
+        <c-property-filter></c-property-filter>
+      </lightning-layout-item>
+      <lightning-layout-item
+        size="12"
+        large-device-size="6"
+        padding="around-small"
+      >
+        <c-property-list
+          selected-id={selectedId}
+          onpropertyselect={handleSelect}
+        ></c-property-list>
+      </lightning-layout-item>
+      <lightning-layout-item
+        size="12"
+        large-device-size="3"
+        padding="around-small"
+      >
+        <c-property-detail
+          property={selectedProperty}
+          can-edit={isAdmin}
+          onpropertysave={handleSave}
+        ></c-property-detail>
+      </lightning-layout-item>
+    </lightning-layout>
+  </div>
 </template>
