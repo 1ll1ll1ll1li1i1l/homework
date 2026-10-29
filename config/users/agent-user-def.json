@@ -1,0 +1,14 @@
+{
+  "Username": "dh-agent.{orgId}@example.invalid",
+  "LastName": "E2E Agent",
+  "FirstName": "DreamHouse",
+  "Alias": "dhagent",
+  "Email": "dh-agent@example.invalid",
+  "profileName": "Minimum Access - Salesforce",
+  "fallbackProfileName": "Standard Platform User",
+  "permsets": ["DreamHouse_Agent"],
+  "LocaleSidKey": "ko_KR",
+  "LanguageLocaleKey": "ko",
+  "TimeZoneSidKey": "Asia/Seoul",
+  "EmailEncodingKey": "UTF-8"
+}

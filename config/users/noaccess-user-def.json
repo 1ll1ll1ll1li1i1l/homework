@@ -1,0 +1,14 @@
+{
+  "Username": "dh-noaccess.{orgId}@example.invalid",
+  "LastName": "E2E NoAccess",
+  "FirstName": "DreamHouse",
+  "Alias": "dhnoacc",
+  "Email": "dh-noaccess@example.invalid",
+  "profileName": "Minimum Access - Salesforce",
+  "fallbackProfileName": "Standard Platform User",
+  "permsets": [],
+  "LocaleSidKey": "ko_KR",
+  "LanguageLocaleKey": "ko",
+  "TimeZoneSidKey": "Asia/Seoul",
+  "EmailEncodingKey": "UTF-8"
+}

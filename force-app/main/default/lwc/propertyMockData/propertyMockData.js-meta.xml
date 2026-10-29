@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- [MOCKUP ONLY] 정적 샘플 데이터 모듈 (SD-01~SD-10). 본 개발 WI-1.003 착수 시 삭제 대상. -->
-<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
-    <apiVersion>67.0</apiVersion>
-    <isExposed>false</isExposed>
-</LightningComponentBundle>

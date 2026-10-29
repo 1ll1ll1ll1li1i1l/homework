@@ -1,6 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- MWI-1.005 (↔ WI-1.005). 목업에서는 propertyExplorer 의 자식. 본 개발 WI-1.005 에서 isExposed=true + lightning__AppPage 로 ENHANCE -->
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- WI-1.005 (MWI-1.005 승계 — ENHANCED). LMS PropertySelected__c 구독 / PropertyUpdated__c 발행. App Page Property_Explorer region3 에 배치 -->
 <LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>67.0</apiVersion>
-    <isExposed>false</isExposed>
+    <isExposed>true</isExposed>
+    <masterLabel>Property Detail</masterLabel>
+    <description
+  >매물 상세 — 선택 매물의 큰 사진·전체 속성·상태 배지, 관리자 전용 편집(저장 후 목록 즉시 반영)</description>
+    <targets>
+        <target>lightning__AppPage</target>
+    </targets>
 </LightningComponentBundle>
