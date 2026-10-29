@@ -190,7 +190,7 @@ test.describe('admin — 상세 패널 편집', () => {
     await expect(combo).toBeVisible({ timeout: 15_000 });
     const option = page.getByRole('option', { name: label, exact: true });
     await expect(async () => {
-      if (!(await option.isVisible())) await combo.click();
+      if (!(await option.isVisible())) await combo.click({ timeout: 5_000 });
       await expect(option).toBeVisible({ timeout: 3_000 });
     }).toPass({ timeout: 30_000 });
     await option.click();

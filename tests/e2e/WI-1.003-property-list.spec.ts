@@ -253,7 +253,8 @@ test.describe('admin — 표준 페이지 변경 후 복귀 반영', () => {
     await expect(statusBox).toContainText(SD03.label, { timeout: 30_000 });
     const available = page.getByRole('option', { name: '판매중' });
     await expect(async () => {
-      if (!(await available.isVisible())) await statusBox.click();
+      // (ENHANCED 2026-10-29) click 에 timeout 지정 — actionTimeout 기본값(무제한) 때문에 클릭이 걸리면 toPass 가 재시도하지 못하고 테스트 타임아웃(전체 회귀 2회 관측)
+      if (!(await available.isVisible())) await statusBox.click({ timeout: 5_000 });
       await expect(available).toBeVisible({ timeout: 3_000 });
     }).toPass({ timeout: 30_000 });
     await available.click();

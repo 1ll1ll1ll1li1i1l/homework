@@ -571,6 +571,10 @@ test("AC-068 axe (Should)", async ({ page }) => {
 
 > (ENHANCED 2026-10-29: test_engineer 2차 전체 회귀 — D-1(LEX 권한) 배포 후 agent 를 `Minimum Access - Salesforce` 로 복귀, `WI-1.001-property-crud.spec.ts` 신규 포함. **49 passed / 2 failed / 5 skipped** — 실패 2건은 단독 재실행 통과하는 flaky: AC-044(표준 Edit 모달 드롭다운 미열림 타임아웃), AC-034(50ms 입력 중 공백 유실 → 0건). WI-1.001 이월 AC-009·011·012·060 통과)
 
+> (ENHANCED 2026-10-29: test_engineer **Lab 12.1 SIT 회귀 — DH-SIT**(deploy 0AfEk00000gQETlKAO). 샘플 적재 10건·6/2/2·도시 7개 확인(적재 전 SIT 관리자에 DreamHouse_Admin 할당 필요 — 미할당 시 `FlsError Address__c`). 역할 사용자 생성: agent=Minimum Access - Salesforce, admin·noaccess=Standard Platform User. `npx playwright test`(@perf 자동 포함) **52 passed / 1 failed / 3 skipped(잠정 fixme)** — 실패 AC-044 는 테스트 결함(toPass 안의 click 에 timeout 없음 → 무한 대기)으로 수정 후 2/2 통과. 성능: AC-063 getProperties→10카드 중앙값 571ms·최대 698ms(목표 ≤1,000/≤1,500) 통과, AC-064 서버 중앙값 210ms(≤1,000)·마지막 입력→갱신 중앙값 서울 732/3개 이상 992/최대 20억 964ms(≤1,300) 통과. 실행 후 분포 6/2/2 유지, [E2E] 잔여 0건)
+
+> (ENHANCED 2026-10-29: test_engineer **Lab 12.2 UAT 회귀 — DH-UAT**. 샘플 적재 10건·6/2/2·도시 7개(사전 DreamHouse_Admin 할당), 역할 사용자 생성 agent=Minimum Access - Salesforce / admin·noaccess=Standard Platform User. `npx playwright test` **51 passed / 0 failed / 5 skipped**(@perf 2·잠정 fixme 3) — AC-044 포함 전부 통과(click timeout 수정 효과). 실행 후 분포 6/2/2·[E2E] 잔여 0건)
+
 - 회귀 범위 외(이 WI 에서 하지 않음): AC-063/064(성능)·AC-008(SIT/UAT) → Lab 12, AC-069 → Lab 13, AC-004 조회 10건 → WI-1.003(Apex).
 
 ## 7. 테스트 요구

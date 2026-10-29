@@ -20,7 +20,7 @@ export async function selectBedrooms(page: Page, label: (typeof BEDROOM_LABELS)[
   // (ENHANCED 2026-10-29) 전체 회귀에서 드롭다운 클릭이 무시돼 타임아웃된 사례(AC-030) → 열릴 때까지 재시도
   const option = page.getByTestId('filter-min-bedrooms').getByRole('option', { name: label, exact: true });
   await expect(async () => {
-    if (!(await option.isVisible())) await bedroomsCombobox(page).click();
+    if (!(await option.isVisible())) await bedroomsCombobox(page).click({ timeout: 5_000 });
     await expect(option).toBeVisible({ timeout: 3_000 });
   }).toPass({ timeout: 30_000 });
   await option.click();

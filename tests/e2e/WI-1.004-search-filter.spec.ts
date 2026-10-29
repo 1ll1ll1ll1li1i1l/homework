@@ -151,7 +151,7 @@ test.describe('agent — 검색·필터', () => {
     const options = page.getByTestId('filter-min-bedrooms').getByRole('option');
     // (ENHANCED 2026-10-29) 회귀 중 첫 클릭이 무시되는 사례 → 열릴 때까지 재시도
     await expect(async () => {
-      if (!(await options.first().isVisible())) await bedroomsCombobox(page).click();
+      if (!(await options.first().isVisible())) await bedroomsCombobox(page).click({ timeout: 5_000 });
       await expect(options.first()).toBeVisible({ timeout: 3_000 });
     }).toPass({ timeout: 30_000 });
     await expect(options).toHaveText([...BEDROOM_LABELS]);
